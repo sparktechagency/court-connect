@@ -67,8 +67,16 @@ class $AssetsImagesGen {
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
 
+  /// File path: assets/images/splash_bottom.png
+  AssetGenImage get splashBottom =>
+      const AssetGenImage('assets/images/splash_bottom.png');
+
+  /// File path: assets/images/splash_top.png
+  AssetGenImage get splashTop =>
+      const AssetGenImage('assets/images/splash_top.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [logo];
+  List<AssetGenImage> get values => [logo, splashBottom, splashTop];
 }
 
 class $AssetsLottieGen {

@@ -8,7 +8,6 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 
-
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -19,21 +18,15 @@ class LoginScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Column(
-
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
             SizedBox(height: 110.h),
-
             Assets.images.logo.image(width: 156.w, height: 79.h),
-
-
             SizedBox(height: 82.h),
             CustomText(
-              text: "Sign in to your account.",
-              fontsize: 24.sp,
-              fontWeight: FontWeight.bold
-            ),
+                text: "Sign in to your account.",
+                fontsize: 24.sp,
+                fontWeight: FontWeight.bold),
             SizedBox(height: 8.h),
             CustomText(
               text: "Make sure that you already have an \n account.",
@@ -56,21 +49,19 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 8.h),
             Align(
               alignment: Alignment.centerRight,
-              child: GestureDetector(
+              child: CustomText(
                 onTap: () {
                   context.goNamed(AppRoutes.forgetScreen);
                 },
-                child: CustomText(
-                  text: "Forgot Password",
-                  fontsize: 14.sp,
-                  color: AppColors.primaryColor,
-                ),
+                text: "Forgot Password",
+                fontsize: 14.sp,
+                color: AppColors.primaryColor,
               ),
             ),
             SizedBox(height: 111.h),
             CustomButton(
-              title: "Sign In",
-              onpress: () {
+              label: "Sign In",
+              onPressed: () {
                 context.goNamed(AppRoutes.profileScreen);
               },
             ),
@@ -83,16 +74,14 @@ class LoginScreen extends StatelessWidget {
                   fontsize: 16.sp,
                   color: AppColors.textColor646464,
                 ),
-                GestureDetector(
+                CustomText(
                   onTap: () {
                     context.goNamed(AppRoutes.signUpScreen);
                   },
-                  child: CustomText(
-                    text: "Sign Up",
-                    fontsize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
-                  ),
+                  text: "Sign Up",
+                  fontsize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryColor,
                 ),
               ],
             ),

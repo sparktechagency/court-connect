@@ -63,8 +63,8 @@ class ForgetScreen extends StatelessWidget {
 
             SizedBox(height: 36.h),
             CustomButton(
-              title: "Get Verification Code",
-              onpress: () {
+              label: "Get Verification Code",
+              onPressed: () {
                 context.goNamed(AppRoutes.otpScreen);
               },
             ),

@@ -140,8 +140,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
             SizedBox(height: 36.h),
             CustomButton(
-              title: "Sign Up",
-              onpress: () {
+              label: "Sign Up",
+              onPressed: () {
                 // Implement sign-up functionality
               },
             ),

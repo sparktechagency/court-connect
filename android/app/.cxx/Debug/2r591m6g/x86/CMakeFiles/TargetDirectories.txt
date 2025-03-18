@@ -1,0 +1,2 @@
+C:/Users/ikram/Desktop/Projects/court-connect/android/app/.cxx/Debug/2r591m6g/x86/CMakeFiles/edit_cache.dir
+C:/Users/ikram/Desktop/Projects/court-connect/android/app/.cxx/Debug/2r591m6g/x86/CMakeFiles/rebuild_cache.dir

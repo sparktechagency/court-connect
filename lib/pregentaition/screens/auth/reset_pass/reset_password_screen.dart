@@ -75,8 +75,8 @@ class ResetPasswordScreen extends StatelessWidget {
 
             SizedBox(height: 36.h),
             CustomButton(
-              title: "Reset",
-              onpress: () {
+              label: "Reset",
+              onPressed: () {
                 context.goNamed(AppRoutes.loginScreen);
               },
             ),

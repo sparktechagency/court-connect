@@ -1,77 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../global/custom_assets/assets.gen.dart';
 import '../utils/app_colors.dart';
-import 'custom_text.dart';
 
 class CustomButton extends StatelessWidget {
-  final VoidCallback onpress;
-  final String title;
-  final Color? color;
-  final Color? titlecolor;
-  final double? height;
-  final double? width;
-  final double? fontSize;
-  final bool loading;
-  final bool loaderIgnore;
-
-  CustomButton({
+  const CustomButton({
     super.key,
-    required this.title,
-    required this.onpress,
-    this.color,
+    this.icon,
+    this.child,
+    this.label,
+    this.backgroundColor,
+    this.foregroundColor,
     this.height,
     this.width,
+    this.fontWeight,
     this.fontSize,
-    this.titlecolor,
-    this.loading=false,
-    this.loaderIgnore = false,
+    this.fontFamily,
+    this.paddingHorizontal,
+    this.paddingVertical,
+    required this.onPressed, this.radius,
   });
+
+  final IconData? icon;
+  final Widget? child;
+  final String? label;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final double? height;
+  final double? width;
+  final FontWeight? fontWeight;
+  final double? fontSize;
+  final double? radius;
+  final String? fontFamily;
+  final double? paddingHorizontal;
+  final double? paddingVertical;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: loading?(){} : onpress,
-      child: Container(
-        width:width?? 345.w,
-        height: height ?? 52.h,
-        padding:  EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-        decoration: BoxDecoration(
-          borderRadius:BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.primaryColor),
-          color: color ?? AppColors.primaryColor,
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius ?? 100.r)),
+        padding: EdgeInsets.symmetric(
+          horizontal: paddingHorizontal ?? 8.w,
+          vertical: paddingVertical ?? 0,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-           loaderIgnore ? SizedBox() : SizedBox(width: 30.w),
-
-
-            Center(
-              child: CustomText(
-                text: title,
-                fontsize: fontSize ?? 16.h,
-                color: titlecolor ?? Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-
-
-            loaderIgnore ? SizedBox() :  SizedBox(width: 20.w),
-
-
-            loaderIgnore ? SizedBox() :  loading  ?
-                SizedBox(
-                    height: 25.h,
-                    width: 25.w,
-                    child: Assets.lottie.buttonLoading.lottie(fit: BoxFit.cover)
-                ) :  SizedBox(width: 25.w)
-          ],
+        backgroundColor: backgroundColor ?? AppColors.primaryColor,
+        foregroundColor: foregroundColor ?? Colors.white,
+        fixedSize: Size(width ?? double.maxFinite, height ?? 40.h),
+        textStyle: TextStyle(
+          fontFamily: fontFamily ?? 'Montserrat',
+          fontWeight: fontWeight ?? FontWeight.w600,
+          fontSize: fontSize ?? 18.sp,
+          color: Colors.white
         ),
       ),
+      onPressed: onPressed,
+      label:
+          child != null
+              ? child!
+              : child == null && label != null
+              ? Text(label!)
+              : const SizedBox.shrink(),
+      icon: icon != null ? Icon(icon, color: Colors.white) : null,
     );
   }
 }
