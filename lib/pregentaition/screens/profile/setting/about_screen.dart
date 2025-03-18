@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:jotter/global_widgets/custom_text.dart';
-import 'package:jotter/utils/app_colors.dart';
 
 
 class AboutScreen extends StatelessWidget {
@@ -16,12 +14,14 @@ class AboutScreen extends StatelessWidget {
     final sizeH = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
-      appBar: AppBar(title: CustomTextOne(text: "About Us",fontSize: 18.sp,color: AppColors.textColor,),),
+      appBar: AppBar(
+        //title: CustomTextOne(text: "About Us",fontSize: 18.sp,color: AppColors.textColor,),
+      ),
       body:  ListView(
         padding: EdgeInsets.all(sizeH * .02),
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
-          const CustomTextTwo(text: 'Our Introduction',textAlign: TextAlign.start,),
+         // const CustomTextTwo(text: 'Our Introduction',textAlign: TextAlign.start,),
           SizedBox(height: sizeH * .02),
           Container(
             width: double.infinity,

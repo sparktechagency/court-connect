@@ -1,18 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:jotter/Controller/profile_controller.dart';
 import 'dart:io';
 
-import 'package:jotter/global_widgets/custom_text.dart';
-import 'package:jotter/global_widgets/custom_text_button.dart';
-import 'package:jotter/global_widgets/custom_text_field.dart';
-import 'package:jotter/utils/app_colors.dart';
-import 'package:jotter/utils/app_icons.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-import '../../Controller/auth_controller.dart';
-import '../../routes/exports.dart';
-import '../widgets/custom_network_image.dart';
+import '../../../core/utils/app_colors.dart';
+import '../../../core/widgets/custom_network_image.dart';
+import '../../../core/widgets/custom_text_field.dart';
 
 class ProfileUpdate extends StatefulWidget {
   const ProfileUpdate({super.key});
@@ -28,7 +23,6 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   final TextEditingController nameTEController = TextEditingController();
   final TextEditingController emailTEController = TextEditingController();
   final TextEditingController imageCtrl = TextEditingController();
-  final ProfileController profileController = Get.put(ProfileController());
 
   @override
   void initState() {
@@ -84,11 +78,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: CustomTextOne(
-          text: 'Profile Update',
-          fontSize: 18.sp,
-          color: AppColors.textColor,
-        ),
+        // title: CustomTextOne(
+        //   text: 'Profile Update',
+        //   fontSize: 18.sp,
+        //   color: AppColors.textColor,
+        // ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -156,7 +150,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                   ],
                 ),
               ),
-               CustomTextTwo(text: "User Name", bottom: 8.h),
+               //CustomTextTwo(text: "User Name", bottom: 8.h),
               CustomTextField(
                 controller: nameTEController,
                 hintText: "Enter your name",
@@ -166,7 +160,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
 
               SizedBox(height: 20.h),
 
-               CustomTextTwo(text: "E-mail", bottom: 8.h),
+               //CustomTextTwo(text: "E-mail", bottom: 8.h),
               CustomTextField(
                 readOnly: true,
                 controller: emailTEController,
@@ -179,15 +173,15 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                 height: 50.h,
               ),
               // Edit Profile Button
-              CustomTextButton(
-                text: 'Update Profile',
-                onTap: () async {
-                  profileController.profileUpdate(
-                    name: nameTEController.text,
-                    image: _profileImage
-                  );
-                },
-              ),
+              // CustomTextButton(
+              //   text: 'Update Profile',
+              //   onTap: () async {
+              //     profileController.profileUpdate(
+              //       name: nameTEController.text,
+              //       image: _profileImage
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),

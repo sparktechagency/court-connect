@@ -26,22 +26,22 @@ class SupportScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             // spacing: 10.h,
             children: [
-              Image.asset(AppImages.support),
+              //Image.asset(AppImages.support),
 
-              CustomTextTwo(
-                text:
-                "If you face any kind of problem with our service feel free to contact us.",
-              ),
+              // CustomTextTwo(
+              //   text:
+              //   "If you face any kind of problem with our service feel free to contact us.",
+              // ),
               SizedBox(height: 20.h),
 
               InkWell(
                 onTap: () async {
-                  final Uri url = Uri.parse('tel:(609)327-7992');
-                  if (await launchUrl(url)) {
-                    await launchUrl(url);
-                  } else {
-                    debugPrint('Could not launch phone dialer');
-                  }
+                  // final Uri url = Uri.parse('tel:(609)327-7992');
+                  // if (await launchUrl(url)) {
+                  //   await launchUrl(url);
+                  // } else {
+                  //   debugPrint('Could not launch phone dialer');
+                  // }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -51,33 +51,33 @@ class SupportScreen extends StatelessWidget {
                       color: AppColors.primaryColor,
                     ),
                     SizedBox(width: 10.w),
-                    CustomTextTwo(text: "(609)327-7992"),
+                    //CustomTextTwo(text: "(609)327-7992"),
                   ],
                 ),
               ),
 
               InkWell(
                 onTap: () async {
-                  final Uri emailUrl = Uri(
-                    scheme: 'mailto',
-                    path: 'jotter@gmail.com',
-                    query: 'subject=Support Inquiry&body=Hello, I need assistance with...',
-                  );
-                  if (await launchUrl(emailUrl)) {
-                    await launchUrl(emailUrl);
-                  } else {
-                    debugPrint('Could not launch email client');
-                  }
+                  // final Uri emailUrl = Uri(
+                  //   scheme: 'mailto',
+                  //   path: 'jotter@gmail.com',
+                  //   query: 'subject=Support Inquiry&body=Hello, I need assistance with...',
+                  // );
+                  // if (await launchUrl(emailUrl)) {
+                  //   await launchUrl(emailUrl);
+                  // } else {
+                  //   debugPrint('Could not launch email client');
+                  // }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.email_outlined,
                       color: AppColors.primaryColor,
                     ),
                     SizedBox(width: 10.w),
-                    CustomTextTwo(text: "jotter@gmail.com"),
+                   // CustomTextTwo(text: "jotter@gmail.com"),
                   ],
                 ),
               ),
