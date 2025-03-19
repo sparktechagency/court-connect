@@ -1,9 +1,17 @@
+import 'package:courtconnect/core/utils/app_colors.dart';
+import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../global/custom_assets/assets.gen.dart';
+
 class CustomBottomNavBar extends StatefulWidget {
+  const CustomBottomNavBar({super.key});
+
   @override
-  _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
+  State<CustomBottomNavBar> createState() => _CustomBottomNavBarState();
 }
 
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
@@ -17,56 +25,61 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-      selectedItemColor: Colors.blue[900], // Dark Blue for Selected
-      unselectedItemColor: Colors.grey, // Grey for Unselected
-      showSelectedLabels: true,
-      showUnselectedLabels: false,
-      items: [
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/home.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 0 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
-            ),
+    return Scaffold(
+      bottomNavigationBar: CustomContainer(
+        elevation: true,
+        verticalPadding: 10.h,
+        color: Colors.white,
+        child: SafeArea(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(Assets.icons.homeBottom.path, "Home", 0),
+              _buildNavItem(Assets.icons.groupBottom.path, "Group", 1),
+              _buildNavItem(Assets.icons.message.path, "Message", 2),
+              _buildNavItem(Assets.icons.profileNav.path, "Profile", 3),
+            ],
           ),
-          label: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/network.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 1 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
+      ),
+    );
+  }
+
+  Widget _buildNavItem(String icon, String label, int index) {
+    bool isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: SizedBox(
+        height: 48.h,
+        width: 60.w,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              icon,
+              color: isSelected ? AppColors.primaryColor : Colors.grey,
+              width: 24.w,
+              height: 24.h,
             ),
-          ),
-          label: 'Network',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/chat.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 2 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
+            const SizedBox(height: 5),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? AppColors.primaryColor : Colors.grey,
+              ),
             ),
-          ),
-          label: 'Chat',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/profile.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 3 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
+            CustomContainer(
+              verticalPadding: 2.h,
+              horizontalPadding: 30.w,
+              color: isSelected ? AppColors.primaryColor : Colors.transparent,
+              topLeftRadius: 10.r,
+              topRightRadius: 10.r,
             ),
-          ),
-          label: 'Profile',
+          ],
         ),
-      ],
+      ),
     );
   }
 }

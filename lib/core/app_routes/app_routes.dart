@@ -1,5 +1,8 @@
 
 import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/registered_users_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +29,9 @@ class AppRoutes {
   static const String resetPasswordScreen = "/ResetPasswordScreen";
   static const String customBottomNavBar = "/CustomBottomNavBar";
   static const String profileScreen = "/ProfileScreen";
+  static const String homeScreen = "/homeScreen";
+  static const String bookedNowScreen = "/bookedNowScreen";
+  static const String registeredUsersScreen = "/registeredUsersScreen";
 
 
 
@@ -47,7 +53,7 @@ class AppRoutes {
               // if(token.isNotEmpty){
               //     // AppRoutes.goRouter.replaceNamed(AppRoutes.managerHomeScreen);
               // }else{
-                AppRoutes.goRouter.replaceNamed(AppRoutes.loginScreen);
+                AppRoutes.goRouter.replaceNamed(AppRoutes.homeScreen);
               // }
 
 
@@ -63,7 +69,7 @@ class AppRoutes {
         GoRoute(
           path: loginScreen,
           name: loginScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( LoginScreen(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage( const LoginScreen(), state),
         ),
 
 
@@ -73,7 +79,7 @@ class AppRoutes {
         GoRoute(
           path: signUpScreen,
           name: signUpScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( SignUpScreen(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage( const SignUpScreen(), state),
         ),
 
 
@@ -83,7 +89,7 @@ class AppRoutes {
         GoRoute(
           path: forgetScreen,
           name: forgetScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( ForgetScreen(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage( const ForgetScreen(), state),
         ),
 
 
@@ -92,7 +98,7 @@ class AppRoutes {
         GoRoute(
           path: otpScreen,
           name: otpScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( OtpScreen(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage( const OtpScreen(), state),
         ),
 
 
@@ -102,7 +108,7 @@ class AppRoutes {
         GoRoute(
           path: resetPasswordScreen,
           name: resetPasswordScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( ResetPasswordScreen(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage( const ResetPasswordScreen(), state),
         ),
 
 
@@ -111,7 +117,7 @@ class AppRoutes {
         GoRoute(
           path: customBottomNavBar,
           name: customBottomNavBar,
-          pageBuilder: (context, state) =>  _customTransitionPage( CustomBottomNavBar(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage( const CustomBottomNavBar(), state),
         ),
 
 
@@ -120,7 +126,33 @@ class AppRoutes {
         GoRoute(
           path: profileScreen,
           name: profileScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( ProfileScreen(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage( const ProfileScreen(), state),
+        ),
+
+        ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: homeScreen,
+          name: homeScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const HomeScreen(), state),
+        ),
+
+
+        ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: bookedNowScreen,
+          name: bookedNowScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const BookedNowScreen(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: registeredUsersScreen,
+          name: registeredUsersScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const RegisteredUsersScreen(), state),
         ),
 
 

@@ -1,4 +1,6 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/widgets/custom_app_bar.dart';
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +11,7 @@ import '../../../../core/widgets/custom_text.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
-
+  const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -17,43 +19,26 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
 
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
 
-  bool isChecked = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+  bool _isChecked = false;
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+    return CustomScaffold(
+      appBar: const CustomAppBar(),
+      body: Form(
+        key: _globalKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 60.h),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: GestureDetector(
-                onTap: (){
-                  context.pop();
-                },
-                child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black)
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.all(5.r),
-                      child: const Icon(Icons.arrow_back),
-                    )),
-              ),
-            ),
-
             Assets.images.logo.image(width: 156.w, height: 79.h),
-
-            SizedBox(height: 40.h),
+            SizedBox(height: 30.h),
             CustomText(
               text: "Sign up to your \n account.",
               fontsize: 24.sp,
@@ -66,39 +51,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
               color: AppColors.textColor646464,
             ),
             SizedBox(height: 32.h),
-
             CustomTextField(
-              controller: usernameController,
+              controller: _usernameController,
               hintText: "User Name",
               keyboardType: TextInputType.text,
             ),
             SizedBox(height: 16.h),
             CustomTextField(
-              controller: emailController,
+              controller: _emailController,
               hintText: "Email",
               keyboardType: TextInputType.emailAddress,
               isEmail: true,
             ),
             SizedBox(height: 16.h),
             CustomTextField(
-              controller: passwordController,
+              controller: _passwordController,
               hintText: "Password",
               isPassword: true,
             ),
             SizedBox(height: 16.h),
             CustomTextField(
-              controller: confirmPasswordController,
+              controller: _confirmPasswordController,
               hintText: "Confirm Password",
               isPassword: true,
             ),
             SizedBox(height: 8.h),
-
             Row(
               children: [
                 Checkbox(
-                  value: isChecked,
+                  value: _isChecked,
                   onChanged: (value) {
-                    isChecked = !isChecked;
+                    _isChecked = !_isChecked;
                     setState(() {});
                   },
                   activeColor: AppColors.primaryColor,
@@ -108,43 +91,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   fontsize: 11.sp,
                   color: AppColors.textColor646464,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // Open Terms of Service
-                  },
-                  child: CustomText(
-                    text: "terms of services ",
-                    fontsize: 11.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
-                  ),
+                CustomText(
+                  onTap: () {},
+                  text: "terms of services ",
+                  fontsize: 11.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryColor,
                 ),
                 CustomText(
                   text: "and ",
                   fontsize: 11.sp,
                   color: AppColors.textColor646464,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // Open Privacy Policy
-                  },
-                  child: CustomText(
-                    text: "privacy policy.",
-                    fontsize: 11.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
-                  ),
+                CustomText(
+                  onTap: () {},
+                  text: "privacy policy.",
+                  fontsize: 11.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryColor,
                 ),
               ],
             ),
-
             SizedBox(height: 36.h),
-            CustomButton(
-              label: "Sign Up",
-              onPressed: () {
-                // Implement sign-up functionality
-              },
-            ),
+            CustomButton(label: "Sign Up", onPressed: _onSignUp),
             SizedBox(height: 18.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -154,16 +123,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   fontsize: 16.sp,
                   color: AppColors.textColor646464,
                 ),
-                GestureDetector(
+                CustomText(
                   onTap: () {
-                    // Navigate to Sign In screenr
+                    context.pushNamed(AppRoutes.loginScreen);
                   },
-                  child: CustomText(
-                    text: "Sign In",
-                    fontsize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
-                  ),
+                  text: "Sign In",
+                  fontsize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryColor,
                 ),
               ],
             ),
@@ -171,5 +138,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
+  }
+
+  void _onSignUp() {
+    if (!_globalKey.currentState!.validate() && _isChecked) return;
+  }
+
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 }

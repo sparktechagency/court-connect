@@ -39,6 +39,7 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius ?? 100.r)),
         padding: EdgeInsets.symmetric(
           horizontal: paddingHorizontal ?? 8.w,

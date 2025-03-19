@@ -4,10 +4,11 @@ import '../core/utils/app_colors.dart';
 
 class Themes {
   final lightTheme = ThemeData.light().copyWith(
-    ///-------------------------elevated button theme------------------------->
+      scaffoldBackgroundColor: AppColors.bgColor,
+      ///-------------------------elevated button theme------------------------->
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           backgroundColor: Colors.red,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.maxFinite, 56),

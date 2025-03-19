@@ -16,6 +16,9 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/date.svg
+  SvgGenImage get date => const SvgGenImage('assets/icons/date.svg');
+
   /// File path: assets/icons/group_bottom.svg
   SvgGenImage get groupBottom =>
       const SvgGenImage('assets/icons/group_bottom.svg');
@@ -24,11 +27,17 @@ class $AssetsIconsGen {
   SvgGenImage get homeBottom =>
       const SvgGenImage('assets/icons/homeBottom.svg');
 
+  /// File path: assets/icons/location.svg
+  SvgGenImage get location => const SvgGenImage('assets/icons/location.svg');
+
   /// File path: assets/icons/log_out.svg
   SvgGenImage get logOut => const SvgGenImage('assets/icons/log_out.svg');
 
   /// File path: assets/icons/message.svg
   SvgGenImage get message => const SvgGenImage('assets/icons/message.svg');
+
+  /// File path: assets/icons/money.svg
+  SvgGenImage get money => const SvgGenImage('assets/icons/money.svg');
 
   /// File path: assets/icons/my_book.svg
   SvgGenImage get myBook => const SvgGenImage('assets/icons/my_book.svg');
@@ -49,10 +58,13 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
+        date,
         groupBottom,
         homeBottom,
+        location,
         logOut,
         message,
+        money,
         myBook,
         profileEdit,
         profileNav,
@@ -64,8 +76,18 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/coin.png
+  AssetGenImage get coin => const AssetGenImage('assets/images/coin.png');
+
+  /// File path: assets/images/home_image.png
+  AssetGenImage get homeImage =>
+      const AssetGenImage('assets/images/home_image.png');
+
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
+
+  /// File path: assets/images/man.png
+  AssetGenImage get man => const AssetGenImage('assets/images/man.png');
 
   /// File path: assets/images/splash_bottom.png
   AssetGenImage get splashBottom =>
@@ -76,7 +98,8 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/splash_top.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [logo, splashBottom, splashTop];
+  List<AssetGenImage> get values =>
+      [coin, homeImage, logo, man, splashBottom, splashTop];
 }
 
 class $AssetsLottieGen {

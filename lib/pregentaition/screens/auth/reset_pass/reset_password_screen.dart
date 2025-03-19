@@ -1,3 +1,5 @@
+import 'package:courtconnect/core/widgets/custom_app_bar.dart';
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,38 +10,31 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 
-class ResetPasswordScreen extends StatelessWidget {
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
 
-  final TextEditingController passController = TextEditingController();
-  final TextEditingController confirmPassController = TextEditingController();
+
+  @override
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+}
+
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+
+
+  final TextEditingController _passController = TextEditingController();
+  final TextEditingController _confirmPassController = TextEditingController();
+  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+    return CustomScaffold(
+      appBar: const CustomAppBar(),
+      body: Form(
+        key: _globalKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 60.h),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: GestureDetector(
-                onTap: (){
-                  context.pop();
-                },
-                child: Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black)
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.all(5.r),
-                      child: const Icon(Icons.arrow_back),
-                    )),
-              ),
-            ),
-
             Assets.images.logo.image(width: 156.w, height: 79.h),
 
             SizedBox(height: 40.h),
@@ -57,7 +52,7 @@ class ResetPasswordScreen extends StatelessWidget {
             SizedBox(height: 56.h),
 
             CustomTextField(
-              controller: passController,
+              controller: _passController,
               hintText: "New Password",
               isPassword: true,
             ),
@@ -67,7 +62,7 @@ class ResetPasswordScreen extends StatelessWidget {
             SizedBox(height: 16.h),
 
             CustomTextField(
-              controller: confirmPassController,
+              controller: _confirmPassController,
               hintText: "Confirm Password",
               isPassword: true,
             ),
@@ -76,9 +71,7 @@ class ResetPasswordScreen extends StatelessWidget {
             SizedBox(height: 36.h),
             CustomButton(
               label: "Reset",
-              onPressed: () {
-                context.goNamed(AppRoutes.loginScreen);
-              },
+              onPressed: _onResetPassword,
             ),
             SizedBox(height: 18.h),
 
@@ -86,5 +79,19 @@ class ResetPasswordScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+
+
+  void _onResetPassword(){
+    if(!_globalKey.currentState!.validate()) return;
+    context.goNamed(AppRoutes.loginScreen);
+  }
+
+  @override
+  void dispose() {
+    _passController.dispose();
+    _confirmPassController.dispose();
+    super.dispose();
   }
 }

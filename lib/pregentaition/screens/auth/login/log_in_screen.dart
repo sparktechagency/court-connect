@@ -1,3 +1,4 @@
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,19 +9,27 @@ import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_text.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+    return CustomScaffold(
+      body: Form(
+        key: _globalKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 110.h),
+            SizedBox(height: 60.h),
             Assets.images.logo.image(width: 156.w, height: 79.h),
             SizedBox(height: 82.h),
             CustomText(
@@ -35,14 +44,14 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 53.h),
             CustomTextField(
-              controller: emailController,
+              controller: _emailController,
               hintText: "Email",
               keyboardType: TextInputType.emailAddress,
               isEmail: true,
             ),
             SizedBox(height: 16.h),
             CustomTextField(
-              controller: passwordController,
+              controller: _passwordController,
               hintText: "Password",
               isPassword: true,
             ),
@@ -51,7 +60,7 @@ class LoginScreen extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: CustomText(
                 onTap: () {
-                  context.goNamed(AppRoutes.forgetScreen);
+                  context.pushNamed(AppRoutes.forgetScreen);
                 },
                 text: "Forgot Password",
                 fontsize: 14.sp,
@@ -61,9 +70,7 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 111.h),
             CustomButton(
               label: "Sign In",
-              onPressed: () {
-                context.goNamed(AppRoutes.profileScreen);
-              },
+              onPressed: _onSingUp,
             ),
             SizedBox(height: 18.h),
             Row(
@@ -76,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 CustomText(
                   onTap: () {
-                    context.goNamed(AppRoutes.signUpScreen);
+                    context.pushNamed(AppRoutes.signUpScreen);
                   },
                   text: "Sign Up",
                   fontsize: 16.sp,
@@ -89,5 +96,17 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onSingUp() {
+    if (_globalKey.currentState!.validate()) return;
+    context.goNamed(AppRoutes.profileScreen);
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
