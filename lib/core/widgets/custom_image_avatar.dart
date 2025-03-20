@@ -1,4 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
+import 'package:courtconnect/core/widgets/custom_network_image.dart';
+import 'package:courtconnect/services/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -13,10 +15,12 @@ class CustomImageAvatar extends StatelessWidget {
     this.bottom,
     this.left,
     this.right,
+    this.fileImage,
   });
 
   final double radius;
   final String? image;
+  final File? fileImage;
   final double? top;
   final double? bottom;
   final double? left;
@@ -40,16 +44,21 @@ class CustomImageAvatar extends StatelessWidget {
         child: CircleAvatar(
           radius: radius.r,
           backgroundColor: Colors.grey.shade300,
-          backgroundImage: image != null && image!.isNotEmpty
-              ? CachedNetworkImageProvider(image!)
-              : null,
-          child: (image == null || image!.isEmpty)
-              ? Icon(
-                  Icons.person,
-                  color: Colors.grey,
-                  size: 44.r,
-                )
-              : null,
+          child: fileImage != null
+              ? ClipOval(
+            child: Image.file(
+              fileImage!,
+              width: 2 * radius.r,
+              height: 2 * radius.r,
+              fit: BoxFit.cover,
+            ),
+          )
+              : CustomNetworkImage(
+            boxShape: BoxShape.circle,
+            imageUrl: (image != null && image!.isNotEmpty)
+                ? "${ApiConstants.imageBaseUrl}/${image!}"
+                : "https://templates.joomla-monster.com/joomla30/jm-news-portal/components/com_djclassifieds/assets/images/default_profile.png",
+          ),
         ),
       ),
     );

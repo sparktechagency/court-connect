@@ -1,6 +1,10 @@
+import 'package:courtconnect/core/widgets/custom_app_bar.dart';
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
+import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/widgets/profile_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/app_routes/app_routes.dart';
 import '../../../../core/widgets/custom_dialog.dart';
@@ -11,47 +15,46 @@ class SettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // title: CustomTextOne(
-        //   text: 'Setting',
-        //   fontSize: 18.sp,
-        // ),
-      ),
+    return CustomScaffold(
+      appBar: const CustomAppBar(title: 'Settings'),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         child: Column(
           children: [
-            _buildOption(
-               // iconPath: AppIcons.password,
-                title: 'Change Password',
-                onTap: () {
-                // Get.toNamed(AppRoutes.changePassword);
-                }),
-            _buildOption(
-               // iconPath: AppIcons.terms,
-                title: 'Terms & Conditions',
-                onTap: () {
-                //Get.toNamed(AppRoutes.termsScreen);
-                }),
-            _buildOption(
-               // iconPath: AppIcons.privacy,
-                title: 'Privacy Policy',
-                onTap: () {
-               // Get.toNamed(AppRoutes.privacyPolicyScreen);
-                }),
-            _buildOption(
-              //iconPath: AppIcons.about,
-              title: "About Us",
+            ProfileListTile(
+              icon: const Icon(Icons.lock,color: Colors.black),
+              title: "Change Password",
               onTap: () {
-              // Get.toNamed(AppRoutes.aboutScreen);
+                context.pushNamed(AppRoutes.changePassword);
               },
             ),
+            ProfileListTile(
+              icon: Assets.icons.terms.svg(),
+              title: "Terms & Conditions",
+              onTap: () {
+                context.pushNamed(AppRoutes.termsScreen);
+              },
+            ),
+            ProfileListTile(
+              icon: Assets.icons.privacy.svg(),
+              title: "Privacy Policy",
+              onTap: () {
+                context.pushNamed(AppRoutes.privacyPolicyScreen);
+              },
+            ),
+          ProfileListTile(
+              icon: Assets.icons.about.svg(),
+              title: "About Us",
+              onTap: () {
+                context.pushNamed(AppRoutes.aboutScreen);
+              },
+            ),
+
             const Spacer(),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 30.h),
-              child: _buildOption(
-                  //iconPath: AppIcons.delete,
+              child: ProfileListTile(
+                icon: const Icon(Icons.delete_outline,color: Colors.red),
                   title: 'Delete Account',
                   onTap: () {
                     showDialog(
@@ -61,12 +64,10 @@ class SettingScreen extends StatelessWidget {
                         confirmButtonText: 'Delete',
                         confirmButtonColor: Colors.red,
                         onCancel: () {
-                          // Handle Cancel Button Action
-                          Get.back();
+                          context.pop();
                         },
                         onConfirm: () {
-                          // Handle Log Out Action
-                          Get.offAllNamed(AppRoutes.signUpScreen);
+                          context.goNamed(AppRoutes.signUpScreen);
                         },
                       ),
                     );
@@ -76,50 +77,6 @@ class SettingScreen extends StatelessWidget {
                   textColor: Colors.red),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOption({
-     String? iconPath,
-    required String title,
-    required VoidCallback onTap,
-    Color? color,
-    Color? textColor,
-    bool? noIcon,
-  }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 7.h),
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            color: color ?? const Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-             // Image.asset(iconPath, height: 20.h, width: 20.w),
-              SizedBox(width: 12.w),
-              // Expanded(
-              //   child: CustomTextOne(
-              //     text: title,
-              //     textAlign: TextAlign.start,
-              //     color: textColor ?? AppColors.textColor,
-              //     fontSize: 14.sp,
-              //   ),
-              // ),
-              if (noIcon != true)
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16.h,
-                  color: Colors.grey,
-                ),
-            ],
-          ),
         ),
       ),
     );

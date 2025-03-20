@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onSingUp() {
     if (_globalKey.currentState!.validate()) return;
-    context.goNamed(AppRoutes.profileScreen);
+    context.goNamed(AppRoutes.customBottomNavBar);
   }
 
   @override

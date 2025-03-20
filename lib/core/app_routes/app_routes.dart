@@ -3,6 +3,14 @@ import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/registered_users_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/my_booking_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/profile_update.dart';
+import 'package:courtconnect/pregentaition/screens/profile/setting/about_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/setting/change%20password/change_password.dart';
+import 'package:courtconnect/pregentaition/screens/profile/setting/privacy_policy_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/setting/setting_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/setting/terms_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/support_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,6 +40,14 @@ class AppRoutes {
   static const String homeScreen = "/homeScreen";
   static const String bookedNowScreen = "/bookedNowScreen";
   static const String registeredUsersScreen = "/registeredUsersScreen";
+  static const String profileUpdate = "/profileUpdate";
+  static const String supportScreen = "/supportScreen";
+  static const String settingScreen = "/settingScreen";
+  static const String changePassword = "/changePassword";
+  static const String termsScreen = "/termsScreen";
+  static const String privacyPolicyScreen = "/privacyPolicyScreen";
+  static const String aboutScreen = "/aboutScreen";
+  static const String myBookingScreen = "/myBookingScreen";
 
 
 
@@ -53,7 +69,7 @@ class AppRoutes {
               // if(token.isNotEmpty){
               //     // AppRoutes.goRouter.replaceNamed(AppRoutes.managerHomeScreen);
               // }else{
-                AppRoutes.goRouter.replaceNamed(AppRoutes.homeScreen);
+                AppRoutes.goRouter.replaceNamed(AppRoutes.loginScreen);
               // }
 
 
@@ -117,7 +133,7 @@ class AppRoutes {
         GoRoute(
           path: customBottomNavBar,
           name: customBottomNavBar,
-          pageBuilder: (context, state) =>  _customTransitionPage( const CustomBottomNavBar(), state),
+          pageBuilder: (context, state) =>  _customTransitionPage(  CustomBottomNavBar(), state),
         ),
 
 
@@ -153,6 +169,81 @@ class AppRoutes {
           path: registeredUsersScreen,
           name: registeredUsersScreen,
           pageBuilder: (context, state) =>  _customTransitionPage( const RegisteredUsersScreen(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: profileUpdate,
+          name: profileUpdate,
+          pageBuilder: (context, state) =>  _customTransitionPage( const ProfileUpdate(), state),
+        ),
+
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: supportScreen,
+          name: supportScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const SupportScreen(), state),
+        ),
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: settingScreen,
+          name: settingScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const SettingScreen(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: changePassword,
+          name: changePassword,
+          pageBuilder: (context, state) =>  _customTransitionPage( const ChangePassword(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: termsScreen,
+          name: termsScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const TermsScreen(), state),
+        ),
+
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: privacyPolicyScreen,
+          name: privacyPolicyScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const PrivacyPolicyScreen(), state),
+        ),
+
+
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: aboutScreen,
+          name: aboutScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const AboutScreen(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: myBookingScreen,
+          name: myBookingScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const MyBookingScreen(), state),
         ),
 
 

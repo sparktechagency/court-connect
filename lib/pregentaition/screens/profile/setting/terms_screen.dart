@@ -1,4 +1,5 @@
 
+import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,30 +16,14 @@ class TermsScreen extends StatelessWidget {
     final sizeH = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
-      appBar: AppBar(
-       // title: CustomTextOne(text: "Terms of Services",fontSize: 18.sp,color: AppColors.textColor,)
-        ),
+      appBar: const CustomAppBar(title:"Terms & Condition"),
       body:  ListView(
         padding: EdgeInsets.all(sizeH * .02),
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
-         // const CustomTextTwo(text: 'Our Terms of Services',textAlign: TextAlign.start),
-          SizedBox(height: sizeH * .02),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-
-              borderRadius: BorderRadius.circular(16),
-            ),
-            padding: EdgeInsets.all(sizeH * .016),
-            child: SizedBox(
-              height: sizeH * 0.7,
-              child: HtmlWidget(
-                "Lorem ipsum dolor sit amet consectetur. Lacus at venenatis gravida vivamus mauris. Quisque mi est vel dis. Donec rhoncus laoreet odio orci sed risus elit accumsan. Mattis ut est tristique amet vitae at aliquet. Ac vel porttitor egestas scelerisque enim quisque senectus. Euismod ultricies vulputate id cras bibendum sollicitudin proin odio bibendum. Velit velit in scelerisque erat etiam rutrum phasellus nunc. Sed lectus sed a at et eget. Nunc purus sed quis at risus. Consectetur nibh justo proin placerat condimentum id at adipiscing.",
-                textStyle: TextStyle(fontSize: 14.sp),
-              ),
-            ),
+          SizedBox(height: sizeH * .01),
+          HtmlWidget('Welcome to Shower Share! \nThese Terms and Conditions ("Terms") govern your use of the Shower Share mobile application ("App") and the services offered through it. By accessing or using the App, you agree to be bound by these Terms. If you do not agree to these Terms, do not use the App. 1. Acceptance of Terms By downloading, installing, or using the Shower Share App, you agree to these Terms, including any future modifications. We reserve the right to update or change these Terms at any time, and your continued use of the App after any changes will constitute your acceptance of the updated Terms. 2. Description of the App Shower Share is a mobile application that allows users to [describe the main function of the app, e.g., "share shower spaces, book available showers, track shower time, etc."]. The app may also provide additional features and services, which may be subject to additional terms and conditions. 3. User Eligibility To use the App, you must be at least [insert age requirement] years old or the legal age of majority in your jurisdiction. By using the App, you represent and warrant that you meet these requirements. 4. User Accounts Account Creation: To access certain features, you may be required to create an account. When you create an account, you agree to provide accurate, current, and complete information and to update it as necessary. Account Security: You are responsible for maintaining the confidentiality of your account login credentials and for all activities that occur under your account. Notify us immediately if you suspect any unauthorized use of your account.',
+            textStyle: TextStyle(fontSize: 14.sp),
           ),
         ],
       ),

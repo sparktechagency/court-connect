@@ -1,78 +1,85 @@
+import 'package:courtconnect/core/widgets/custom_app_bar.dart';
+import 'package:courtconnect/core/widgets/custom_button.dart';
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../../../../core/app_routes/app_routes.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 
 
-class ChangePassword extends StatelessWidget {
+class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
 
   @override
+  State<ChangePassword> createState() => _ChangePasswordState();
+}
+
+class _ChangePasswordState extends State<ChangePassword> {
+
+
+  final TextEditingController _oldPassTEController = TextEditingController();
+  final TextEditingController _passTEController = TextEditingController();
+  final TextEditingController _rePassTEController = TextEditingController();
+  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController oldPassTEController = TextEditingController();
-    TextEditingController passTEController = TextEditingController();
-    TextEditingController rePassTEController = TextEditingController();
-    return Scaffold(
-      appBar: AppBar(
-        // title: CustomTextOne(
-        //   text: "Change Password",
-        //   fontSize: 18.sp,
-        //   color: AppColors.textColor,
-        // ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.h),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            // spacing: 15.h,
-            children: [
-              SizedBox(
-                height: 50.h,
-              ),
-             // const AppLogo(),
-              SizedBox(
-                height: 15.h,
-              ),
-              CustomTextField(
-                controller: oldPassTEController,
-                hintText: "Enter  Old Password",
-                labelText: "Enter  Old Password",
-                isPassword: true,
-              ),
-              CustomTextField(
-                controller: passTEController,
-                hintText: "Enter New Password",
-                labelText: "Enter New Password",
-                isPassword: true,
-              ),
-              CustomTextField(
-                controller: rePassTEController,
-                hintText: "Re-Enter New Password",
-                labelText: "Re-Enter New Password",
-                isPassword: true,
-              ),
-              // Align(
-              //     alignment: Alignment.centerRight,
-              //     child: StyleTextButton(
-              //         text: "Forgot Password?",
-              //         onTap: () {
-              //           Get.toNamed(AppRoutes.forgetScreen);
-              //         },textDecoration: TextDecoration.underline)),
-              SizedBox(
-                height: 15.h,
-              ),
-              // CustomTextButton(
-              //     text: "Change Password",
-              //     onTap: () {
-              //       Get.offAllNamed(AppRoutes.customNavBar);
-              //     }),
-            ],
-          ),
+    return CustomScaffold(
+      appBar: const CustomAppBar(title: 'Change Password'),
+      body: Form(
+        key: _globalKey,
+        child: Column(
+          spacing: 10.h,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 60.h,
+            ),
+            CustomTextField(
+              controller: _oldPassTEController,
+              hintText: "Old Password",
+              isPassword: true,
+            ),
+            CustomTextField(
+              controller: _passTEController,
+              hintText: "New Password",
+              isPassword: true,
+            ),
+            CustomTextField(
+              controller: _rePassTEController,
+              hintText: "Confirm Password",
+              isPassword: true,
+            ),
+
+
+            const Spacer(),
+            CustomButton(
+                label: "Change Password",
+                onPressed: _onChangePassword,
+                ),
+            SizedBox(
+              height: 100.h,
+            ),
+          ],
         ),
       ),
     );
+  }
+
+
+  void _onChangePassword(){
+    if(!_globalKey.currentState!.validate()) return;
+    context.goNamed(AppRoutes.customBottomNavBar);
+
+  }
+
+
+  @override
+  void dispose() {
+    _oldPassTEController.dispose();
+    _passTEController.dispose();
+    _rePassTEController.dispose();
+    super.dispose();
   }
 }

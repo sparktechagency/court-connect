@@ -16,6 +16,9 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/about.svg
+  SvgGenImage get about => const SvgGenImage('assets/icons/about.svg');
+
   /// File path: assets/icons/date.svg
   SvgGenImage get date => const SvgGenImage('assets/icons/date.svg');
 
@@ -42,6 +45,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/my_book.svg
   SvgGenImage get myBook => const SvgGenImage('assets/icons/my_book.svg');
 
+  /// File path: assets/icons/privacy.svg
+  SvgGenImage get privacy => const SvgGenImage('assets/icons/privacy.svg');
+
   /// File path: assets/icons/profile_edit.svg
   SvgGenImage get profileEdit =>
       const SvgGenImage('assets/icons/profile_edit.svg');
@@ -56,8 +62,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/support.svg
   SvgGenImage get support => const SvgGenImage('assets/icons/support.svg');
 
+  /// File path: assets/icons/terms.svg
+  SvgGenImage get terms => const SvgGenImage('assets/icons/terms.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
+        about,
         date,
         groupBottom,
         homeBottom,
@@ -66,10 +76,12 @@ class $AssetsIconsGen {
         message,
         money,
         myBook,
+        privacy,
         profileEdit,
         profileNav,
         settings,
-        support
+        support,
+        terms
       ];
 }
 
@@ -97,9 +109,13 @@ class $AssetsImagesGen {
   AssetGenImage get splashTop =>
       const AssetGenImage('assets/images/splash_top.png');
 
+  /// File path: assets/images/support_logo.png
+  AssetGenImage get supportLogo =>
+      const AssetGenImage('assets/images/support_logo.png');
+
   /// List of all assets
   List<AssetGenImage> get values =>
-      [coin, homeImage, logo, man, splashBottom, splashTop];
+      [coin, homeImage, logo, man, splashBottom, splashTop, supportLogo];
 }
 
 class $AssetsLottieGen {
