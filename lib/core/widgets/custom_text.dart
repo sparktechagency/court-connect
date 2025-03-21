@@ -47,7 +47,7 @@ class CustomText extends StatelessWidget {
           textAlign: textAlign,
           text,
           maxLines: maxline,
-          overflow: textOverflow ?? TextOverflow.ellipsis,
+          overflow: textOverflow,
           style: TextStyle(
               fontSize: fontsize ?? 14.h,
               fontFamily: fontName ?? "Montserrat-Regular",

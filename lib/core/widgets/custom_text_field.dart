@@ -26,6 +26,8 @@ class CustomTextField extends StatefulWidget {
   final double? borderRadio;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
+  final Color? cursorColor;
+  final int? maxLength;
 
 
   const CustomTextField(
@@ -48,7 +50,7 @@ class CustomTextField extends StatefulWidget {
         this.hintextSize,
         this.labelText,
         this.isPassword = false,
-        this.readOnly = false, this.borderRadio, this.onTap, this.onChanged});
+        this.readOnly = false, this.borderRadio, this.onTap, this.onChanged, this.cursorColor, this.maxLength});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -66,6 +68,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLength: widget.maxLength,
       onChanged: widget.onChanged,
       onTap:widget. onTap,
       readOnly: widget.readOnly!,
@@ -99,14 +102,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
             return null;
           },
 
-      cursorColor: Colors.white,
+      cursorColor: widget.cursorColor ?? AppColors.textColor646464,
       obscureText: widget.isPassword ? obscureText : false,
-      style: TextStyle(color: widget.hintextColor ?? Colors.white, fontSize: widget.hintextSize ?? 12.h),
+      style: TextStyle(color: widget.hintextColor ?? AppColors.textColor646464, fontSize: widget.hintextSize ?? 12.h),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(
               horizontal: widget.contentPaddingHorizontal ?? 20.w,
               vertical: widget.contentPaddingVertical ?? 10.h),
-          fillColor: Color(0xffECECEC),
+          fillColor: const Color(0xffECECEC),
           filled: true,
           prefixIcon: widget.prefixIcon,
           suffixIcon: widget.isPassword

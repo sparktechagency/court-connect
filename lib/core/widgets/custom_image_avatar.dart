@@ -43,7 +43,7 @@ class CustomImageAvatar extends StatelessWidget {
         ),
         child: CircleAvatar(
           radius: radius.r,
-          backgroundColor: Colors.grey.shade300,
+          backgroundColor: Colors.grey.shade200,
           child: fileImage != null
               ? ClipOval(
             child: Image.file(

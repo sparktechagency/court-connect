@@ -1,8 +1,13 @@
 
 import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/create_group_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/group_details_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/post/create_post_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/post/post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/registered_users_screen.dart';
+import 'package:courtconnect/pregentaition/screens/message/chat_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/my_booking_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/profile_update.dart';
 import 'package:courtconnect/pregentaition/screens/profile/setting/about_screen.dart';
@@ -48,6 +53,11 @@ class AppRoutes {
   static const String privacyPolicyScreen = "/privacyPolicyScreen";
   static const String aboutScreen = "/aboutScreen";
   static const String myBookingScreen = "/myBookingScreen";
+  static const String groupDetailsScreen = "/groupDetailsScreen";
+  static const String createGroupScreen = "/createGroupScreen";
+  static const String postScreen = "/postScreen";
+  static const String createPostScreen = "/createPostScreen";
+  static const String chatScreen = "/chatScreen";
 
 
 
@@ -244,6 +254,52 @@ class AppRoutes {
           path: myBookingScreen,
           name: myBookingScreen,
           pageBuilder: (context, state) =>  _customTransitionPage( const MyBookingScreen(), state),
+        ),
+
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: groupDetailsScreen,
+          name: groupDetailsScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const GroupDetailsScreen(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: createGroupScreen,
+          name: createGroupScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const CreateGroupScreen(), state),
+        ),
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: postScreen,
+          name: postScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const PostScreen(), state),
+        ),
+
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: createPostScreen,
+          name: createPostScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const CreatePostScreen(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: chatScreen,
+          name: chatScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const ChatScreen(), state),
         ),
 
 

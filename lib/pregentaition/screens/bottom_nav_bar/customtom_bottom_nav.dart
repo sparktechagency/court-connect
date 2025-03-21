@@ -1,4 +1,6 @@
+import 'package:courtconnect/pregentaition/screens/group/group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
+import 'package:courtconnect/pregentaition/screens/message/message_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,8 +19,8 @@ class CustomBottomNavBar extends StatelessWidget {
 
   final List<Widget> _screens = const [
     HomeScreen(),
-    HomeScreen(),
-    HomeScreen(),
+    GroupScreen(),
+    MessageScreen(),
     ProfileScreen(),
   ];
 

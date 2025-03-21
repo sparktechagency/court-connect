@@ -19,8 +19,15 @@ class $AssetsIconsGen {
   /// File path: assets/icons/about.svg
   SvgGenImage get about => const SvgGenImage('assets/icons/about.svg');
 
+  /// File path: assets/icons/comment.svg
+  SvgGenImage get comment => const SvgGenImage('assets/icons/comment.svg');
+
   /// File path: assets/icons/date.svg
   SvgGenImage get date => const SvgGenImage('assets/icons/date.svg');
+
+  /// File path: assets/icons/details_icons.svg
+  SvgGenImage get detailsIcons =>
+      const SvgGenImage('assets/icons/details_icons.svg');
 
   /// File path: assets/icons/group_bottom.svg
   SvgGenImage get groupBottom =>
@@ -68,7 +75,9 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
         about,
+        comment,
         date,
+        detailsIcons,
         groupBottom,
         homeBottom,
         location,
@@ -90,6 +99,9 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/coin.png
   AssetGenImage get coin => const AssetGenImage('assets/images/coin.png');
+
+  /// File path: assets/images/group.png
+  AssetGenImage get group => const AssetGenImage('assets/images/group.png');
 
   /// File path: assets/images/home_image.png
   AssetGenImage get homeImage =>
@@ -115,7 +127,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values =>
-      [coin, homeImage, logo, man, splashBottom, splashTop, supportLogo];
+      [coin, group, homeImage, logo, man, splashBottom, splashTop, supportLogo];
 }
 
 class $AssetsLottieGen {

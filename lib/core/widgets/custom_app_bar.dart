@@ -4,9 +4,10 @@ import 'package:go_router/go_router.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar(
-      {super.key, this.title, this.showLeading = true, this.actions});
+      {super.key, this.title, this.showLeading = true, this.actions, this.titleWidget});
 
   final String? title;
+  final Widget? titleWidget;
   final bool showLeading;
   final List<Widget>? actions;
 
@@ -45,7 +46,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
           )
-          : null,
+          : titleWidget,
       actions: actions,
     );
   }
