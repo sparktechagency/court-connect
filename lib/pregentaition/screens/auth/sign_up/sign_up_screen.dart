@@ -34,107 +34,109 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: const CustomAppBar(),
       body: Form(
         key: _globalKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Assets.images.logo.image(width: 156.w, height: 79.h),
-            SizedBox(height: 30.h),
-            CustomText(
-              text: "Sign up to your \n account.",
-              fontsize: 24.sp,
-              fontWeight: FontWeight.bold,
-            ),
-            SizedBox(height: 8.h),
-            CustomText(
-              text: "Make sure your account keeps secure",
-              fontsize: 12.sp,
-              color: AppColors.textColor646464,
-            ),
-            SizedBox(height: 32.h),
-            CustomTextField(
-              controller: _usernameController,
-              hintText: "User Name",
-              keyboardType: TextInputType.text,
-            ),
-            SizedBox(height: 16.h),
-            CustomTextField(
-              controller: _emailController,
-              hintText: "Email",
-              keyboardType: TextInputType.emailAddress,
-              isEmail: true,
-            ),
-            SizedBox(height: 16.h),
-            CustomTextField(
-              controller: _passwordController,
-              hintText: "Password",
-              isPassword: true,
-            ),
-            SizedBox(height: 16.h),
-            CustomTextField(
-              controller: _confirmPasswordController,
-              hintText: "Confirm Password",
-              isPassword: true,
-            ),
-            SizedBox(height: 8.h),
-            Row(
-              children: [
-                Checkbox(
-                  value: _isChecked,
-                  onChanged: (value) {
-                    _isChecked = !_isChecked;
-                    setState(() {});
-                  },
-                  activeColor: AppColors.primaryColor,
-                ),
-                CustomText(
-                  text: "I agree with ",
-                  fontsize: 11.sp,
-                  color: AppColors.textColor646464,
-                ),
-                CustomText(
-                  onTap: () {},
-                  text: "terms of services ",
-                  fontsize: 11.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryColor,
-                ),
-                CustomText(
-                  text: "and ",
-                  fontsize: 11.sp,
-                  color: AppColors.textColor646464,
-                ),
-                CustomText(
-                  onTap: () {},
-                  text: "privacy policy.",
-                  fontsize: 11.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryColor,
-                ),
-              ],
-            ),
-            SizedBox(height: 36.h),
-            CustomButton(label: "Sign Up", onPressed: _onSignUp),
-            SizedBox(height: 18.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomText(
-                  text: "Already have an account? ",
-                  fontsize: 16.sp,
-                  color: AppColors.textColor646464,
-                ),
-                CustomText(
-                  onTap: () {
-                    context.pushNamed(AppRoutes.loginScreen);
-                  },
-                  text: "Sign In",
-                  fontsize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryColor,
-                ),
-              ],
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Assets.images.logo.image(width: 156.w, height: 79.h),
+              SizedBox(height: 30.h),
+              CustomText(
+                text: "Sign up to your \n account.",
+                fontsize: 24.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              SizedBox(height: 8.h),
+              CustomText(
+                text: "Make sure your account keeps secure",
+                fontsize: 12.sp,
+                color: AppColors.textColor646464,
+              ),
+              SizedBox(height: 32.h),
+              CustomTextField(
+                controller: _usernameController,
+                hintText: "User Name",
+                keyboardType: TextInputType.text,
+              ),
+              SizedBox(height: 16.h),
+              CustomTextField(
+                controller: _emailController,
+                hintText: "Email",
+                keyboardType: TextInputType.emailAddress,
+                isEmail: true,
+              ),
+              SizedBox(height: 16.h),
+              CustomTextField(
+                controller: _passwordController,
+                hintText: "Password",
+                isPassword: true,
+              ),
+              SizedBox(height: 16.h),
+              CustomTextField(
+                controller: _confirmPasswordController,
+                hintText: "Confirm Password",
+                isPassword: true,
+              ),
+              SizedBox(height: 8.h),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _isChecked,
+                    onChanged: (value) {
+                      _isChecked = !_isChecked;
+                      setState(() {});
+                    },
+                    activeColor: AppColors.primaryColor,
+                  ),
+                  CustomText(
+                    text: "I agree with ",
+                    fontsize: 11.sp,
+                    color: AppColors.textColor646464,
+                  ),
+                  CustomText(
+                    onTap: () {},
+                    text: "terms of services ",
+                    fontsize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
+                  CustomText(
+                    text: "and ",
+                    fontsize: 11.sp,
+                    color: AppColors.textColor646464,
+                  ),
+                  CustomText(
+                    onTap: () {},
+                    text: "privacy policy.",
+                    fontsize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
+                ],
+              ),
+              SizedBox(height: 36.h),
+              CustomButton(label: "Sign Up", onPressed: _onSignUp),
+              SizedBox(height: 18.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomText(
+                    text: "Already have an account? ",
+                    fontsize: 16.sp,
+                    color: AppColors.textColor646464,
+                  ),
+                  CustomText(
+                    onTap: () {
+                      context.pushNamed(AppRoutes.loginScreen);
+                    },
+                    text: "Sign In",
+                    fontsize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

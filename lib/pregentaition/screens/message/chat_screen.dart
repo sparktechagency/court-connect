@@ -71,31 +71,28 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildMessageSender() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: CustomTextField(
-        validator: (_) {
-          return null;
-        },
-        controller: _messageController,
-        hintText: 'Type here...',
-        suffixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.keyboard_voice, color: Colors.white),
+      child: Row(
+        spacing: 10.w,
+        children: [
+          Expanded(
+            child: CustomTextField(
+              validator: (_) {
+                return null;
+              },
+              controller: _messageController,
+              hintText: 'Write your message',
             ),
-            CustomContainer(
-              onTap: _sendMessage,
-              verticalPadding: 8.r,
-              horizontalPadding: 8.r,
-              horizontalMargin: 4.r,
-              shape: BoxShape.circle,
-              color: AppColors.primaryColor,
-              child: const Icon(Icons.arrow_forward_rounded),
-            ),
-          ],
-        ),
+          ),
+          CustomContainer(
+            onTap: _sendMessage,
+            verticalPadding: 8.r,
+            horizontalPadding: 8.r,
+            horizontalMargin: 4.r,
+            shape: BoxShape.circle,
+            color: AppColors.primaryColor,
+            child: const Icon(Icons.arrow_forward_rounded,color: Colors.white,),
+          ),
+        ],
       ),
     );
   }
