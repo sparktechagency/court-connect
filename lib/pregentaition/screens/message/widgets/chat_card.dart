@@ -44,7 +44,7 @@ class ChatBubbleMessage extends StatelessWidget {
               isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
 
               children: [
-                if (!isMe) CustomImageAvatar(right: 6.w, radius: 6.r),
+                //if (!isMe) CustomImageAvatar(right: 6.w, radius: 6.r),
                 CustomContainer(
                   horizontalPadding: 16.w,
                   verticalPadding: 8.h,
@@ -79,7 +79,7 @@ class ChatBubbleMessage extends StatelessWidget {
                     onSeekChanged: (double value) {},
                   ),
                 ),
-                if (isMe) CustomImageAvatar(left: 6.w, radius: 6.r),
+                //if (isMe) CustomImageAvatar(left: 6.w, radius: 6.r),
               ],
             ),
             const SizedBox(height: 4),

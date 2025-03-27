@@ -1,5 +1,6 @@
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
+import 'package:courtconnect/core/widgets/custom_tost_message.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -84,8 +85,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
 
   void _onResetPassword(){
-    if(!_globalKey.currentState!.validate()) return;
+    if(_globalKey.currentState!.validate()) return;
     context.goNamed(AppRoutes.loginScreen);
+    showToast('Successfully Changed Password');
   }
 
   @override
