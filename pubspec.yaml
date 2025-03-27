@@ -1,8 +1,7 @@
 name: courtconnect
 description: "A new Flutter project."
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -33,6 +32,7 @@ dependencies:
   url_launcher: ^6.3.1
   intl:
   chat_bubbles:
+  logger: ^2.5.0
 
 
   flutter_local_notifications: ^18.0.1

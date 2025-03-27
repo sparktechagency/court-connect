@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:courtconnect/core/widgets/custom_network_image.dart';
-import 'package:courtconnect/services/api_constants.dart';
+import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -56,7 +56,7 @@ class CustomImageAvatar extends StatelessWidget {
               : CustomNetworkImage(
             boxShape: BoxShape.circle,
             imageUrl: (image != null && image!.isNotEmpty)
-                ? "${ApiConstants.imageBaseUrl}/${image!}"
+                ? "${ApiUrls.imageBaseUrl}/${image!}"
                 : "https://templates.joomla-monster.com/joomla30/jm-news-portal/components/com_djclassifieds/assets/images/default_profile.png",
           ),
         ),

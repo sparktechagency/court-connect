@@ -5,23 +5,6 @@ import '../core/utils/app_colors.dart';
 class Themes {
   final lightTheme = ThemeData.light().copyWith(
       scaffoldBackgroundColor: AppColors.bgColor,
-      ///-------------------------elevated button theme------------------------->
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(20),
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.maxFinite, 56),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-      ),
 
       ///-----------------app bar theme------------------>
       appBarTheme: const AppBarTheme(
