@@ -58,16 +58,16 @@ class _OtpScreenState extends State<OtpScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: Obx(() => CustomText(
-                    onTap: isCountingDown.value
+                    onTap: _controller.isCountingDown.value
                         ? null
                         : () {
-                            startCountdown();
+                      _controller.resendOTP(context);
                           },
                     top: 10.h,
-                    text: isCountingDown.value
-                        ? 'Resend in ${countdown.value}s'
+                    text: _controller.isCountingDown.value
+                        ? 'Resend in ${_controller.countdown.value}s'
                         : 'Resend code',
-                    color: isCountingDown.value
+                    color: _controller.isCountingDown.value
                         ? Colors.red
                         : AppColors.primaryColor,
                   )),
@@ -94,22 +94,5 @@ class _OtpScreenState extends State<OtpScreen> {
     _controller.otpSubmit(context);
   }
 
-  /// <==================time count function hare====================>
-  final RxInt countdown = 10.obs;
 
-  final RxBool isCountingDown = false.obs;
-
-  void startCountdown() {
-    isCountingDown.value = true;
-    countdown.value = 10;
-
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (countdown.value > 0) {
-        countdown.value--;
-      } else {
-        timer.cancel();
-        isCountingDown.value = false;
-      }
-    });
-  }
 }
