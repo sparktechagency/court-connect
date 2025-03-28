@@ -79,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Obx(
                     () => Checkbox(
                       value: _controller.isChecked.value,
-                      onChanged: (value) => _controller.onChangedChecked(),
+                      onChanged: (value) => _controller.toggleChecked(),
                       activeColor: AppColors.primaryColor,
                     ),
                   ),
@@ -111,10 +111,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: 36.h),
               Obx(
-                () => Visibility(
-                  visible: !_controller.isLoading.value,
-                    replacement: const CustomLoader(),
-                    child: CustomButton(label: "Sign Up", onPressed: _onSignUp)),
+                () => _controller.isLoading.value
+                    ? const CustomLoader()
+                    : CustomButton(label: "Sign Up", onPressed: _onSignUp),
               ),
               SizedBox(height: 18.h),
               Row(

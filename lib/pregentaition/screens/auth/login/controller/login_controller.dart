@@ -8,29 +8,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
-class RegisterController extends GetxController {
-  final usernameController = TextEditingController();
+class LoginController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
 
   final RxBool isLoading = false.obs;
-  final RxBool isChecked = false.obs;
 
-  void toggleChecked() => isChecked.toggle();
-
-  Future<void> registerAccount(BuildContext context) async {
+  Future<void> login(BuildContext context) async {
     isLoading.value = true;
 
     var bodyParams = {
-      'name': usernameController.text.trim(),
-      'email': emailController.text.trim(),
-      'password': passwordController.text,
+
+      "email": emailController.text.trim(),
+      "password": passwordController.text,
+      "role":"user"
+
+
     };
 
     try {
       final response = await ApiClient.postData(
-        ApiUrls.register,
+        ApiUrls.login,
         bodyParams,
         headers: {'Content-Type': 'application/json'},
       );
@@ -41,11 +39,10 @@ class RegisterController extends GetxController {
         if (token != null) {
           debugPrint('====================> response token save: $token');
           await PrefsHelper.setString(AppConstants.bearerToken, token);
-          context.pushNamed(AppRoutes.otpScreen);
-          ToastMessageHelper.showToastMessage(responseBody['message'] ?? "OTP sent to your email");
+          context.pushNamed(AppRoutes.customBottomNavBar);
         }
       } else {
-        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "Registration failed.");
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "Login failed.");
       }
     } catch (e) {
       ToastMessageHelper.showToastMessage("Error: $e");
@@ -56,10 +53,8 @@ class RegisterController extends GetxController {
 
   @override
   void dispose() {
-    usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
-    confirmPasswordController.dispose();
     super.dispose();
   }
 }

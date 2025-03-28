@@ -62,7 +62,7 @@ class ApiClient extends GetxService {
     try {
       log.i(
           '|📍📍📍|-----------------[[ POST ]] method details start -----------------|📍📍📍|');
-      log.i('URL: $uri \n $mainHeaders \n $body');
+      log.i('URL: $uri \n ${headers ?? mainHeaders} \n $body');
 
       http.Response response = await client.post(
         Uri.parse(ApiUrls.baseUrl + uri),

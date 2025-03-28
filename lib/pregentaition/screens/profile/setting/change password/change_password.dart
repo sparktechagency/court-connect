@@ -71,7 +71,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   void _onChangePassword(){
     if(!_globalKey.currentState!.validate()) return;
     context.goNamed(AppRoutes.customBottomNavBar);
-
   }
 
 

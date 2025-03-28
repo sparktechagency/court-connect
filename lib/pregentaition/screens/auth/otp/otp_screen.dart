@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/pregentaition/screens/auth/otp/controller/otp_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../core/app_routes/app_routes.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_pin_code_text_field.dart';
@@ -20,11 +20,8 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-
-
-  final TextEditingController _otpCtrl = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
-
+  final OTPController _controller = Get.put(OTPController());
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +51,9 @@ class _OtpScreenState extends State<OtpScreen> {
             ///==============Pin code Field============<>>>>
 
             Form(
-                key: _globalKey,
-                child: CustomPinCodeTextField(textEditingController: _otpCtrl)),
+              key: _globalKey,
+              child: CustomPinCodeTextField(textEditingController: _controller.otpCtrl),
+            ),
 
             Align(
               alignment: Alignment.centerRight,
@@ -76,9 +74,13 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
 
             SizedBox(height: 36.h),
-            CustomButton(
-              label: "Get Verification Code",
-              onPressed: _onTapNextScreen,
+            Visibility(
+              visible: !_controller.isLoading.value,
+              replacement: const CustomLoader(),
+              child: CustomButton(
+                label: "Get Verification Code",
+                onPressed: _onTapNextScreen,
+              ),
             ),
             SizedBox(height: 18.h),
           ],
@@ -88,13 +90,11 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   void _onTapNextScreen() {
-    if (_globalKey.currentState!.validate()) return;
-    context.pushNamed(AppRoutes.resetPasswordScreen);
+    if (!_globalKey.currentState!.validate()) return;
+    _controller.otpSubmit(context);
   }
 
-
-
-/// <==================time count function hare====================>
+  /// <==================time count function hare====================>
   final RxInt countdown = 10.obs;
 
   final RxBool isCountingDown = false.obs;
@@ -111,12 +111,5 @@ class _OtpScreenState extends State<OtpScreen> {
         isCountingDown.value = false;
       }
     });
-  }
-
-
-  @override
-  void dispose() {
-    _otpCtrl.dispose();
-    super.dispose();
   }
 }
