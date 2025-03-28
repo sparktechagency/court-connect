@@ -26,7 +26,7 @@ class OTPController extends GetxController {
 
       final responseBody = response.body;
       if ((response.statusCode == 200 || response.statusCode == 201) && responseBody['success'] == true) {
-        context.pushNamed(AppRoutes.customBottomNavBar);
+        context.pushNamed(AppRoutes.loginScreen);
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "OTP failed.");
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "OTP failed.");
