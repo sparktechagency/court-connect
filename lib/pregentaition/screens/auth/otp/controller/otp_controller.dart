@@ -1,12 +1,9 @@
 import 'dart:async';
-
-import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
 class OTPController extends GetxController {
   final otpCtrl = TextEditingController();
@@ -15,7 +12,8 @@ class OTPController extends GetxController {
 
   /// <==================otpSubmit function hare====================>
 
-  Future<void> otpSubmit(BuildContext context) async {
+  Future<bool> otpSubmit() async {
+    RxBool isSuccess = false.obs;
     isLoading.value = true;
 
     var bodyParams = {
@@ -31,7 +29,8 @@ class OTPController extends GetxController {
       final responseBody = response.body;
       if ((response.statusCode == 200 || response.statusCode == 201) &&
           responseBody['success'] == true) {
-        context.pushNamed(AppRoutes.loginScreen);
+        isSuccess.value = true;
+        otpCtrl.clear();
         ToastMessageHelper.showToastMessage(
             responseBody['message'] ?? "OTP failed.");
       } else {
@@ -43,11 +42,14 @@ class OTPController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+    return isSuccess.value;
   }
 
   /// <==================resendOTP function hare====================>
 
-  Future<void> resendOTP(BuildContext context,) async {
+  Future<void> resendOTP(
+    BuildContext context,
+  ) async {
     _startCountdown();
     try {
       final response = await ApiClient.postData(ApiUrls.resendOtp, {});

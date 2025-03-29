@@ -41,7 +41,8 @@ class RegisterController extends GetxController {
         if (token != null) {
           debugPrint('====================> response token save: $token');
           await PrefsHelper.setString(AppConstants.bearerToken, token);
-          context.pushNamed(AppRoutes.otpScreen);
+          context.pushReplacementNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'signupScreen'});
+          _cleanTextField();
           ToastMessageHelper.showToastMessage(responseBody['message'] ?? "OTP sent to your email");
         }
       } else {
@@ -52,6 +53,16 @@ class RegisterController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+
+
+  void _cleanTextField (){
+    usernameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    isChecked.value = false;
   }
 
   @override

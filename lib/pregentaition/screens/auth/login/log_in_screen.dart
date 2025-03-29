@@ -57,6 +57,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _controller.passwordController,
                 hintText: "Password",
                 isPassword: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Password is required';
+                  } else if (_controller.passwordController.text.length < 8) {
+                    return 'Password must be 8+ chars';
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 8.h),
               Align(
@@ -86,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   CustomText(
                     onTap: () {
-                      context.pushNamed(AppRoutes.signUpScreen);
+                      context.pushReplacement(AppRoutes.signUpScreen);
                     },
                     text: "Sign Up",
                     fontsize: 16.sp,

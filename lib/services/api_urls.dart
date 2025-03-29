@@ -7,4 +7,6 @@ class ApiUrls {
   static const String login = '/auth/login';
   static const String forgetPassword = '/auth/forget-password';
   static  const String  resendOtp = '/auth/resend-otp';
+  static  const String  resetPassword = '/auth/reset-password';
+  static  const String  myProfile = '/auth/my-profile';
 }

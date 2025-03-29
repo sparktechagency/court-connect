@@ -120,11 +120,13 @@ class AppRoutes {
 
 
     ///=========ForgetScreen Screen========>>
-
         GoRoute(
-          path: otpScreen,
+          path: '$otpScreen/:screenType',
           name: otpScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const OtpScreen(), state),
+          builder: (context, state) {
+            final String screenType = state.pathParameters['screenType']!;
+            return OtpScreen(screenType: screenType);
+          },
         ),
 
 

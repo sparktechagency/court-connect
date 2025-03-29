@@ -21,8 +21,7 @@ class ApiClient extends GetxService {
   static String bearerToken = "";
 
   // <==========================================> Get Data <======================================>
-  static Future<Response> getData(String uri,
-      {Map<String, String>? headers}) async {
+  static Future<Response> getData(String uri, {Map<String, String>? headers}) async {
     bearerToken = await PrefsHelper.getString(AppConstants.bearerToken);
 
     var mainHeaders = {

@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
@@ -7,13 +7,17 @@ import 'package:courtconnect/pregentaition/screens/auth/otp/controller/otp_contr
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_pin_code_text_field.dart';
 import '../../../../core/widgets/custom_text.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  const OtpScreen({super.key, required this.screenType,});
+
+  final String screenType;
+
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -52,7 +56,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
             Form(
               key: _globalKey,
-              child: CustomPinCodeTextField(textEditingController: _controller.otpCtrl),
+              child: CustomPinCodeTextField(
+                  textEditingController: _controller.otpCtrl),
             ),
 
             Align(
@@ -61,7 +66,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     onTap: _controller.isCountingDown.value
                         ? null
                         : () {
-                      _controller.resendOTP(context);
+                            _controller.resendOTP(context);
                           },
                     top: 10.h,
                     text: _controller.isCountingDown.value
@@ -89,10 +94,16 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 
-  void _onTapNextScreen() {
+  void _onTapNextScreen()async {
     if (!_globalKey.currentState!.validate()) return;
-    _controller.otpSubmit(context);
+    final bool success = await _controller.otpSubmit();
+    if(success){
+      if(widget.screenType == 'signupScreen'){
+        context.pushReplacementNamed(AppRoutes.customBottomNavBar);
+
+      }else{
+        context.pushReplacementNamed(AppRoutes.resetPasswordScreen);
+      }
+    }
   }
-
-
 }

@@ -3,6 +3,7 @@ import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/auth/sign_up/controller/register_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,13 +29,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: const CustomAppBar(),
       body: SingleChildScrollView(
         child: Form(
           key: _globalKey,
           child: Column(
+
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(height: 44.h),
               Assets.images.logo.image(width: 156.w, height: 79.h),
               SizedBox(height: 30.h),
               CustomText(
@@ -66,12 +68,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: _controller.passwordController,
                 hintText: "Password",
                 isPassword: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Password is required';
+                  } else if (_controller.passwordController.text.length < 8) {
+                    return 'Password must be 8+ chars';
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 16.h),
               CustomTextField(
                 controller: _controller.confirmPasswordController,
                 hintText: "Confirm Password",
                 isPassword: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Confirm password is required';
+                  } else if (value != _controller.passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 8.h),
               Row(
@@ -126,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   CustomText(
                     onTap: () {
-                      context.pushNamed(AppRoutes.loginScreen);
+                      context.pushReplacement(AppRoutes.loginScreen);
                     },
                     text: "Sign In",
                     fontsize: 16.sp,
@@ -144,7 +162,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onSignUp() {
-    if (!_globalKey.currentState!.validate() || !_controller.isChecked.value) return;
-    _controller.registerAccount(context);
+    if (!_globalKey.currentState!.validate()) return;
+    if(!_controller.isChecked.value){
+      return ToastMessageHelper.showToastMessage('Please confirm that you agree to the Terms of Service and Privacy Policy.');
+    }
+      _controller.registerAccount(context);
   }
 }

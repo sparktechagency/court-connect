@@ -3,16 +3,26 @@ import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/controller/profile_controller.dart';
 import 'package:courtconnect/pregentaition/screens/profile/widgets/profile_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../../core/widgets/custom_dialog.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  
+  
+  final ProfileController _controller = Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -22,17 +32,17 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(height: 50.h),
             // Profile Picture and Name Section
             Center(
-              child: Column(
+              child: Obx(() => Column(
                 children: [
                   // Profile Picture with Outer Border and Shadow
                   CustomImageAvatar(
                     radius: 60.r,
-                    image: '',
+                    image: _controller.profileData.image ?? '',
                   ),
                   SizedBox(height: 24.h),
-                  CustomText(text: "Rakibul Hasan", fontsize: 18.h),
+                  CustomText(text: _controller.profileData.name ?? 'N/A', fontsize: 18.h),
                 ],
-              ),
+              )),
             ),
             SizedBox(height: 20.h),
             // List of Options
