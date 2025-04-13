@@ -1,12 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
-import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_session_card.dart';
+import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/two_button_widget.dart';
+import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
+import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import '../../../global/custom_assets/assets.gen.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,20 +22,84 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  final HomeController _controller = Get.put(HomeController());
 
+  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: CustomAppBar(
-        showLeading: false,
-        title: 'Available Session',
+      appBar: AppBar(
+        centerTitle: false,
+        titleSpacing: 0,
+        automaticallyImplyLeading: false,
+        title: ListTile(
+          title: CustomText(
+            text: 'Hello',
+            fontsize: 18.sp,
+            textAlign: TextAlign.left,
+          ),
+          subtitle: Obx(() => CustomText(
+                text: '${_controller.userName.value} ✨',
+                fontsize: 10.sp,
+                fontWeight: FontWeight.w500,
+                textAlign: TextAlign.left,
+              )),
+        ),
         actions: [
-          IconButton(onPressed: () {}, icon: Assets.icons.myBook.svg()),
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.black,
+              )),
         ],
       ),
       body: Column(
         children: [
+          Obx(
+            () => CarouselSlider(
+              options: CarouselOptions(
+                autoPlay: true,
+                aspectRatio: 14 / 4,
+              ),
+              items: _controller.bannerList
+                  .map((item) => ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: _controller.isLoading.value
+                          ? Shimmer.fromColors(
+                              baseColor: Colors.grey.shade300,
+                              highlightColor: Colors.grey.shade100,
+                              period: const Duration(milliseconds: 800),
+                              child: SizedBox(
+                                height: 114.h,
+                                width: double.infinity,
+                              ),
+                            )
+                          : CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              height: 114.h,
+                              imageUrl: '${ApiUrls.imageBaseUrl}${item.image}',
+                            )))
+                  .toList(),
+            ),
+          ),
+          SizedBox(height: 24.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomText(
+                text: 'Available Session',
+                fontsize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              Row(
+                children: [
+                  IconButton(onPressed: () {}, icon: Assets.icons.menu.svg()),
+                  IconButton(onPressed: () {}, icon: Assets.icons.myBook.svg()),
+                ],
+              ),
+            ],
+          ),
           TwoButtonWidget(
               buttons: const [
                 'All Session',

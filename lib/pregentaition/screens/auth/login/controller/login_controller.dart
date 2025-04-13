@@ -35,11 +35,16 @@ class LoginController extends GetxController {
 
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
+
         final String? token = responseBody['data']?['token'];
+        final String? userName = responseBody['data']?['user']['name'];
+
         if (token != null) {
           debugPrint('====================> response token save: $token');
+          debugPrint('====================> response userName save: $userName');
           await PrefsHelper.setString(AppConstants.bearerToken, token);
-          context.pushNamed(AppRoutes.customBottomNavBar);
+          await PrefsHelper.setString(AppConstants.name, userName);
+          context.pushReplacementNamed(AppRoutes.customBottomNavBar);
         }
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "Login failed.");

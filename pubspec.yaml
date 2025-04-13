@@ -33,6 +33,7 @@ dependencies:
   intl:
   chat_bubbles:
   logger: ^2.5.0
+  carousel_slider: ^5.0.0
 
 
   flutter_local_notifications: ^18.0.1

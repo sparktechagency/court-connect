@@ -1,2 +1,0 @@
-C:/Users/ikram/Desktop/Projects/court-connect/android/app/.cxx/RelWithDebInfo/493n4k4e/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/Users/ikram/Desktop/Projects/court-connect/android/app/.cxx/RelWithDebInfo/493n4k4e/arm64-v8a/CMakeFiles/rebuild_cache.dir

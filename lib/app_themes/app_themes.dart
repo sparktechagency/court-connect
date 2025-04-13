@@ -11,8 +11,8 @@ class Themes {
           color: Colors.white,
           // backgroundColor: Colors.white10,
           centerTitle: true,
-          elevation: 5,
-          shadowColor: Colors.green)
+          elevation: 0,
+          scrolledUnderElevation: 0)
   );
 
 

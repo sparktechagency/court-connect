@@ -1,5 +1,4 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
-import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
@@ -33,7 +32,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Form(
           key: _globalKey,
           child: Column(
-
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 44.h),

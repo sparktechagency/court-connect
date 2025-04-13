@@ -1,12 +1,12 @@
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_button.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
+import 'package:courtconnect/pregentaition/screens/profile/setting/change%20password/controller/change_pass_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../../core/app_routes/app_routes.dart';
+import 'package:get/get.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
-
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -16,11 +16,7 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-
-
-  final TextEditingController _oldPassTEController = TextEditingController();
-  final TextEditingController _passTEController = TextEditingController();
-  final TextEditingController _rePassTEController = TextEditingController();
+  final ChangePassController _controller = Get.put(ChangePassController());
   final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
 
   @override
@@ -37,27 +33,53 @@ class _ChangePasswordState extends State<ChangePassword> {
               height: 60.h,
             ),
             CustomTextField(
-              controller: _oldPassTEController,
+              controller: _controller.oldPassTEController,
               hintText: "Old Password",
               isPassword: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Password is required';
+                } else if (_controller.oldPassTEController.text.length < 8) {
+                  return 'Password must be 8+ chars';
+                }
+                return null;
+              },
             ),
             CustomTextField(
-              controller: _passTEController,
+              controller: _controller.passTEController,
               hintText: "New Password",
               isPassword: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Password is required';
+                } else if (_controller.passTEController.text.length < 8) {
+                  return 'Password must be 8+ chars';
+                }
+                return null;
+              },
             ),
             CustomTextField(
-              controller: _rePassTEController,
+              controller: _controller.rePassTEController,
               hintText: "Confirm Password",
               isPassword: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Confirm password is required';
+                } else if (value != _controller.passTEController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              },
             ),
-
-
             const Spacer(),
-            CustomButton(
-                label: "Change Password",
-                onPressed: _onChangePassword,
-                ),
+            Obx(
+              () => _controller.isLoading.value
+                  ? const CustomLoader()
+                  : CustomButton(
+                      label: "Change Password",
+                      onPressed: _onChangePassword,
+                    ),
+            ),
             SizedBox(
               height: 100.h,
             ),
@@ -67,18 +89,8 @@ class _ChangePasswordState extends State<ChangePassword> {
     );
   }
 
-
-  void _onChangePassword(){
-    if(!_globalKey.currentState!.validate()) return;
-    context.goNamed(AppRoutes.customBottomNavBar);
-  }
-
-
-  @override
-  void dispose() {
-    _oldPassTEController.dispose();
-    _passTEController.dispose();
-    _rePassTEController.dispose();
-    super.dispose();
+  void _onChangePassword() {
+    if (!_globalKey.currentState!.validate()) return;
+    _controller.changePass(context);
   }
 }

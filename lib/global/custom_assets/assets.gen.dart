@@ -43,6 +43,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/log_out.svg
   SvgGenImage get logOut => const SvgGenImage('assets/icons/log_out.svg');
 
+  /// File path: assets/icons/menu.svg
+  SvgGenImage get menu => const SvgGenImage('assets/icons/menu.svg');
+
   /// File path: assets/icons/message.svg
   SvgGenImage get message => const SvgGenImage('assets/icons/message.svg');
 
@@ -82,6 +85,7 @@ class $AssetsIconsGen {
         homeBottom,
         location,
         logOut,
+        menu,
         message,
         money,
         myBook,
