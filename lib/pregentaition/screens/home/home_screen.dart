@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_session_card.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/two_button_widget.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/widgets/price_list_bottom_sheet.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final HomeController _controller = Get.put(HomeController());
 
   int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -94,7 +97,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Row(
                 children: [
-                  IconButton(onPressed: () {}, icon: Assets.icons.menu.svg()),
+                  IconButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return PriceListBottomSheet();
+                            });
+                      },
+                      icon: Assets.icons.menu.svg()),
                   IconButton(onPressed: () {}, icon: Assets.icons.myBook.svg()),
                 ],
               ),
