@@ -53,7 +53,7 @@ class _GroupScreenState extends State<GroupScreen> {
             hintText: 'Search Community...',
             contentPaddingVertical: 0,
           ),
-          TwoButtonWidget(
+          /*TwoButtonWidget(
               buttons: const [
                 'All Group',
                 'My Group',
@@ -62,7 +62,7 @@ class _GroupScreenState extends State<GroupScreen> {
               onTap: (index) {
                 _selectedIndex = index;
                 setState(() {});
-              }),
+              }),*/
           Expanded(
             child: _selectedIndex == 0
                 ? ListView.builder(

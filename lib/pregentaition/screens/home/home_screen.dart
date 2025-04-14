@@ -1,20 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'package:courtconnect/services/api_urls.dart';
+import 'package:courtconnect/helpers/time_format.dart';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
-import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_button.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
-import 'package:courtconnect/core/widgets/custom_session_card.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
+import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/core/widgets/custom_session_card.dart';
 import 'package:courtconnect/core/widgets/two_button_widget.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/home/widgets/price_list_bottom_sheet.dart';
-import 'package:courtconnect/services/api_urls.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,9 +28,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final HomeController _controller = Get.put(HomeController());
+  final _controller = Get.put(HomeController());
+  final _searchController = TextEditingController();
 
-  int _selectedIndex = 0;
+  final _sessionTypes = [
+    {'label': 'All Session', 'value': 'all'},
+    {'label': 'My Session', 'value': 'my'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.getSession();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,122 +56,149 @@ class _HomeScreenState extends State<HomeScreen> {
             textAlign: TextAlign.left,
           ),
           subtitle: Obx(() => CustomText(
-                text: '${_controller.userName.value} ✨',
-                fontsize: 10.sp,
-                fontWeight: FontWeight.w500,
-                textAlign: TextAlign.left,
-              )),
+            text: '${_controller.userName.value} ✨',
+            fontsize: 10.sp,
+            fontWeight: FontWeight.w500,
+            textAlign: TextAlign.left,
+          )),
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.notifications,
-                color: Colors.black,
-              )),
+            onPressed: () {},
+            icon: const Icon(Icons.notifications, color: Colors.black),
+          ),
         ],
       ),
       body: Column(
         children: [
-          Obx(
-            () => CarouselSlider(
-              options: CarouselOptions(
-                autoPlay: true,
-                aspectRatio: 14 / 4,
-              ),
-              items: _controller.bannerList
-                  .map((item) => ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: _controller.isLoading.value
-                          ? Shimmer.fromColors(
-                              baseColor: Colors.grey.shade300,
-                              highlightColor: Colors.grey.shade100,
-                              period: const Duration(milliseconds: 800),
-                              child: SizedBox(
-                                height: 114.h,
-                                width: double.infinity,
-                              ),
-                            )
-                          : CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              height: 114.h,
-                              imageUrl: '${ApiUrls.imageBaseUrl}${item.image}',
-                            )))
-                  .toList(),
-            ),
-          ),
+          Obx(() => CarouselSlider(
+            options: CarouselOptions(autoPlay: true, aspectRatio: 14 / 4),
+            items: _controller.bannerList.map((item) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(8.r),
+                child: _controller.isLoading.value
+                    ? _buildShimmer(height: 114.h)
+                    : GestureDetector(
+                  onTap: () async {
+                    final url = Uri.parse(item.link ?? '');
+                    if (await launchUrl(url)) await launchUrl(url);
+                  },
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    height: 114.h,
+                    imageUrl:
+                    '${ApiUrls.imageBaseUrl}${item.image}',
+                  ),
+                ),
+              );
+            }).toList(),
+          )),
           SizedBox(height: 24.h),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomText(
-                text: 'Available Session',
-                fontsize: 18.sp,
-                fontWeight: FontWeight.w600,
+              Expanded(
+                child: CustomTextField(
+                  controller: _searchController,
+                  hintText: 'Search Session',
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.only(left: 8.0.w),
+                    child: const Icon(Icons.search),
+                  ),
+                ),
               ),
               Row(
                 children: [
                   IconButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              return PriceListBottomSheet();
-                            });
-                      },
-                      icon: Assets.icons.menu.svg()),
-                  IconButton(onPressed: () {}, icon: Assets.icons.myBook.svg()),
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      builder: (_) => const PriceListBottomSheet(),
+                    ),
+                    icon: Assets.icons.menu.svg(),
+                  ),
+                  IconButton(
+                    onPressed: () =>
+                        context.pushNamed(AppRoutes.createSessionScreen),
+                    icon: Assets.icons.myBook.svg(),
+                  ),
                 ],
               ),
             ],
           ),
-          TwoButtonWidget(
-              buttons: const [
-                'All Session',
-                'My Session',
-              ],
-              selectedIndex: _selectedIndex,
-              onTap: (index) {
-                _selectedIndex = index;
-                setState(() {});
-              }),
+          SizedBox(height: 24.h),
+          Obx(() => TwoButtonWidget(
+            buttons: _sessionTypes,
+            selectedValue: _controller.type.value,
+            onTap: _controller.onChangeType,
+          )),
           SizedBox(height: 16.h),
           Expanded(
-            child: _selectedIndex == 0
-                ? ListView.builder(
-                    itemCount: 8,
-                    itemBuilder: (context, index) {
-                      return CustomSessionCard(
-                        title: 'Sailing Komodo',
-                        subtitles: const [
-                          '\$ 100',
-                          'Bonosree, Dhaka, Bangladeh',
-                          'Jun 20,2025 | 10:30PM',
-                        ],
-                        onTap: () {
-                          context.pushNamed(AppRoutes.bookedNowScreen);
-                        },
-                        buttonLabel: 'Booked Now',
-                      );
-                    })
-                : ListView.builder(
-                    itemCount: 8,
-                    itemBuilder: (context, index) {
-                      return CustomSessionCard(
-                        title: 'Sailing Komodo',
-                        subtitles: const [
-                          '\$ 100',
-                          'Bonosree, Dhaka, Bangladeh',
-                          'Jun 20,2025 | 10:30PM',
-                        ],
-                        onTap: () {
-                          context.pushNamed(AppRoutes.registeredUsersScreen);
-                        },
-                        buttonLabel: 'Registered Users',
-                      );
-                    }),
-          )
+            child: Obx(() => ListView.builder(
+              itemCount: _controller.sessionList.length,
+              itemBuilder: (context, index) {
+                final session = _controller.sessionList[index];
+
+                if (_controller.isLoading.value) {
+                  return _buildShimmer(height: 300.h);
+                }
+
+                return CustomSessionCard(
+                  image: '${ApiUrls.imageBaseUrl}${session.image}',
+                  title: session.name ?? '',
+                  subtitles: [
+                    '\$ ${session.price}',
+                    session.location ?? '',
+                    '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
+                  ],
+                  onTap: () => _showBookingDialog(context),
+                  buttonLabel: 'Book Now',
+                );
+              },
+            )),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShimmer({required double height}) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      period: const Duration(milliseconds: 800),
+      child: Container(
+        height: height,
+        width: double.infinity,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  void _showBookingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        child: Padding(
+          padding: EdgeInsets.all(24.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Assets.icons.bookingSuccess.svg(),
+              SizedBox(height: 24.h),
+              CustomText(
+                text: 'Booking Successful!',
+                fontWeight: FontWeight.w500,
+                fontsize: 22.sp,
+              ),
+              SizedBox(height: 24.h),
+              CustomButton(
+                onPressed: () => context.pop(),
+                label: 'Go Back',
+                width: 160.w,
+                radius: 8.r,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

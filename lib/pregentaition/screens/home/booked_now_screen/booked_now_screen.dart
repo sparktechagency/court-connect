@@ -7,8 +7,8 @@ import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BookedNowScreen extends StatelessWidget {
-  const BookedNowScreen({super.key});
+class CreateSessionScreen extends StatelessWidget {
+  const CreateSessionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

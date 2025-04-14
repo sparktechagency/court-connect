@@ -81,10 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 111.h),
               Obx(() => _controller.isLoading.value ? const CustomLoader() : CustomButton(
                 label: "Sign In",
-                onPressed: (){
-                  context.pushReplacementNamed(AppRoutes.customBottomNavBar);
-
-                },
+                onPressed: _onLogin,
               )),
               SizedBox(height: 18.h),
               Row(

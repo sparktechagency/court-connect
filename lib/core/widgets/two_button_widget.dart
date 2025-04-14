@@ -1,43 +1,44 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TwoButtonWidget extends StatelessWidget {
-  final List<String> buttons;
-  final int selectedIndex;
-  final Function(int) onTap;
+  final List<Map<String, String>> buttons;
+  final String selectedValue;
+  final Function(String) onTap;
 
   const TwoButtonWidget({
     super.key,
     required this.buttons,
-    required this.selectedIndex,
+    required this.selectedValue,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      spacing: 20.w,
-      children: List.generate(buttons.length, (index) {
+      children: buttons.map((item) {
+        final isSelected = item['value'] == selectedValue;
         return Expanded(
-          child: CustomContainer(
-            verticalPadding: 8.h,
-            radiusAll: 12.r,
-            color: selectedIndex == index
-                ? AppColors.primaryColor
-                : Colors.grey.shade300,
-            onTap: () => onTap(index),
-            child: CustomText(
-              text: buttons[index],
-              color: selectedIndex == index ? Colors.white : Colors.grey,
-              fontsize: 18.sp,
-              fontWeight: FontWeight.w600,
+          child: GestureDetector(
+            onTap: () => onTap(item['value']!),
+            child: CustomContainer(
+              horizontalMargin: 6.w,
+              radiusAll: 12.r,
+              verticalPadding: 8.h,
+              color: isSelected ? AppColors.primaryColor : Colors.grey.shade300,
+              child: CustomText(
+                text: item['label']!,
+                color: isSelected ? Colors.white : Colors.grey,
+                fontsize: 18.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         );
-      }),
+      }).toList(),
     );
   }
 }

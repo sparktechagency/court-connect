@@ -1,4 +1,3 @@
-
 import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/create_group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/group_details_screen.dart';
@@ -18,8 +17,6 @@ import 'package:courtconnect/pregentaition/screens/profile/setting/terms_screen.
 import 'package:courtconnect/pregentaition/screens/profile/support_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../helpers/prefs_helper.dart';
 import '../../pregentaition/screens/auth/forget/forget_screen.dart';
 import '../../pregentaition/screens/auth/otp/otp_screen.dart';
 import '../../pregentaition/screens/auth/reset_pass/reset_password_screen.dart';
@@ -27,7 +24,6 @@ import '../../pregentaition/screens/auth/sign_up/sign_up_screen.dart';
 import '../../pregentaition/screens/bottom_nav_bar/customtom_bottom_nav.dart';
 import '../../pregentaition/screens/profile/profile_screen.dart';
 import '../../pregentaition/screens/splash_screen/splash_screen.dart';
-import '../utils/app_constants.dart';
 
 
 
@@ -43,7 +39,7 @@ class AppRoutes {
   static const String customBottomNavBar = "/CustomBottomNavBar";
   static const String profileScreen = "/ProfileScreen";
   static const String homeScreen = "/homeScreen";
-  static const String bookedNowScreen = "/bookedNowScreen";
+  static const String createSessionScreen = "/createSessionScreen";
   static const String registeredUsersScreen = "/registeredUsersScreen";
   static const String profileUpdate = "/profileUpdate";
   static const String supportScreen = "/supportScreen";
@@ -169,9 +165,9 @@ class AppRoutes {
         ///=========ForgetScreen Screen========>>
 
         GoRoute(
-          path: bookedNowScreen,
-          name: bookedNowScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const BookedNowScreen(), state),
+          path: createSessionScreen,
+          name: createSessionScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const CreateSessionScreen(), state),
         ),
 
 

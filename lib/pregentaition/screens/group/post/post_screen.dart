@@ -37,7 +37,7 @@ class _PostScreenState extends State<PostScreen> {
       body: Column(
         spacing: 16.h,
         children: [
-          TwoButtonWidget(
+          /*TwoButtonWidget(
               buttons: const [
                 'All Post',
                 'My Post',
@@ -46,7 +46,7 @@ class _PostScreenState extends State<PostScreen> {
               onTap: (index) {
                 _selectedIndex = index;
                 setState(() {});
-              }),
+              }),*/
           Expanded(
             child: _selectedIndex == 0
                 ? ListView.builder(

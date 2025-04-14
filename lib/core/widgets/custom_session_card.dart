@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
@@ -12,13 +13,13 @@ class CustomSessionCard extends StatefulWidget {
       required this.title,
       required this.subtitles,
       required this.onTap,
-      required this.buttonLabel,this.image});
+      required this.buttonLabel,required this.image});
 
   final String title;
   final List<String> subtitles;
   final VoidCallback onTap;
   final String buttonLabel;
-  final String? image;
+  final String image;
 
   @override
   State<CustomSessionCard> createState() => _CustomSessionCardState();
@@ -44,7 +45,11 @@ class _CustomSessionCardState extends State<CustomSessionCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              child: Assets.images.homeImage.image(),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
+              child: SizedBox(
+                height: 140.h,
+                  width: double.infinity,
+                  child: CachedNetworkImage(imageUrl: widget.image,fit: BoxFit.cover,)),
             ),
             SizedBox(height: 10.h),
             CustomText(

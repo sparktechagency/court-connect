@@ -19,6 +19,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/about.svg
   SvgGenImage get about => const SvgGenImage('assets/icons/about.svg');
 
+  /// File path: assets/icons/booking_success.svg
+  SvgGenImage get bookingSuccess =>
+      const SvgGenImage('assets/icons/booking_success.svg');
+
   /// File path: assets/icons/comment.svg
   SvgGenImage get comment => const SvgGenImage('assets/icons/comment.svg');
 
@@ -78,6 +82,7 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
         about,
+        bookingSuccess,
         comment,
         date,
         detailsIcons,
