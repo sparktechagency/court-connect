@@ -35,7 +35,7 @@ dependencies:
   chat_bubbles:
   logger: ^2.5.0
   carousel_slider: ^5.0.0
-  flutter_stripe: ^11.4.0
+  flutter_stripe:
   country_picker: ^2.0.27
 
   flutter_local_notifications: ^18.0.1
@@ -43,6 +43,7 @@ dependencies:
 
   multiselect: ^0.1.1
   connectivity_plus:
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:

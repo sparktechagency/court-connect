@@ -1,6 +1,6 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
-import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/payment_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/stripe_payment_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -13,7 +13,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  PaymentController paymentController = Get.put(PaymentController());
+  StripePaymentSheet paymentController = Get.put(StripePaymentSheet());
 
   final emailController = TextEditingController();
   final nameController = TextEditingController();

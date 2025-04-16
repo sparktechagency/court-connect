@@ -12,6 +12,7 @@ void main() async{
 
   // Initialize Stripe
   Stripe.publishableKey = PaymentKeys.publishAbleKey;
+  await Stripe.instance.applySettings();
 
 
   runApp(const MyApp());
