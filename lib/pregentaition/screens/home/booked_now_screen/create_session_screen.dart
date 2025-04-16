@@ -3,12 +3,16 @@ import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_button.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/create_session_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
 
 class CreateSessionScreen extends StatefulWidget {
   const CreateSessionScreen({super.key});
@@ -18,13 +22,9 @@ class CreateSessionScreen extends StatefulWidget {
 }
 
 class _CreateSessionScreenState extends State<CreateSessionScreen> {
-  File? _coverImage;
+  final CreateSessionController _controller =
+      Get.put(CreateSessionController());
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _monthController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
 
   DateTime? _selectedDate;
@@ -41,7 +41,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
       setState(() {
         _selectedDate = picked;
         final formatted = "${picked.month}-${picked.day}-${picked.year}";
-        _monthController.text = formatted;
+        _controller.monthController.text = formatted;
       });
     }
   }
@@ -66,7 +66,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                 top: 10.h,
               ),
               CustomTextField(
-                controller: _nameController,
+                controller: _controller.nameController,
                 hintText: 'Write name here...',
               ),
 
@@ -82,11 +82,11 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                 width: double.infinity,
                 radiusAll: 12.r,
                 color: Colors.grey.shade300,
-                child: _coverImage != null
+                child: _controller.coverImage != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12.r),
                         child: Image.file(
-                          _coverImage!,
+                          _controller.coverImage!,
                           fit: BoxFit.cover,
                         ))
                     : Center(
@@ -117,7 +117,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                 top: 10.h,
               ),
               CustomTextField(
-                controller: _nameController,
+                controller: _controller.priceController,
                 hintText: '\$',
               ),
 
@@ -127,7 +127,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                 top: 10.h,
               ),
               CustomTextField(
-                controller: _nameController,
+                controller: _controller.locationController,
                 hintText: 'Write location here...',
               ),
 
@@ -146,7 +146,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                           onTap: () => _pickDate(context),
                           child: AbsorbPointer(
                             child: CustomTextField(
-                              controller: _monthController,
+                              controller: _controller.monthController,
                               hintText: "MM-DD-YYYY",
                               suffixIcon: const Icon(Icons.date_range_outlined),
                             ),
@@ -171,12 +171,12 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                                 context: context, initialTime: TimeOfDay.now());
                             if (pickedTime != null) {
                               final formattedTime = pickedTime.format(context);
-                              _timeController.text = formattedTime;
+                              _controller.timeController.text = formattedTime;
                             }
                           },
                           child: AbsorbPointer(
                             child: CustomTextField(
-                              controller: _timeController,
+                              controller: _controller.timeController,
                               hintText: "--:---",
                               suffixIcon: const Icon(Icons.access_time),
                             ),
@@ -191,9 +191,20 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
               ///<=========== Submit button form ==============>
 
               SizedBox(height: 32.h),
-              CustomButton(
-                onPressed: _onSubmit,
-                label: 'Submit',
+              Obx(
+                () => _controller.isLoading.value
+                    ? const CustomLoader()
+                    : CustomButton(
+                        onPressed: () {
+                          if (!_globalKey.currentState!.validate()) return;
+                          if (_controller.coverImage == null) {
+                            return ToastMessageHelper.showToastMessage(
+                                "Please select image");
+                          }
+                          _controller.createSession(context);
+                        },
+                        label: 'Submit',
+                      ),
               ),
               SizedBox(height: 24.h),
             ],
@@ -201,10 +212,6 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
         ),
       ),
     );
-  }
-
-  void _onSubmit() {
-    if (!_globalKey.currentState!.validate()) return;
   }
 
   Future<void> _pickImage(String type) async {
@@ -224,7 +231,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                       await picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
                     setState(() {
-                      _coverImage = File(image.path);
+                      _controller.coverImage = File(image.path);
                     });
                   }
                   Navigator.pop(context);
@@ -238,7 +245,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                       await picker.pickImage(source: ImageSource.camera);
                   if (image != null) {
                     setState(() {
-                      _coverImage = File(image.path);
+                      _controller.coverImage = File(image.path);
                     });
                   }
                   Navigator.pop(context);
@@ -249,15 +256,5 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
         );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _nameController.dispose();
-    _monthController.dispose();
-    _timeController.dispose();
-    _priceController.dispose();
-    _locationController.dispose();
   }
 }

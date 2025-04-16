@@ -61,7 +61,6 @@ class StripePaymentSheet {
                     : TextButton(
                         onPressed: () {
                           _controller.paymentParams(
-                            context: context,
                             amount: int.parse(amount),
                             transactionId: transactionId,
                           );

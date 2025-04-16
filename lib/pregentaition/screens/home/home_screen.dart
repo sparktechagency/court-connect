@@ -146,8 +146,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       session.location ?? '',
                       '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
                     ],
-                    onTap: () => _showBookingDialog(context),
-                    buttonLabel: 'Book Now',
+                    onTap: () {
+                      if(_controller.type.value == 'all'){
+                        _showBookingDialog(context);
+
+                    }else{
+                        context.pushNamed(AppRoutes.registeredUsersScreen);
+                      }
+                    },
+                    buttonLabel: _controller.type.value == 'all' ? 'Book Now' : 'Registered Users',
                   );
                 },
               );

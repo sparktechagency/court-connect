@@ -10,7 +10,7 @@ class PaymentController extends GetxController {
   RxBool isLoading = false.obs;
 
   Future<void> paymentParams(
-      {required BuildContext context,
+      {
       required int amount,
       required String transactionId}) async {
     isLoading.value = true;

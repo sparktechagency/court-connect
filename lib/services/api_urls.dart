@@ -16,5 +16,6 @@ class ApiUrls {
   static  const String  privacy = '/privacy';
   static  const String  changePassword = '/user/change-password';
   static  const String  paymentConfirm = '/payment/confirm';
+  static  const String  sessionCreate = '/session/create';
   static   String  session (String? type,price,date)=> '/session?type=$type&price=$price&date=$date';
 }
