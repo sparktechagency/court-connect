@@ -37,12 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _controller.getSession();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       appBar: AppBar(
@@ -56,11 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
             textAlign: TextAlign.left,
           ),
           subtitle: Obx(() => CustomText(
-            text: '${_controller.userName.value} ✨',
-            fontsize: 10.sp,
-            fontWeight: FontWeight.w500,
-            textAlign: TextAlign.left,
-          )),
+                text: '${_controller.userName.value} ✨',
+                fontsize: 10.sp,
+                fontWeight: FontWeight.w500,
+                textAlign: TextAlign.left,
+              )),
         ),
         actions: [
           IconButton(
@@ -72,27 +66,26 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           Obx(() => CarouselSlider(
-            options: CarouselOptions(autoPlay: true, aspectRatio: 14 / 4),
-            items: _controller.bannerList.map((item) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: _controller.isLoading.value
-                    ? _buildShimmer(height: 114.h)
-                    : GestureDetector(
-                  onTap: () async {
-                    final url = Uri.parse(item.link ?? '');
-                    if (await launchUrl(url)) await launchUrl(url);
-                  },
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    height: 114.h,
-                    imageUrl:
-                    '${ApiUrls.imageBaseUrl}${item.image}',
-                  ),
-                ),
-              );
-            }).toList(),
-          )),
+                options: CarouselOptions(autoPlay: true, aspectRatio: 14 / 4),
+                items: _controller.bannerList.map((item) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: _controller.isLoading.value
+                        ? _buildShimmer(height: 114.h)
+                        : GestureDetector(
+                            onTap: () async {
+                              final url = Uri.parse(item.link ?? '');
+                              if (await launchUrl(url)) await launchUrl(url);
+                            },
+                            child: CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              height: 114.h,
+                              imageUrl: '${ApiUrls.imageBaseUrl}${item.image}',
+                            ),
+                          ),
+                  );
+                }).toList(),
+              )),
           SizedBox(height: 24.h),
           Row(
             children: [
@@ -117,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IconButton(
                     onPressed: () =>
-                        context.pushNamed(AppRoutes.createSessionScreen),
+                        context.pushNamed(AppRoutes.bookedNowScreen),
                     icon: Assets.icons.myBook.svg(),
                   ),
                 ],
@@ -126,35 +119,40 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 24.h),
           Obx(() => TwoButtonWidget(
-            buttons: _sessionTypes,
-            selectedValue: _controller.type.value,
-            onTap: _controller.onChangeType,
-          )),
+                buttons: _sessionTypes,
+                selectedValue: _controller.type.value,
+                onTap: _controller.onChangeType,
+              )),
           SizedBox(height: 16.h),
           Expanded(
-            child: Obx(() => ListView.builder(
-              itemCount: _controller.sessionList.length,
-              itemBuilder: (context, index) {
-                final session = _controller.sessionList[index];
+            child: Obx(() {
+              if (_controller.isLoading.value) {
+                return _buildShimmer(height: 300.h);
+              }
 
-                if (_controller.isLoading.value) {
-                  return _buildShimmer(height: 300.h);
-                }
+              if (_controller.sessionList.isEmpty) {
+                return const Center(child: Text("No sessions available"));
+              }
 
-                return CustomSessionCard(
-                  image: '${ApiUrls.imageBaseUrl}${session.image}',
-                  title: session.name ?? '',
-                  subtitles: [
-                    '\$ ${session.price}',
-                    session.location ?? '',
-                    '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
-                  ],
-                  onTap: () => _showBookingDialog(context),
-                  buttonLabel: 'Book Now',
-                );
-              },
-            )),
-          ),
+              return ListView.builder(
+                itemCount: _controller.sessionList.length,
+                itemBuilder: (context, index) {
+                  final session = _controller.sessionList[index];
+                  return CustomSessionCard(
+                    image: '${ApiUrls.imageBaseUrl}${session.image}',
+                    title: session.name ?? '',
+                    subtitles: [
+                      '\$ ${session.price}',
+                      session.location ?? '',
+                      '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
+                    ],
+                    onTap: () => _showBookingDialog(context),
+                    buttonLabel: 'Book Now',
+                  );
+                },
+              );
+            }),
+          )
         ],
       ),
     );

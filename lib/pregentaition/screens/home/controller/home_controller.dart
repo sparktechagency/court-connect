@@ -22,6 +22,7 @@ class HomeController extends GetxController {
     super.onInit();
     _getUserName();
     _getBanner();
+    getSession();
   }
 
   void _getUserName() async {
@@ -51,6 +52,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> getSession() async {
+    sessionList.clear();
     isLoading.value = true;
 
     try {
@@ -62,7 +64,7 @@ class HomeController extends GetxController {
       if (response.statusCode == 200 && responseBody['success'] == true) {
         List data = responseBody['data'] ?? [];
         sessionList.value = data.map((e) => SessionData.fromJson(e)).toList();
-      } else {
+      } else{
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
     } catch (e) {

@@ -4,11 +4,21 @@ import 'package:courtconnect/core/widgets/custom_button.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/payment_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
-class CreateSessionScreen extends StatelessWidget {
-  const CreateSessionScreen({super.key});
+class BookedNowScreen extends StatefulWidget {
+  const BookedNowScreen({super.key});
+
+  @override
+  State<BookedNowScreen> createState() => _BookedNowScreenState();
+}
+
+class _BookedNowScreenState extends State<BookedNowScreen> {
+  double amount = 200;
+  PaymentController paymentController = PaymentController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +58,10 @@ class CreateSessionScreen extends StatelessWidget {
                     ])),
             SizedBox(height: 54.h),
             CustomButton(
-              onPressed: () {},
+              onPressed: () async{
+                await paymentController.initPaymentSheet(
+                    amount: amount.round().toString(), currency: 'USD',context: context);
+              },
               label: 'Proceed to Payment',
             ),
           ],

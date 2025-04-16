@@ -4,6 +4,8 @@ import 'package:courtconnect/pregentaition/screens/group/group_details_screen.da
 import 'package:courtconnect/pregentaition/screens/group/post/create_post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/post/post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/create_session_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/payement_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/registered_users_screen.dart';
 import 'package:courtconnect/pregentaition/screens/message/chat_screen.dart';
@@ -39,6 +41,7 @@ class AppRoutes {
   static const String customBottomNavBar = "/CustomBottomNavBar";
   static const String profileScreen = "/ProfileScreen";
   static const String homeScreen = "/homeScreen";
+  static const String bookedNowScreen = "/bookedNowScreen";
   static const String createSessionScreen = "/createSessionScreen";
   static const String registeredUsersScreen = "/registeredUsersScreen";
   static const String profileUpdate = "/profileUpdate";
@@ -54,6 +57,7 @@ class AppRoutes {
   static const String postScreen = "/postScreen";
   static const String createPostScreen = "/createPostScreen";
   static const String chatScreen = "/chatScreen";
+  static const String paymentScreen = "/paymentScreen";
 
 
 
@@ -165,9 +169,9 @@ class AppRoutes {
         ///=========ForgetScreen Screen========>>
 
         GoRoute(
-          path: createSessionScreen,
-          name: createSessionScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const CreateSessionScreen(), state),
+          path: bookedNowScreen,
+          name: bookedNowScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const BookedNowScreen(), state),
         ),
 
 
@@ -298,6 +302,25 @@ class AppRoutes {
           path: chatScreen,
           name: chatScreen,
           pageBuilder: (context, state) =>  _customTransitionPage( const ChatScreen(), state),
+        ),
+
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: createSessionScreen,
+          name: createSessionScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const CreateSessionScreen(), state),
+        ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: paymentScreen,
+          name: paymentScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const PaymentScreen(), state),
         ),
 
 

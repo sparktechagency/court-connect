@@ -2,8 +2,10 @@ import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
 class PriceListBottomSheet extends StatefulWidget {
@@ -14,23 +16,24 @@ class PriceListBottomSheet extends StatefulWidget {
 }
 
 class _PriceListBottomSheetState extends State<PriceListBottomSheet> {
-  String _selectedSort = '';
+  final HomeController _controller = Get.put(HomeController());
+  final TextEditingController _monthController = TextEditingController();
   DateTime? _selectedDate;
 
-  final TextEditingController _monthController = TextEditingController();
-
+  // Method to pick the date
   Future<void> _pickDate(BuildContext context) async {
-    final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? now,
-      firstDate: DateTime(now.year - 5),
-      lastDate: DateTime(now.year + 5),
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(DateTime.now().year - 5),
+      lastDate: DateTime(DateTime.now().year + 5),
     );
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-        _monthController.text = "${picked.month}-${picked.day}-${picked.year}";
+        final formatted = "${picked.month}-${picked.day}-${picked.year}";
+        _monthController.text = formatted;
+        _controller.date.value = formatted;
       });
     }
   }
@@ -44,91 +47,59 @@ class _PriceListBottomSheetState extends State<PriceListBottomSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: 50.w,
-              child: const Divider(thickness: 3),
-            ),
+            // Divider for visual separation
+            SizedBox(width: 50.w, child: const Divider(thickness: 3)),
+
+            // Header Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomText(
-                  text: 'Sort By',
-                  fontWeight: FontWeight.w500,
-                  fontsize: 18.sp,
-                ),
+                    text: 'Sort By',
+                    fontWeight: FontWeight.w500,
+                    fontsize: 18.sp),
                 IconButton(
-                  onPressed: () => context.pop(),
                   icon: const Icon(Icons.clear, color: Colors.black),
+                  onPressed: () => context.pop(),
                 ),
               ],
             ),
             Divider(thickness: 0.4, color: Colors.grey.shade200),
-        
+
             // Sort Options
-            _buildSortTile(label: 'Price: Low to High'),
-            _buildSortTile(label: 'Price: High to Low'),
-        
+            _buildSortTile('Price: Low to High'),
+            _buildSortTile('Price: High to Low'),
+
             // Month Filter with Date Picker
-            _buildSortTile(
-              label: 'Month',
-              titleWidget: GestureDetector(
-                onTap: () => _pickDate(context),
-                child: AbsorbPointer(
-                  child: CustomTextField(
-                    suffixIcon: const Icon(Icons.date_range_outlined),
-                    controller: _monthController,
-                    hintText: "MM-DD-YYYY",
-                  ),
+            GestureDetector(
+              onTap: () => _pickDate(context),
+              child: AbsorbPointer(
+                child: CustomTextField(
+                  controller: _monthController,
+                  hintText: "MM-DD-YYYY",
+                  suffixIcon: const Icon(Icons.date_range_outlined),
                 ),
               ),
             ),
+
+            // Action Buttons
             SizedBox(height: 24.w),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Cancel Button
-                Expanded(
-                  child: TextButton(
-                    onPressed: (){
-                      _monthController.clear();
-                      context.pop();
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.grey.shade300,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                    ),
-                    child: CustomText(
-                      text: 'Clear all',
-                      fontsize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 44.w),
-                // Confirm Button
-                Expanded(
-                  child: TextButton(
-                    onPressed: (){
-                      context.pop();
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                    ),
-                    child: CustomText(
-                      text: 'Apply',
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                _buildActionButton(
+                    'Clear all', Colors.grey.shade300, Colors.black, () {
+                  _controller.date.value = '';
+                  _controller.price.value = '';
+                  _monthController.clear();
+                  _controller.getSession();
+                  context.pop();
+                }),
+                SizedBox(width: 16.w),
+                _buildActionButton(
+                    'Apply', AppColors.primaryColor, Colors.white, () {
+                  _controller.getSession();
+                  context.pop();
+                }),
               ],
             ),
             SizedBox(height: 24.h),
@@ -138,32 +109,49 @@ class _PriceListBottomSheetState extends State<PriceListBottomSheet> {
     );
   }
 
-  Widget _buildSortTile({required String label,Widget? titleWidget}) {
+  ///Helper method to build the sort options list tile
+  Widget _buildSortTile(String label, {Widget? trailing}) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Radio<String>(
         value: label,
-        groupValue: _selectedSort,
-        onChanged: (value) {
-          setState(() {
-            _selectedSort = value!;
-          });
-        },
+        groupValue: _controller.price.value,
+        onChanged: (value) => setState(() {
+          _controller.price.value = value!;
+        }),
         activeColor: Colors.black,
       ),
       title: Row(
         children: [
-          CustomText(textAlign: TextAlign.left, text: label ?? ''),
-          if (titleWidget != null) ...[
+          CustomText(text: label),
+          if (trailing != null) ...[
             const SizedBox(width: 10),
-            SizedBox(
-                width: 150.w,
-                child: titleWidget),
+            SizedBox(width: 150.w, child: trailing),
           ],
         ],
       ),
     );
   }
+
+  /// Helper method to build action buttons (Clear and Apply)
+  Widget _buildActionButton(
+      String label, Color bgColor, Color textColor, VoidCallback onPressed) {
+    return Expanded(
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          backgroundColor: bgColor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+        ),
+        child: CustomText(
+          text: label,
+          fontWeight: FontWeight.w500,
+          fontsize: 14.sp,
+          color: textColor,
+        ),
+      ),
+    );
+  }
 }
-
-

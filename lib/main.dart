@@ -1,11 +1,19 @@
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/utils/payment_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 import 'app_themes/app_themes.dart';
 import 'core/app_routes/app_routes.dart';
 import 'core/widgets/no_inter_net_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Stripe
+  Stripe.publishableKey = PaymentKeys.publishAbleKey;
+
+
   runApp(const MyApp());
 }
 
