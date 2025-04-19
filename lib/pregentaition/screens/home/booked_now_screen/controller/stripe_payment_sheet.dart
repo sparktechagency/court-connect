@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/core/widgets/custom_button.dart';
 import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
@@ -58,7 +59,7 @@ class StripePaymentSheet {
               Obx(
                 () => _controller.isLoading.value
                     ? const CustomLoader()
-                    : TextButton(
+                    : CustomButton(
                         onPressed: () {
                           _controller.paymentParams(
                             amount: int.parse(amount),
@@ -75,7 +76,7 @@ class StripePaymentSheet {
         );
       }).onError((error, stackTrace) {
         debugPrint('❌ PaymentSheet Error: $error');
-        ToastMessageHelper.showToastMessage("PaymentSheet Error: $error");
+        ToastMessageHelper.showToastMessage("Oops! Payment failed. Please try again.");
       });
     } on StripeException catch (e) {
       debugPrint('❌ StripeException: ${e.error.localizedMessage}');

@@ -12,7 +12,11 @@ class HomeController extends GetxController {
   RxString type = 'all'.obs;
   RxString price = ''.obs;
   RxString date = ''.obs;
+  RxString id = ''.obs;
   RxBool isLoading = false.obs;
+
+
+  RxInt charge = 0.obs;
 
   RxList<BannerData> bannerList = <BannerData>[].obs;
   RxList<SessionData> sessionList = <SessionData>[].obs;
@@ -23,6 +27,7 @@ class HomeController extends GetxController {
     _getUserName();
     _getBanner();
     getSession();
+    getCharge();
   }
 
   void _getUserName() async {
@@ -51,6 +56,9 @@ class HomeController extends GetxController {
     }
   }
 
+  /// <==================== get Session Data ======================>
+
+
   Future<void> getSession() async {
     sessionList.clear();
     isLoading.value = true;
@@ -65,6 +73,29 @@ class HomeController extends GetxController {
         List data = responseBody['data'] ?? [];
         sessionList.value = data.map((e) => SessionData.fromJson(e)).toList();
       } else{
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+      }
+    } catch (e) {
+      ToastMessageHelper.showToastMessage("Error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  Future<void> getCharge() async {
+    isLoading.value = true;
+
+    try {
+      final response = await ApiClient.getData(
+          ApiUrls.charge);
+
+      final responseBody = response.body;
+
+      if (response.statusCode == 200 && responseBody['success'] == true) {
+        charge.value = responseBody['data']['charge'];
+
+    } else{
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
     } catch (e) {

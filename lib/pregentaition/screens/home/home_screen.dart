@@ -1,3 +1,5 @@
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/book_mark_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/registered_users_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +8,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:courtconnect/helpers/time_format.dart';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
@@ -28,7 +29,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _controller = Get.put(HomeController());
+  final _homeController = Get.put(HomeController());
+  final _userController = Get.put(RegisteredUsersController());
+  final _bookMarkController = Get.put(BookMarkController());
   final _searchController = TextEditingController();
 
   final _sessionTypes = [
@@ -50,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
             textAlign: TextAlign.left,
           ),
           subtitle: Obx(() => CustomText(
-                text: '${_controller.userName.value} ✨',
+                text: '${_homeController.userName.value} ✨',
                 fontsize: 10.sp,
                 fontWeight: FontWeight.w500,
                 textAlign: TextAlign.left,
@@ -67,10 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Obx(() => CarouselSlider(
                 options: CarouselOptions(autoPlay: true, aspectRatio: 14 / 4),
-                items: _controller.bannerList.map((item) {
+                items: _homeController.bannerList.map((item) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(8.r),
-                    child: _controller.isLoading.value
+                    child: _homeController.isLoading.value
                         ? _buildShimmer(height: 114.h)
                         : GestureDetector(
                             onTap: () async {
@@ -120,24 +123,24 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 24.h),
           Obx(() => TwoButtonWidget(
                 buttons: _sessionTypes,
-                selectedValue: _controller.type.value,
-                onTap: _controller.onChangeType,
+                selectedValue: _homeController.type.value,
+                onTap: _homeController.onChangeType,
               )),
           SizedBox(height: 16.h),
           Expanded(
             child: Obx(() {
-              if (_controller.isLoading.value) {
+              if (_homeController.isLoading.value) {
                 return _buildShimmer(height: 300.h);
               }
 
-              if (_controller.sessionList.isEmpty) {
+              if (_homeController.sessionList.isEmpty) {
                 return const Center(child: Text("No sessions available"));
               }
 
               return ListView.builder(
-                itemCount: _controller.sessionList.length,
+                itemCount: _homeController.sessionList.length,
                 itemBuilder: (context, index) {
-                  final session = _controller.sessionList[index];
+                  final session = _homeController.sessionList[index];
                   return CustomSessionCard(
                     image: '${ApiUrls.imageBaseUrl}${session.image}',
                     title: session.name ?? '',
@@ -147,14 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
                     ],
                     onTap: () {
-                      if(_controller.type.value == 'all'){
+                      if(_homeController.type.value == 'all'){
+                        _bookMarkController.getBookMark( session.sId ?? '');
                         _showBookingDialog(context);
 
                     }else{
-                        context.pushNamed(AppRoutes.registeredUsersScreen);
+                        _userController.getUser(context,session.sId ?? '');
                       }
                     },
-                    buttonLabel: _controller.type.value == 'all' ? 'Book Now' : 'Registered Users',
+                    buttonLabel: _homeController.type.value == 'all' ? 'Book Now' : 'Registered Users',
                   );
                 },
               );

@@ -5,8 +5,10 @@ import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/stripe_payment_sheet.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class BookedNowScreen extends StatefulWidget {
   const BookedNowScreen({super.key});
@@ -16,7 +18,9 @@ class BookedNowScreen extends StatefulWidget {
 }
 
 class _BookedNowScreenState extends State<BookedNowScreen> {
-  double amount = 200;
+
+  final HomeController _controller = Get.put(HomeController());
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CustomText(
-              text: 'Create Your Session for Only \$${amount.toInt()}!',
+              text: 'Create Your Session for Only \$${_controller.charge.value.toInt()}!',
               fontWeight: FontWeight.w600,
               fontsize: 18.sp,
               color: AppColors.primaryColor,
@@ -58,7 +62,7 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
             CustomButton(
               onPressed: () {
                 StripePaymentSheet()
-                    .paymentSheetInit(amount: amount.round().toString(), context: context);
+                    .paymentSheetInit(amount: _controller.charge.value.round().toString(), context: context);
               },
               label: 'Proceed to Payment',
             ),
