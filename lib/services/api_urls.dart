@@ -20,5 +20,5 @@ class ApiUrls {
   static  const String  charge = '/charge';
   static   String  session (String? type,price,date)=> '/session?type=$type&price=$price&date=$date';
   static   String  user (String id)=> '/session/registered-users?sessionId=$id';
-  static   String  bookmark (String id)=> '/bookmark/add-remove?id=$id';
+  static   String  bookmark (String id)=> '/booking/add?sessionId=$id';
 }

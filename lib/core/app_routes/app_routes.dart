@@ -178,10 +178,15 @@ class AppRoutes {
  ///=========ForgetScreen Screen========>>
 
         GoRoute(
-          path: registeredUsersScreen,
+          path: '$registeredUsersScreen/:sessionId',
           name: registeredUsersScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const RegisteredUsersScreen(), state),
-        ),
+          pageBuilder: (context, state) {
+            final String sessionId = state.pathParameters['sessionId']!;
+
+            return
+            _customTransitionPage(
+                 RegisteredUsersScreen(sessionId : sessionId), state);}
+  ),
 
 
  ///=========ForgetScreen Screen========>>

@@ -1,5 +1,5 @@
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/book_mark_controller.dart';
-import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/registered_users_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/controller/registered_users_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -141,24 +141,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: _homeController.sessionList.length,
                 itemBuilder: (context, index) {
                   final session = _homeController.sessionList[index];
-                  return CustomSessionCard(
-                    image: '${ApiUrls.imageBaseUrl}${session.image}',
-                    title: session.name ?? '',
-                    subtitles: [
-                      '\$ ${session.price}',
-                      session.location ?? '',
-                      '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
-                    ],
-                    onTap: () {
-                      if(_homeController.type.value == 'all'){
-                        _bookMarkController.getBookMark( session.sId ?? '');
-                        _showBookingDialog(context);
+                  return Obx(
+                    () {
+                      return CustomSessionCard(
+                        image: '${ApiUrls.imageBaseUrl}${session.image}',
+                        title: session.name ?? '',
+                        subtitles: [
+                          '\$ ${session.price}',
+                          session.location ?? '',
+                          '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
+                        ],
+                        onTap: () {
+                          if(_homeController.type.value == 'all'){
+                            _bookMarkController.getBookMark( context,session.sId ?? '');
 
-                    }else{
-                        _userController.getUser(context,session.sId ?? '');
-                      }
-                    },
-                    buttonLabel: _homeController.type.value == 'all' ? 'Book Now' : 'Registered Users',
+                        }else{
+                            context.pushNamed(AppRoutes.registeredUsersScreen,pathParameters: {'sessionId': session.sId!});
+                          }
+                        },
+                        buttonLabel: _bookMarkController.isLoading.value &&
+                            _bookMarkController.loadingSessionId.value == session.sId
+                            ? 'Please wait..'
+                            : _homeController.type.value == 'all'
+                            ? 'Book Now'
+                            : 'Registered Users',
+                      );
+                    }
                   );
                 },
               );
@@ -182,33 +190,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showBookingDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => Dialog(
-        child: Padding(
-          padding: EdgeInsets.all(24.r),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Assets.icons.bookingSuccess.svg(),
-              SizedBox(height: 24.h),
-              CustomText(
-                text: 'Booking Successful!',
-                fontWeight: FontWeight.w500,
-                fontsize: 22.sp,
-              ),
-              SizedBox(height: 24.h),
-              CustomButton(
-                onPressed: () => context.pop(),
-                label: 'Go Back',
-                width: 160.w,
-                radius: 8.r,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

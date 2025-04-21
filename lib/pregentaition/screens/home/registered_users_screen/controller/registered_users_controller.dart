@@ -1,17 +1,18 @@
-import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/models/user_data.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
+import 'package:http/http.dart';
 
 class RegisteredUsersController extends GetxController {
   RxBool isLoading = false.obs;
+  RxList<UserData> userDataList = <UserData>[].obs;
 
 
 
-  Future<void> getUser(BuildContext context,String id) async {
+  Future<void> getUser(String id) async {
     isLoading.value = true;
 
     try {
@@ -19,8 +20,10 @@ class RegisteredUsersController extends GetxController {
 
       final responseBody = response.body;
 
-      if (response.statusCode == 200 || responseBody['message'] == 'No users found for this session.') {
-        context.pushNamed(AppRoutes.registeredUsersScreen);
+      if (response.statusCode == 200) {
+        userDataList.clear();
+        final List data = responseBody['data'];
+        userDataList.value = data.map((json) => UserData.fromJson(json)).toList();
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
