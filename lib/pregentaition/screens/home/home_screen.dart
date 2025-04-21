@@ -1,5 +1,7 @@
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/book_mark_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/models/session_data.dart';
 import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/controller/registered_users_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/session_edit/controller/session_edit_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -30,8 +32,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _homeController = Get.put(HomeController());
-  final _userController = Get.put(RegisteredUsersController());
   final _bookMarkController = Get.put(BookMarkController());
+  final _sessionEditController = Get.put(SessionEditController());
   final _searchController = TextEditingController();
 
   final _sessionTypes = [
@@ -144,6 +146,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Obx(
                     () {
                       return CustomSessionCard(
+                        menuItems:  _homeController.type.value == 'all' ? []: [
+                          'Edit',
+                          'Delete'
+                        ],
+                        onSelected: (val){
+                          if(val == 'Edit'){
+                            context.pushNamed(
+                              AppRoutes.editSessionScreen,  // Name of the route
+                              extra: {
+                                'name': session.name,
+                                'image': '${ApiUrls.imageBaseUrl}${session.image}',
+                                'price': session.price,
+                                'location': session.location,
+                                'date': session.date,
+                                'time': session.time,
+                              },
+                            );
+                          }else if(val == 'Delete'){
+                            _sessionEditController.deleteMyBooking(session.sId!);
+                          }
+
+                        },
                         image: '${ApiUrls.imageBaseUrl}${session.image}',
                         title: session.name ?? '',
                         subtitles: [

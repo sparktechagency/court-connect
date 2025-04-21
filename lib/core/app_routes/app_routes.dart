@@ -7,7 +7,9 @@ import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/create_session_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/payement_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/models/session_data.dart';
 import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/registered_users_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/session_edit/session_edit_screen.dart';
 import 'package:courtconnect/pregentaition/screens/message/chat_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/my_booking_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/profile_update.dart';
@@ -58,6 +60,7 @@ class AppRoutes {
   static const String createPostScreen = "/createPostScreen";
   static const String chatScreen = "/chatScreen";
   static const String paymentScreen = "/paymentScreen";
+  static const String editSessionScreen = "/EditSessionScreen";
 
 
 
@@ -327,6 +330,24 @@ class AppRoutes {
           name: paymentScreen,
           pageBuilder: (context, state) =>  _customTransitionPage( const PaymentScreen(), state),
         ),
+
+
+ ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: editSessionScreen,
+          name: editSessionScreen,
+          pageBuilder: (context, state) {
+            // Extract the session data from 'extra'
+            final session = state.extra as Map<String, dynamic>;
+
+            return _customTransitionPage(
+              EditSessionScreen(sessionData: session),  // Pass the entire session data
+              state,
+            );
+          },
+        ),
+
 
 
 

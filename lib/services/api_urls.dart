@@ -18,7 +18,9 @@ class ApiUrls {
   static  const String  paymentConfirm = '/payment/confirm';
   static  const String  sessionCreate = '/session/create';
   static  const String  charge = '/charge';
+  static  const String  booking = '/booking';
   static   String  session (String? type,price,date)=> '/session?type=$type&price=$price&date=$date';
   static   String  user (String id)=> '/session/registered-users?sessionId=$id';
   static   String  bookmark (String id)=> '/booking/add?sessionId=$id';
+  static   String  deleteBooking (String id)=> '/booking/delete?bookingId=$id';
 }

@@ -42,6 +42,9 @@ dependencies:
   multiselect: ^0.1.1
   connectivity_plus:
   flutter_dotenv: ^5.2.1
+  syncfusion_flutter_pdf: ^29.1.38
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
 
 dev_dependencies:
   flutter_test:
