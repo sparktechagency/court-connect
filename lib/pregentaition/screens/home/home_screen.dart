@@ -39,11 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     {'label': 'My Session', 'value': 'my'},
   ];
 
-  final _filterTypes = [
-    {'label': 'All Session', 'value': 'all'},
-    {'label': 'My Session', 'value': 'my'},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(

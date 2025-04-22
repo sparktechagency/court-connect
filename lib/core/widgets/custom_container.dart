@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -31,7 +30,10 @@ class CustomContainer extends StatelessWidget {
     this.topLeftRadius,
     this.topRightRadius,
     this.bottomLeft,
-    this.bottomRight,  this.elevation = false,
+    this.bottomRight,
+    this.elevation = false,
+    this.paddingAll,
+    this.marginAll,
   });
 
   final Widget? child;
@@ -50,8 +52,10 @@ class CustomContainer extends StatelessWidget {
   final double? horizontalMargin;
   final double? marginLeft;
   final double? marginRight;
+  final double? marginAll;
   final double? paddingLeft;
   final double? paddingRight;
+  final double? paddingAll;
   final double? verticalMargin;
   final double? height;
   final double? width;
@@ -72,26 +76,30 @@ class CustomContainer extends StatelessWidget {
         width: width,
         padding: horizontalPadding != null || verticalPadding != null
             ? EdgeInsets.symmetric(
-                horizontal: horizontalPadding ?? 0,
-                vertical: verticalPadding ?? 0,
-              )
+          horizontal: horizontalPadding ?? 0,
+          vertical: verticalPadding ?? 0,
+        )
             : paddingLeft != null || paddingRight != null
-                ? EdgeInsets.only(
-                    left: paddingLeft ?? 0,
-                    right: paddingRight ?? 0,
-                  )
-                : null,
+            ? EdgeInsets.only(
+          left: paddingLeft ?? 0,
+          right: paddingRight ?? 0,
+        )
+            : paddingAll != null
+            ? EdgeInsets.all(paddingAll ?? 0)
+            : null,
         margin: horizontalMargin != null || verticalMargin != null
             ? EdgeInsets.symmetric(
-                horizontal: horizontalMargin ?? 0,
-                vertical: verticalMargin ?? 0,
-              )
+          horizontal: horizontalMargin ?? 0,
+          vertical: verticalMargin ?? 0,
+        )
             : marginLeft != null || marginRight != null
-                ? EdgeInsets.only(
-                    left: marginLeft ?? 0,
-                    right: marginRight ?? 0,
-                  )
-                : null,
+            ? EdgeInsets.only(
+          left: marginLeft ?? 0,
+          right: marginRight ?? 0,
+        )
+            : marginAll != null
+            ? EdgeInsets.all(marginAll ?? 0)
+            : null,
         alignment: alignment,
         decoration: BoxDecoration(
           boxShadow: boxShadow ??
@@ -112,24 +120,24 @@ class CustomContainer extends StatelessWidget {
           color: color,
           gradient: linearColors != null
               ? LinearGradient(
-                  colors: linearColors!,
-                  begin: begin,
-                  end: end,
-                )
+            colors: linearColors!,
+            begin: begin,
+            end: end,
+          )
               : null,
           borderRadius: (shape == BoxShape.rectangle && radiusAll != null)
               ? BorderRadius.circular(radiusAll!.r)
               : (topLeftRadius != null ||
-                      topRightRadius != null ||
-                      bottomLeft != null ||
-                      bottomRight != null)
-                  ? BorderRadius.only(
-                      topLeft: Radius.circular(topLeftRadius ?? 0),
-                      topRight: Radius.circular(topRightRadius ?? 0),
-                      bottomLeft: Radius.circular(bottomLeft ?? 0),
-                      bottomRight: Radius.circular(bottomRight ?? 0),
-                    )
-                  : null,
+              topRightRadius != null ||
+              bottomLeft != null ||
+              bottomRight != null)
+              ? BorderRadius.only(
+            topLeft: Radius.circular(topLeftRadius ?? 0),
+            topRight: Radius.circular(topRightRadius ?? 0),
+            bottomLeft: Radius.circular(bottomLeft ?? 0),
+            bottomRight: Radius.circular(bottomRight ?? 0),
+          )
+              : null,
         ),
         child: child,
       ),

@@ -1,4 +1,5 @@
-import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:courtconnect/core/widgets/custom_network_image.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -30,18 +31,23 @@ class GroupCardWidget extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(8.r)),
-                  child: Assets.images.group.image(),
+                  BorderRadius.vertical(top: Radius.circular(8.r)),
+                  child: SizedBox(
+                      height: 140.h,
+                      width: double.infinity,
+                      child: CustomNetworkImage(
+                        imageUrl: coverImage ?? '',
+                      )),
                 ),
-                SizedBox(height: 34.h),
+                SizedBox(height: 24.h),
                 CustomText(
                   text: title ?? '',
-                  fontsize: 16.sp,
+                  fontsize: 18.sp,
                   fontWeight: FontWeight.w700,
                 ),
                 CustomText(
                   text: subTitle ?? '',
-                  fontsize: 10.sp,
+                  fontsize: 12.sp,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
@@ -49,14 +55,6 @@ class GroupCardWidget extends StatelessWidget {
               ],
             ),
           ),
-          Positioned(
-              left: 0,
-              right: 0,
-              bottom: 48.h,
-              child: CustomImageAvatar(
-                radius: 34,
-                image: profileImage,
-              )),
           if (detailAction != null)
             Positioned(
                 right: 10.w,

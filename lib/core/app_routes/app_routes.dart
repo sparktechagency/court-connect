@@ -1,6 +1,8 @@
 import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/create_group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/group_details_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/members_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
 import 'package:courtconnect/pregentaition/screens/group/post/create_post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/post/post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
@@ -61,6 +63,7 @@ class AppRoutes {
   static const String chatScreen = "/chatScreen";
   static const String paymentScreen = "/paymentScreen";
   static const String editSessionScreen = "/EditSessionScreen";
+  static const String membersScreen = "/membersScreen";
 
 
 
@@ -268,14 +271,6 @@ class AppRoutes {
 
 
 
- ///=========ForgetScreen Screen========>>
-
-        GoRoute(
-          path: groupDetailsScreen,
-          name: groupDetailsScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const GroupDetailsScreen(), state),
-        ),
-
 
  ///=========ForgetScreen Screen========>>
 
@@ -347,6 +342,36 @@ class AppRoutes {
             );
           },
         ),
+
+        GoRoute(
+          path: groupDetailsScreen,
+          name: groupDetailsScreen,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final id = extra['id']! as String;
+            return _customTransitionPage( GroupDetailsScreen(id: id,), state);
+  } ,
+        ),
+
+        GoRoute(
+          path: AppRoutes.membersScreen,
+          name: AppRoutes.membersScreen,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final members = extra['members'] as List<Members>;
+            final communityId = extra['communityId'] as String;
+
+            return _customTransitionPage(
+              MembersScreen(
+                members: members,
+                communityId: communityId,
+              ),
+              state,
+            );
+          },
+        ),
+
+
 
 
 

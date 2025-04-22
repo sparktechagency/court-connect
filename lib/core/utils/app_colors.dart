@@ -8,4 +8,5 @@ class AppColors{
   static const Color textColor787878 = Color(0xff787878);
   static const Color logoutColor = Color(0xffE8E9F2);
   static const Color textColor646464 = Color(0xff646464);
+  static const Color removeColor = Color(0xffEA0000);
 }

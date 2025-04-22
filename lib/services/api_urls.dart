@@ -17,9 +17,14 @@ class ApiUrls {
   static  const String  changePassword = '/user/change-password';
   static  const String  paymentConfirm = '/payment/confirm';
   static  const String  sessionCreate = '/session/create';
+  static  const String  communityCreate = '/community/create';
   static  const String  charge = '/charge';
   static  const String  booking = '/booking';
+  static  const String  joinCommunity = '/community/join';
+  static  const String  removeMember = '/community/remove-member';
   static   String  session (String? type,price,date)=> '/session?type=$type&price=$price&date=$date';
+  static   String  community (String? type,page,date,limit,)=> '/community?page=$page&limit=$limit&type=$type&date=$date';
+  static   String  communityDetails (String? communityId,limit,page,name,)=> '/community/details?communityId=$communityId&limit=$limit&page=$page&name=$name';
   static   String  user (String id)=> '/session/registered-users?sessionId=$id';
   static   String  bookmark (String id)=> '/booking/add?sessionId=$id';
   static   String  deleteBooking (String id)=> '/booking/delete?bookingId=$id';

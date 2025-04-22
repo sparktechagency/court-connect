@@ -29,13 +29,13 @@ class CustomListTile extends StatelessWidget {
         fontWeight: FontWeight.w500,
         fontsize: 16.sp,
       ),
-      subtitle: CustomText(
+      subtitle: subTitle != null ? CustomText(
         textAlign: TextAlign.left,
         text: subTitle??'',
         fontWeight: FontWeight.w500,
         fontsize: 10.sp,
         color: Colors.grey,
-      ),
+      ) : null,
       trailing: trailing,
     );
   }

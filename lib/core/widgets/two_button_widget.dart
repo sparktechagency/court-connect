@@ -8,12 +8,13 @@ class TwoButtonWidget extends StatelessWidget {
   final List<Map<String, String>> buttons;
   final String selectedValue;
   final Function(String) onTap;
+  final double? fontSize;
 
   const TwoButtonWidget({
     super.key,
     required this.buttons,
     required this.selectedValue,
-    required this.onTap,
+    required this.onTap, this.fontSize,
   });
 
   @override
@@ -32,7 +33,7 @@ class TwoButtonWidget extends StatelessWidget {
               child: CustomText(
                 text: item['label']!,
                 color: isSelected ? Colors.white : Colors.grey,
-                fontsize: 18.sp,
+                fontsize: fontSize ?? 18.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
