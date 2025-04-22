@@ -9,7 +9,7 @@ import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
-import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/create_session_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/session_edit/controller/session_edit_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,7 +18,6 @@ import 'package:get/get.dart';
 class EditSessionScreen extends StatefulWidget {
   const EditSessionScreen({super.key, required this.sessionData});
 
-
   final Map<String, dynamic> sessionData;
 
   @override
@@ -26,27 +25,19 @@ class EditSessionScreen extends StatefulWidget {
 }
 
 class _EditSessionScreenState extends State<EditSessionScreen> {
-  final CreateSessionController _controller = Get.put(CreateSessionController());
-
+  final SessionEditController _controller = Get.put(SessionEditController());
   final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
 
-  DateTime? _selectedDate;
+  @override
+  void initState() {
+    super.initState();
 
-  // Method to pick the date
-  Future<void> _pickDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(DateTime.now().year - 5),
-      lastDate: DateTime(DateTime.now().year + 5),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-        final formatted = "${picked.month}-${picked.day}-${picked.year}";
-        _controller.monthController.text = formatted;
-      });
-    }
+    final data = widget.sessionData;
+    _controller.nameController.text = data['name'] ?? '';
+    _controller.priceController.text = '\$ ${data['price'] ?? ''}';
+    _controller.locationController.text = data['location'] ?? '';
+    _controller.monthController.text = data['date'] ?? '';
+    _controller.timeController.text = data['time'] ?? '';
   }
 
   @override
@@ -71,7 +62,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
               ),
               CustomTextField(
                 controller: _controller.nameController,
-                hintText: data['name'],
+                hintText: 'name',
               ),
 
               ///<=========== Cover Photo  form ==============>
@@ -80,38 +71,39 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 bottom: 10.h,
                 top: 20.h,
               ),
-              CustomContainer(
-                bordersColor: Colors.grey,
-                height: 170.h,
-                width: double.infinity,
-                radiusAll: 12.r,
-                color: Colors.grey.shade300,
-                child: _controller.coverImage != null
-                    ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: _controller.coverImage == null ? CustomNetworkImage(imageUrl: data['image']) : Image.file(
-                      _controller.coverImage!,
-                      fit: BoxFit.cover,
-                    ))
-                    : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () => _pickImage('cover'),
-                        icon: Icon(
-                          Icons.add,
-                          color: AppColors.primaryColor,
-                          size: 54.r,
+              Stack(
+                children: [
+                  CustomContainer(
+                    bordersColor: Colors.grey,
+                    height: 170.h,
+                    width: double.infinity,
+                    radiusAll: 12.r,
+                    color: Colors.grey.shade300,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: _controller.coverImage != null
+                          ? Image.file(_controller.coverImage!,
+                              fit: BoxFit.cover)
+                          : CustomNetworkImage(imageUrl: data['image']),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12.r),
+                        onTap: () => _pickImage('cover'),
+                        child: Center(
+                          child: Icon(
+                            Icons.add_a_photo,
+                            color: Colors.white.withOpacity(0.8),
+                            size: 40.r,
+                          ),
                         ),
                       ),
-                      CustomText(
-                        text: 'Upload Image',
-                        top: 10.h,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
 
               ///<=========== price text form ==============>
@@ -121,8 +113,9 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 top: 10.h,
               ),
               CustomTextField(
+                enabled: false,
                 controller: _controller.priceController,
-                hintText: '\$ ${data['price']}',
+                hintText: 'price',
               ),
 
               CustomText(
@@ -131,8 +124,9 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 top: 10.h,
               ),
               CustomTextField(
+                enabled: false,
                 controller: _controller.locationController,
-                hintText: data['location'],
+                hintText: 'location',
               ),
 
               Row(
@@ -146,15 +140,11 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                           bottom: 10.h,
                           top: 10.h,
                         ),
-                        GestureDetector(
-                          onTap: () => _pickDate(context),
-                          child: AbsorbPointer(
-                            child: CustomTextField(
-                              controller: _controller.monthController,
-                              hintText: data['date'],
-                              suffixIcon: const Icon(Icons.date_range_outlined),
-                            ),
-                          ),
+                        CustomTextField(
+                          enabled: false,
+                          controller: _controller.monthController,
+                          hintText: 'date',
+                          suffixIcon: const Icon(Icons.date_range_outlined),
                         ),
                       ],
                     ),
@@ -169,22 +159,11 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                           bottom: 10.h,
                           top: 10.h,
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            final TimeOfDay? pickedTime = await showTimePicker(
-                                context: context, initialTime: TimeOfDay.now());
-                            if (pickedTime != null) {
-                              final formattedTime = pickedTime.format(context);
-                              _controller.timeController.text = formattedTime;
-                            }
-                          },
-                          child: AbsorbPointer(
-                            child: CustomTextField(
-                              controller: _controller.timeController,
-                              hintText: data['time'],
-                              suffixIcon: const Icon(Icons.access_time),
-                            ),
-                          ),
+                        CustomTextField(
+                          enabled: false,
+                          controller: _controller.timeController,
+                          hintText: 'time',
+                          suffixIcon: const Icon(Icons.access_time),
                         ),
                       ],
                     ),
@@ -196,19 +175,15 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
 
               SizedBox(height: 32.h),
               Obx(
-                    () => _controller.isLoading.value
+                () => _controller.isLoading.value
                     ? const CustomLoader()
                     : CustomButton(
-                  onPressed: () {
-                    if (!_globalKey.currentState!.validate()) return;
-                    if (_controller.coverImage == null) {
-                      return ToastMessageHelper.showToastMessage(
-                          "Please select image");
-                    }
-                    _controller.createSession(context);
-                  },
-                  label: 'Submit',
-                ),
+                        onPressed: () {
+                          if (!_globalKey.currentState!.validate()) return;
+                          _controller.editMySession(context, data['id']!);
+                        },
+                        label: 'Submit',
+                      ),
               ),
               SizedBox(height: 24.h),
             ],
@@ -232,7 +207,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 title: const Text("Pick from Gallery"),
                 onTap: () async {
                   final XFile? image =
-                  await picker.pickImage(source: ImageSource.gallery);
+                      await picker.pickImage(source: ImageSource.gallery);
                   if (image != null) {
                     setState(() {
                       _controller.coverImage = File(image.path);
@@ -246,7 +221,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 title: const Text("Take a Photo"),
                 onTap: () async {
                   final XFile? image =
-                  await picker.pickImage(source: ImageSource.camera);
+                      await picker.pickImage(source: ImageSource.camera);
                   if (image != null) {
                     setState(() {
                       _controller.coverImage = File(image.path);

@@ -83,6 +83,10 @@ class HomeController extends GetxController {
   }
 
 
+
+
+  /// <==================== get Session Data ======================>
+
   Future<void> getCharge() async {
     isLoading.value = true;
 

@@ -23,4 +23,6 @@ class ApiUrls {
   static   String  user (String id)=> '/session/registered-users?sessionId=$id';
   static   String  bookmark (String id)=> '/booking/add?sessionId=$id';
   static   String  deleteBooking (String id)=> '/booking/delete?bookingId=$id';
+  static   String  deleteSession (String id)=> '/session/delete?sessionId=$id';
+  static   String  editSession (String id)=> '/session/edit?sessionId=$id';
 }

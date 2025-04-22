@@ -1,6 +1,5 @@
+import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/book_mark_controller.dart';
-import 'package:courtconnect/pregentaition/screens/home/models/session_data.dart';
-import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/controller/registered_users_controller.dart';
 import 'package:courtconnect/pregentaition/screens/home/session_edit/controller/session_edit_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +12,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:courtconnect/helpers/time_format.dart';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
-import 'package:courtconnect/core/widgets/custom_button.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
@@ -37,6 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
 
   final _sessionTypes = [
+    {'label': 'All Session', 'value': 'all'},
+    {'label': 'My Session', 'value': 'my'},
+  ];
+
+  final _filterTypes = [
     {'label': 'All Session', 'value': 'all'},
     {'label': 'My Session', 'value': 'my'},
   ];
@@ -132,7 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Obx(() {
               if (_homeController.isLoading.value) {
-                return _buildShimmer(height: 300.h);
+                return ListView.builder(
+                  itemCount: 3,
+                  itemBuilder: (context, index) => _buildShimmer(height: 280.h),
+                );
               }
 
               if (_homeController.sessionList.isEmpty) {
@@ -144,53 +150,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   final session = _homeController.sessionList[index];
                   return Obx(
-                    () {
-                      return CustomSessionCard(
-                        menuItems:  _homeController.type.value == 'all' ? []: [
-                          'Edit',
-                          'Delete'
-                        ],
-                        onSelected: (val){
-                          if(val == 'Edit'){
-                            context.pushNamed(
-                              AppRoutes.editSessionScreen,  // Name of the route
-                              extra: {
-                                'name': session.name,
-                                'image': '${ApiUrls.imageBaseUrl}${session.image}',
-                                'price': session.price,
-                                'location': session.location,
-                                'date': session.date,
-                                'time': session.time,
-                              },
-                            );
-                          }else if(val == 'Delete'){
-                            _sessionEditController.deleteMyBooking(session.sId!);
-                          }
+                          () {
+                        return CustomSessionCard(
+                          menuItems:  _homeController.type.value == 'all' ? []: [
+                            'Edit',
+                            'Delete'
+                          ],
+                          onSelected: (val){
+                            if(val == 'Edit'){
+                              context.pushNamed(
+                                AppRoutes.editSessionScreen,  // Name of the route
+                                extra: {
+                                  'id' : session.sId,
+                                  'name': session.name,
+                                  'image': '${ApiUrls.imageBaseUrl}${session.image}',
+                                  'price': session.price,
+                                  'location': session.location,
+                                  'date': session.date,
+                                  'time': session.time,
+                                },
+                              );
+                            }else if(val == 'Delete'){
+                              _sessionEditController.deleteMySession(session.sId!);
+                            }
 
-                        },
-                        image: '${ApiUrls.imageBaseUrl}${session.image}',
-                        title: session.name ?? '',
-                        subtitles: [
-                          '\$ ${session.price}',
-                          session.location ?? '',
-                          '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
-                        ],
-                        onTap: () {
-                          if(_homeController.type.value == 'all'){
-                            _bookMarkController.getBookMark( context,session.sId ?? '');
+                          },
+                          image: '${ApiUrls.imageBaseUrl}${session.image}',
+                          title: session.name ?? '',
+                          subtitles: [
+                            '\$ ${session.price}',
+                            session.location ?? '',
+                            '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
+                          ],
+                          onTap: () {
+                            if(_homeController.type.value == 'all'){
+                              _bookMarkController.getBookMark( context,session.sId ?? '');
 
-                        }else{
-                            context.pushNamed(AppRoutes.registeredUsersScreen,pathParameters: {'sessionId': session.sId!});
-                          }
-                        },
-                        buttonLabel: _bookMarkController.isLoading.value &&
-                            _bookMarkController.loadingSessionId.value == session.sId
-                            ? 'Please wait..'
-                            : _homeController.type.value == 'all'
-                            ? 'Book Now'
-                            : 'Registered Users',
-                      );
-                    }
+                            }else{
+                              context.pushNamed(AppRoutes.registeredUsersScreen,pathParameters: {'sessionId': session.sId!});
+                            }
+                          },
+                          buttonLabel: _bookMarkController.isLoading.value &&
+                              _bookMarkController.loadingSessionId.value == session.sId
+                              ? 'Please wait..'
+                              : _homeController.type.value == 'all'
+                              ? 'Book Now'
+                              : 'Registered Users',
+                        );
+                      }
                   );
                 },
               );
@@ -202,14 +209,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildShimmer({required double height}) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      period: const Duration(milliseconds: 800),
-      child: Container(
-        height: height,
-        width: double.infinity,
-        color: Colors.white,
+    return Padding(
+      padding:  EdgeInsets.all(8.0.r),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        period: const Duration(milliseconds: 800),
+        child: CustomContainer(
+          radiusAll: 8.r,
+          height: height,
+          width: double.infinity,
+          color: Colors.white,
+        ),
       ),
     );
   }

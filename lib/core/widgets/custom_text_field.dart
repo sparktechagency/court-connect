@@ -28,6 +28,7 @@ class CustomTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final Color? cursorColor;
   final int? maxLength;
+  final bool? enabled;
 
 
   const CustomTextField(
@@ -50,7 +51,7 @@ class CustomTextField extends StatefulWidget {
         this.hintextSize,
         this.labelText,
         this.isPassword = false,
-        this.readOnly = false, this.borderRadio, this.onTap, this.onChanged, this.cursorColor, this.maxLength});
+        this.readOnly = false, this.borderRadio, this.onTap, this.onChanged, this.cursorColor, this.maxLength, this.enabled});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -68,6 +69,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+
+      enabled: widget.enabled,
       maxLength: widget.maxLength,
       onChanged: widget.onChanged,
       onTap:widget. onTap,

@@ -67,8 +67,9 @@ class _PriceListBottomSheetState extends State<PriceListBottomSheet> {
             Divider(thickness: 0.4, color: Colors.grey.shade200),
 
             // Sort Options
-            _buildSortTile('Price: Low to High'),
-            _buildSortTile('Price: High to Low'),
+            _buildSortTile('Price: Low to High', 'low'),
+            _buildSortTile('Price: High to Low', 'high'),
+
 
             // Month Filter with Date Picker
             GestureDetector(
@@ -110,14 +111,14 @@ class _PriceListBottomSheetState extends State<PriceListBottomSheet> {
   }
 
   ///Helper method to build the sort options list tile
-  Widget _buildSortTile(String label, {Widget? trailing}) {
+  Widget _buildSortTile(String label, String value, {Widget? trailing}) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Radio<String>(
-        value: label,
+        value: value,
         groupValue: _controller.price.value,
-        onChanged: (value) => setState(() {
-          _controller.price.value = value!;
+        onChanged: (val) => setState(() {
+          _controller.price.value = val!;
         }),
         activeColor: Colors.black,
       ),

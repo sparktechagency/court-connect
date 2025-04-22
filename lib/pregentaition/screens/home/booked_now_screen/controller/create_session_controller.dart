@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,9 @@ class CreateSessionController extends GetxController {
   final TextEditingController timeController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
+
+
+
 
   Future<void> createSession(BuildContext context) async {
     isLoading.value = true;
@@ -42,6 +46,8 @@ class CreateSessionController extends GetxController {
         context.pushReplacementNamed(AppRoutes.customBottomNavBar);
         ToastMessageHelper.showToastMessage(
             responseBody['message'] ?? "");
+        _cleanField();
+        Get.find<HomeController>().getSession();
       } else {
 
         ToastMessageHelper.showToastMessage(
@@ -52,6 +58,18 @@ class CreateSessionController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+
+
+  void _cleanField(){
+    nameController.clear();
+    monthController.clear();
+    timeController.clear();
+    priceController.clear();
+    locationController.clear();
+    coverImage = null;
+
   }
 
   @override
