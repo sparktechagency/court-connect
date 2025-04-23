@@ -1,7 +1,10 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
 import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
+import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
 import 'package:courtconnect/pregentaition/screens/group/widgets/group_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,91 +50,109 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
   Widget build(BuildContext context) {
     return Obx(() {
       final data = _controller.groupDetailsData.value;
+      _controller.communityId.value = widget.id;
+
       if (_controller.isLoading.value) {
         return _buildShimmer();
       }
 
       return CustomScaffold(
         appBar: const CustomAppBar(title: 'Group Details'),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Cover Image + Title
-              GroupCardWidget(
-                coverImage:
-                    '${ApiUrls.imageBaseUrl}${data.communityImage ?? ''}',
-                title: data.communityName ?? '',
-                subTitle: '${data.totalMembers ?? ''} Members',
-              ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Cover Image + Title
+            GroupCardWidget(
+              coverImage:
+                  '${ApiUrls.imageBaseUrl}${data.communityImage ?? ''}',
+              title: data.communityName ?? '',
+              subTitle: '${data.totalMembers ?? ''} Members',
+            ),
 
-              /// Description
-              SizedBox(height: 16.h),
-              CustomText(text: 'Description', bottom: 6.h, color: Colors.grey),
-              CustomContainer(
-                width: double.infinity,
-                verticalPadding: 8.w,
-                horizontalPadding: 16.w,
-                radiusAll: 8.r,
-                color: Colors.grey.shade300,
-                child: CustomText(
-                  fontsize: 12.sp,
-                  textAlign: TextAlign.left,
-                  text: data.communityDescription ?? '',
-                ),
+            /// Description
+            SizedBox(height: 16.h),
+            CustomText(
+                text: 'Description', bottom: 6.h, color: Colors.grey),
+            CustomContainer(
+              width: double.infinity,
+              verticalPadding: 8.w,
+              horizontalPadding: 16.w,
+              radiusAll: 8.r,
+              color: Colors.grey.shade300,
+              child: CustomText(
+                maxline: 7,
+                fontsize: 12.sp,
+                textAlign: TextAlign.left,
+                text: data.communityDescription ?? '',
               ),
+            ),
 
-              /// Creator
+            /// Creator
+            CustomText(
+              text: 'Group Creator',
+              top: 20.h,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+              bottom: 10.h,
+            ),
+            CustomListTile(
+              image: data.creator?.image?.publicFileURL ?? '',
+              title: data.creator?.name ?? '',
+            ),
+
+            /// Members
+            if ((data.totalMembers ?? 0) > 0) ...[
               CustomText(
-                text: 'Group Creator',
-                top: 16.h,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-                bottom: 10.h,
-              ),
-              CustomListTile(
-                image: data.creator?.image?.publicFileURL ?? '',
-                title: data.creator?.name ?? '',
-              ),
-
-              /// Members
-              if ((data.totalMembers ?? 0) > 0) ...[
-                CustomText(
-                    text: 'All Members',
-                    top: 20.h,
-                    bottom: 10.h,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey),
-                GroupAllMembersWidget(
-                  totalMember: data.totalMembers!,
-                  members: data.members ?? [],
-                  onTap: (){
-                    context.pushNamed(
-                      AppRoutes.membersScreen,
-                      extra: {
-                        'members': data.members ?? [],
-                        'communityId': data.id!,
-                      },
-                    );
-
-                  },
-                ),
-              ],
-
-              /// Button
-              SizedBox(height: 36.h),
-              Obx(
-                      () {
-                        return _controller.isLoading.value ? const CustomLoader() : CustomButton(
-                    onPressed: () {
-                      _controller.joinCommunity(context,data.id!);
+                  text: 'All Members',
+                  top: 20.h,
+                  bottom: 10.h,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey),
+              GroupAllMembersWidget(
+                totalMember: data.totalMembers!,
+                members: data.members ?? [],
+                onTap: (){
+                  context.pushNamed(
+                    AppRoutes.membersScreen,
+                    extra: {
+                      'members': data.members ?? [],
+                      'communityId': data.id!,
                     },
-                    label: 'Join this Group',
                   );
-                }
+
+                },
               ),
             ],
-          ),
+
+            /// Button
+            const Spacer(),
+
+            if(_controller.type.value != 'my')
+            Obx(
+                    () {
+                      return _controller.isLoading.value ? const CustomLoader() : CustomButton(
+                  onPressed: () {
+                    if(data.alreadyJoined == true){
+                      showDeleteORSuccessDialog(context,message:'Do you really want to leave this group?',onTap: (){
+                        _controller.leaveGroup(context, data.id!);
+                        context.pop();
+                        context.pushNamed(AppRoutes.customBottomNavBar);
+                        Get.find<CustomBottomNavBarController>().onChange(1);
+                      },
+                        title: 'Leave Group',
+                        buttonLabel: 'leave',
+                      );
+                    }else{
+                      _controller.joinCommunity(context,data.id!);
+
+                    }
+                  },
+                  label: data.alreadyJoined! ? 'Leave Group' : 'Join this Group',
+                        backgroundColor: data.alreadyJoined! ? AppColors.removeColor : AppColors.primaryColor,
+                );
+              }
+            ),
+          ],
         ),
       );
     });

@@ -11,7 +11,7 @@ class CustomPopupMenu extends StatelessWidget {
   });
 
   final List<String> items;
-  final Function(String) onSelected;
+  final Function(String)? onSelected;
 
   @override
   Widget build(BuildContext context) {

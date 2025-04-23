@@ -1,4 +1,6 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/utils/app_colors.dart';
+import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/groupe_data.dart';
@@ -15,8 +17,11 @@ class GroupController extends GetxController {
   RxString limit = ''.obs;
   RxString date = ''.obs;
   RxString name = ''.obs;
+  RxString searchText = ''.obs;
+  RxString communityId = ''.obs;
 
-  RxList<GroupData> groupDataList = <GroupData>[].obs;
+
+  final RxList<GroupData> _groupDataList = <GroupData>[].obs;
   Rx<GroupDetailsData> groupDetailsData = GroupDetailsData().obs;
 
   @override
@@ -26,7 +31,7 @@ class GroupController extends GetxController {
   }
 
   Future<void> getGroup() async {
-    groupDataList.clear();
+    _groupDataList.clear();
     isLoading.value = true;
 
     try {
@@ -37,7 +42,7 @@ class GroupController extends GetxController {
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
         final List data = responseBody['data'];
-        groupDataList.value =
+        _groupDataList.value =
             data.map((json) => GroupData.fromJson(json)).toList();
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
@@ -48,6 +53,18 @@ class GroupController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
+
+  List<GroupData> get filteredGroupList {
+    final query = searchText.value;
+    if (query.isEmpty) return _groupDataList;
+    return _groupDataList
+        .where((group) => (group.name ?? '').toLowerCase().contains(query))
+        .toList();
+  }
+
+
 
 
 
@@ -86,7 +103,32 @@ class GroupController extends GetxController {
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
-        context.pushReplacementNamed(AppRoutes.postScreen);
+        Navigator.pop(context); // Remove current
+        context.pushNamed(AppRoutes.postScreen,extra: {
+          'id': communityId.value,
+        },);
+
+      } else {
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+      }
+    } catch (e) {
+      ToastMessageHelper.showToastMessage("Error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  Future<void> leaveGroup(BuildContext context, String? id) async {
+    isLoading.value = true;
+
+    try {
+      final response =
+          await ApiClient.postData(ApiUrls.communityLeave, {"communityId": id!});
+
+      final responseBody = response.body;
+      if (response.statusCode == 200 && responseBody['success'] == true) {
+        getGroup();
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -100,19 +142,22 @@ class GroupController extends GetxController {
 
 
 
-  Future<void> removeMember(String? communityId, memberId) async {
+  Future<void> removeMember(BuildContext context,String? communityId, memberId) async {
     isLoading.value = true;
 
     try {
-      final response = await ApiClient.postData(ApiUrls.joinCommunity, {
+      final response = await ApiClient.postData(ApiUrls.removeMember, {
         "communityId": communityId!,
         "memberId": memberId!,
       });
 
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
-        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
-      } else {
+        Navigator.pop(context); // Remove current
+        Navigator.pop(context); // Remove previous
+        context.pushReplacementNamed(AppRoutes.groupDetailsScreen, extra: {
+          'id': communityId,
+        });      } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
     } catch (e) {

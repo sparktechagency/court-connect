@@ -1,5 +1,6 @@
 import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/create_group_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/edit_group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/group_details_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/members_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
@@ -14,6 +15,7 @@ import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/
 import 'package:courtconnect/pregentaition/screens/home/session_edit/session_edit_screen.dart';
 import 'package:courtconnect/pregentaition/screens/message/chat_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/my_booking_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/other_profile/other_profile_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/profile_update.dart';
 import 'package:courtconnect/pregentaition/screens/profile/setting/about_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/setting/change%20password/change_password.dart';
@@ -64,6 +66,8 @@ class AppRoutes {
   static const String paymentScreen = "/paymentScreen";
   static const String editSessionScreen = "/EditSessionScreen";
   static const String membersScreen = "/membersScreen";
+  static const String editGroupScreen = "/EditGroupScreen";
+  static const String otherProfileScreen = "/OtherProfileScreen";
 
 
 
@@ -285,7 +289,11 @@ class AppRoutes {
         GoRoute(
           path: postScreen,
           name: postScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const PostScreen(), state),
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final id = extra['id']! as String;
+            return _customTransitionPage(  PostScreen(id: id,), state);
+  }  ,
         ),
 
 
@@ -341,6 +349,18 @@ class AppRoutes {
               state,
             );
           },
+        ),     GoRoute(
+          path: editGroupScreen,
+          name: editGroupScreen,
+          pageBuilder: (context, state) {
+            // Extract the session data from 'extra'
+            final groupParams = state.extra as Map<String, dynamic>;
+
+            return _customTransitionPage(
+              EditGroupScreen(groupParams: groupParams),  // Pass the entire session data
+              state,
+            );
+          },
         ),
 
         GoRoute(
@@ -352,6 +372,20 @@ class AppRoutes {
             return _customTransitionPage( GroupDetailsScreen(id: id,), state);
   } ,
         ),
+
+
+
+        GoRoute(
+          path: otherProfileScreen,
+          name: otherProfileScreen,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final id = extra['id']! as String;
+            return _customTransitionPage( OtherProfileScreen(id: id,), state);
+  } ,
+        ),
+
+
 
         GoRoute(
           path: AppRoutes.membersScreen,

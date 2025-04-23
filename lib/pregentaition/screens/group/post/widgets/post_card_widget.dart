@@ -1,6 +1,7 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_list_tile.dart';
+import 'package:courtconnect/core/widgets/custom_network_image.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -30,47 +31,63 @@ class PostCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
+      color: Colors.white,
       horizontalPadding: 10.w,
       radiusAll: 8.r,
-      verticalMargin: 8.h,
-      bordersColor: Colors.grey,
+      verticalMargin: 6.h,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          offset: const Offset(0, 1),
+          blurRadius: 2
+        )
+      ],
       child: Column(
         children: [
+          SizedBox(height: 6.h),
           CustomListTile(
             imageRadius: 20.r,
             image: profileImage,
             title: profileName,
             trailing: isMyPost ? _buildDropdownMenu(context) : null,
           ),
-          CustomText(
-            fontsize: 10.sp,
-            textAlign: TextAlign.start,
-            text: description ?? '',
+          Align(
+            alignment: Alignment.centerLeft,
+            child: CustomText(
+              maxline: 20,
+              top: 10.h,
+              bottom: 10.h,
+              fontsize: 10.sp,
+              textAlign: TextAlign.start,
+              text: description ?? '',
+            ),
           ),
-          //if (image != null && image != '') ...[
+          if (image != null && image != '') ...[
             SizedBox(height: 6.h),
             ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
-              child: Assets.images.group.image(),
+              child: CustomNetworkImage(imageUrl: image ?? ''),
             ),
-          //],
+          ],
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                  onTap: onCommentsView,
-                  child: Row(
-                    spacing: 4.w,
-                    children: [
-                      Assets.icons.comment.svg(),
-                      CustomText(
-                        fontsize: 10.sp,
-                        textAlign: TextAlign.start,
-                        text: 'View $comments comments',
-                      ),
-                    ],
+                Expanded(
+                  child: GestureDetector(
+                    onTap: onCommentsView,
+                    child: Row(
+                      spacing: 4.w,
+                      children: [
+                        Assets.icons.comment.svg(),
+                        CustomText(
+                          fontsize: 10.sp,
+                          textAlign: TextAlign.start,
+                          text: 'View $comments comments',
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 CustomText(
@@ -82,7 +99,7 @@ class PostCardWidget extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 

@@ -1,13 +1,16 @@
 import 'dart:io';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_button.dart';
-import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_list_tile.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/pregentaition/screens/group/post/controller/create_post_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -17,9 +20,14 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  File? _profileImage;
 
-  final TextEditingController _nameController = TextEditingController();
+  final CreatePostController _controller = Get.put(CreatePostController());
+
+
+  final ImagePicker _picker = ImagePicker();
+
+
+
   final TextEditingController _descriptionController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
 
@@ -27,82 +35,89 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       appBar: const CustomAppBar(
-        title: 'Create Community',
+        title: 'Create Post',
       ),
       body: Form(
         key: _globalKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ///<=========== description text form ==============>
-            CustomText(
-              text: 'Your Description',
-              bottom: 10.h,
-              top: 20.h,
-            ),
-            CustomTextField(
-              controller: _descriptionController,
-              maxLength: 200,
-              maxLine: 8,
-              hintText: 'Share your thoughts...',
-            ),
-
-            ///<=========== Profile Photo  form ==============>
-
-            CustomText(
-              text: 'Profile Photo',
-              bottom: 10.h,
-              top: 20.h,
-            ),
-            CustomContainer(
-              verticalPadding: 10.h,
-              width: double.infinity,
-              radiusAll: 12.r,
-              color: Colors.grey.shade300,
-              child: Column(
-                children: [
-                  const Icon(Icons.camera_alt_outlined),
-                  CustomText(
-                    text: _profileImage == null
-                        ? 'Drop your image here'
-                        : 'Please Upload...',
-                    fontsize: 8.sp,
-                    bottom: 6.h,
-                    top: 6.h,
+            Obx(
+              () {
+                return CustomListTile(
+                  title: 'skdngkjsnfk',
+                  trailing: CustomButton(
+                    height: 28.h,
+                    radius: 8.r,
+                    fontSize: 12.sp,
+                    width: 89.w,
+                    onPressed: () => _controller.createGroup(context, ''),
+                    label: 'Post',
                   ),
-                  if (_profileImage == null)
-                    CustomContainer(
-                      onTap: _pickImage,
-                      bordersColor: Colors.grey,
-                      verticalPadding: 2.h,
-                      horizontalPadding: 10.h,
-                      radiusAll: 10.r,
-                      color: Colors.blue.withOpacity(0.1),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.upload_outlined,
-                            size: 18.r,
-                          ),
-                          CustomText(
-                            text: 'Click to browse',
-                            fontsize: 8.sp,
-                          ),
-                        ],
+                );
+              }
+            ),
+
+            ///<=========== description text form ==============>
+            SizedBox(height: 16.h),
+            CustomTextField(
+              validator: (v) => null,
+              filColor: Colors.white,
+              borderColor: Colors.transparent,
+              controller: _descriptionController,
+              maxLine: 8,
+              hintText: 'Write about your thought.......',
+            ),
+
+            const Spacer(),
+
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(_controller.images.length, (index) {
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4.r),
+                      child: Image.file(
+                        _controller.images[index],
+                        width: 66.w,
+                        height: 61.h,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                ],
-              ),
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      child: GestureDetector(
+                          onTap: () => _removeImage(index),
+                          child: Assets.icons.removePhoto
+                              .svg(height: 14.h, width: 14.w)),
+                    ),
+                  ],
+                );
+              }),
             ),
 
-            ///<=========== Post Upload button ==============>
-            const Spacer(),
-            CustomButton(
-              onPressed: _onUploadPost,
-              label: 'Upload Post',
+            const Divider(
+              thickness: 0.4,
             ),
-            SizedBox(height: 24.h),
+
+            ///<===========  Photo  form ==============>
+
+            CustomText(
+              left: 10.w,
+              fontsize: 10.sp,
+              text: 'Upload photo (Optional)',
+              bottom: 6.h,
+              top: 10.h,
+            ),
+
+            GestureDetector(
+                onTap: _pickImage,
+                child: Assets.images.photoUpload
+                    .image(height: 137.h, width: double.infinity)),
+            SizedBox(height: 44.h),
           ],
         ),
       ),
@@ -110,59 +125,33 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   void _onUploadPost() {
-    if (!_globalKey.currentState!.validate()) return;
+
+
   }
 
   ///<=========== image Picker button ==============>
 
   Future<void> _pickImage() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        final ImagePicker picker = ImagePicker();
-
-        return SafeArea(
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text("Pick from Gallery"),
-                onTap: () async {
-                  final XFile? image =
-                      await picker.pickImage(source: ImageSource.gallery);
-                  if (image != null) {
-                    setState(() {
-                      _profileImage = File(image.path);
-                    });
-                  }
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text("Take a Photo"),
-                onTap: () async {
-                  final XFile? image =
-                      await picker.pickImage(source: ImageSource.camera);
-                  if (image != null) {
-                    setState(() {
-                      _profileImage = File(image.path);
-                    });
-                  }
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    final pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _controller.images.add(File(pickedFile.path));
+      });
+    }
   }
+
+
+  void _removeImage(int index) {
+    setState(() {
+      _controller.images.removeAt(index);
+    });
+  }
+
 
   @override
   void dispose() {
     super.dispose();
-    _nameController.dispose();
     _descriptionController.dispose();
   }
 }

@@ -57,6 +57,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/message.svg
   SvgGenImage get message => const SvgGenImage('assets/icons/message.svg');
 
+  /// File path: assets/icons/message_icons.svg
+  SvgGenImage get messageIcons =>
+      const SvgGenImage('assets/icons/message_icons.svg');
+
   /// File path: assets/icons/money.svg
   SvgGenImage get money => const SvgGenImage('assets/icons/money.svg');
 
@@ -73,6 +77,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/profile_nav.svg
   SvgGenImage get profileNav =>
       const SvgGenImage('assets/icons/profile_nav.svg');
+
+  /// File path: assets/icons/remove_photo.svg
+  SvgGenImage get removePhoto =>
+      const SvgGenImage('assets/icons/remove_photo.svg');
 
   /// File path: assets/icons/settings.svg
   SvgGenImage get settings => const SvgGenImage('assets/icons/settings.svg');
@@ -97,11 +105,13 @@ class $AssetsIconsGen {
         logOut,
         menu,
         message,
+        messageIcons,
         money,
         myBook,
         privacy,
         profileEdit,
         profileNav,
+        removePhoto,
         settings,
         support,
         terms
@@ -127,6 +137,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/man.png
   AssetGenImage get man => const AssetGenImage('assets/images/man.png');
 
+  /// File path: assets/images/other_profile_cover.png
+  AssetGenImage get otherProfileCover =>
+      const AssetGenImage('assets/images/other_profile_cover.png');
+
+  /// File path: assets/images/photo_upload.png
+  AssetGenImage get photoUpload =>
+      const AssetGenImage('assets/images/photo_upload.png');
+
   /// File path: assets/images/splash_bottom.png
   AssetGenImage get splashBottom =>
       const AssetGenImage('assets/images/splash_bottom.png');
@@ -140,8 +158,18 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/support_logo.png');
 
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [coin, group, homeImage, logo, man, splashBottom, splashTop, supportLogo];
+  List<AssetGenImage> get values => [
+        coin,
+        group,
+        homeImage,
+        logo,
+        man,
+        otherProfileCover,
+        photoUpload,
+        splashBottom,
+        splashTop,
+        supportLogo
+      ];
 }
 
 class $AssetsLottieGen {

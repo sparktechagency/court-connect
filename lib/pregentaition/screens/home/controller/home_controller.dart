@@ -15,11 +15,14 @@ class HomeController extends GetxController {
   RxString id = ''.obs;
   RxBool isLoading = false.obs;
 
+  RxString searchText = ''.obs;
+
+
 
   RxInt charge = 0.obs;
 
   RxList<BannerData> bannerList = <BannerData>[].obs;
-  RxList<SessionData> sessionList = <SessionData>[].obs;
+  final RxList<SessionData> _sessionList = <SessionData>[].obs;
 
   @override
   void onInit() {
@@ -60,7 +63,7 @@ class HomeController extends GetxController {
 
 
   Future<void> getSession() async {
-    sessionList.clear();
+    _sessionList.clear();
     isLoading.value = true;
 
     try {
@@ -71,7 +74,7 @@ class HomeController extends GetxController {
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
         List data = responseBody['data'] ?? [];
-        sessionList.value = data.map((e) => SessionData.fromJson(e)).toList();
+        _sessionList.value = data.map((e) => SessionData.fromJson(e)).toList();
       } else{
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -80,6 +83,17 @@ class HomeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+
+
+
+  List<SessionData> get filteredSessionList {
+    final query = searchText.value;
+    if (query.isEmpty) return _sessionList;
+    return _sessionList
+        .where((group) => (group.name ?? '').toLowerCase().contains(query))
+        .toList();
   }
 
 

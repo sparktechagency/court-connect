@@ -4,6 +4,7 @@ class GroupDetailsData {
   String? communityDescription;
   String? communityImage;
   Creator? creator;
+  bool? alreadyJoined;
   List<Members>? members;
   int? totalMembers;
 
@@ -13,6 +14,7 @@ class GroupDetailsData {
     this.communityDescription,
     this.communityImage,
     this.creator,
+    this.alreadyJoined,
     this.members,
     this.totalMembers,
   });
@@ -23,11 +25,12 @@ class GroupDetailsData {
     communityDescription = json['communityDescription'];
     communityImage = json['communityImage'];
     creator =
-        json['creator'] != null ? new Creator.fromJson(json['creator']) : null;
+        json['creator'] != null ? Creator.fromJson(json['creator']) : null;
+    alreadyJoined = json['alreadyJoined'];
     if (json['members'] != null) {
       members = <Members>[];
       json['members'].forEach((v) {
-        members!.add(new Members.fromJson(v));
+        members!.add(Members.fromJson(v));
       });
     }
     totalMembers = json['totalMembers'];
@@ -44,7 +47,7 @@ class Creator {
   Creator.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     name = json['name'];
-    image = json['image'] != null ? new Image.fromJson(json['image']) : null;
+    image = json['image'] != null ? Image.fromJson(json['image']) : null;
   }
 }
 
@@ -61,14 +64,16 @@ class Image {
 class Members {
   String? id;
   String? name;
+  String? email;
   String? image;
   String? joiningDate;
 
-  Members({this.id, this.name, this.image, this.joiningDate});
+  Members({this.id, this.name, this.email, this.image, this.joiningDate});
 
   Members.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    email = json['email'];
     image = json['image'];
     joiningDate = json['joiningDate'];
   }

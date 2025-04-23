@@ -39,6 +39,15 @@ class _HomeScreenState extends State<HomeScreen> {
     {'label': 'My Session', 'value': 'my'},
   ];
 
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      _homeController.searchText.value = _searchController.text.toLowerCase();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -94,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Expanded(
                 child: CustomTextField(
+                  validator: (_) => null,
                   controller: _searchController,
                   hintText: 'Search Session',
                   prefixIcon: Padding(
@@ -136,14 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              if (_homeController.sessionList.isEmpty) {
+              if (_homeController.filteredSessionList.isEmpty) {
                 return const Center(child: Text("No sessions available"));
               }
 
               return ListView.builder(
-                itemCount: _homeController.sessionList.length,
+                itemCount: _homeController.filteredSessionList.length,
                 itemBuilder: (context, index) {
-                  final session = _homeController.sessionList[index];
+                  final session = _homeController.filteredSessionList[index];
                   return Obx(
                           () {
                         return CustomSessionCard(

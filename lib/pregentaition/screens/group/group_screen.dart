@@ -1,9 +1,11 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/core/widgets/two_button_widget.dart';
+import 'package:courtconnect/pregentaition/screens/group/controller/edit_group_controller.dart';
 import 'package:courtconnect/pregentaition/screens/group/controller/group_controller.dart';
 import 'package:courtconnect/pregentaition/screens/group/widgets/group_card_widget.dart';
 import 'package:courtconnect/services/api_urls.dart';
@@ -23,12 +25,23 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   final TextEditingController _searchController = TextEditingController();
   final GroupController _controller = Get.put(GroupController());
+  final EditGroupController _editGroupController = Get.put(EditGroupController());
 
   final _sessionTypes = [
     {'label': 'Explore Groups', 'value': 'all'},
     {'label': 'Joined Groups', 'value': 'join'},
     {'label': 'My Creations', 'value': 'my'},
   ];
+
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      _controller.searchText.value = _searchController.text.toLowerCase();
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +63,6 @@ class _GroupScreenState extends State<GroupScreen> {
       body: Column(
         spacing: 16.h,
         children: [
-
           Obx(() {
             return TwoButtonWidget(
               fontSize: 12.sp,
@@ -59,12 +71,8 @@ class _GroupScreenState extends State<GroupScreen> {
               onTap: _controller.onChangeType,
             );
           }),
-
-
           CustomTextField(
-            validator: (_) {
-              return null;
-            },
+            validator: (v) => null,
             borderRadio: 90.r,
             prefixIcon: Padding(
               padding: EdgeInsets.only(left: 12.w),
@@ -74,10 +82,6 @@ class _GroupScreenState extends State<GroupScreen> {
             hintText: 'Search Community...',
             contentPaddingVertical: 0,
           ),
-
-
-
-
           Expanded(child: Obx(() {
             if (_controller.isLoading.value) {
               return ListView.builder(
@@ -86,21 +90,56 @@ class _GroupScreenState extends State<GroupScreen> {
               );
             }
 
-            if (_controller.groupDataList.isEmpty) {
+            if (_controller.filteredGroupList.isEmpty) {
               return const Center(child: Text("No Community available"));
             }
             return ListView.builder(
-                itemCount: _controller.groupDataList.length,
+                itemCount: _controller.filteredGroupList.length,
                 itemBuilder: (context, index) {
-                  final data = _controller.groupDataList[index];
+                  final data = _controller.filteredGroupList[index];
                   return GroupCardWidget(
+                    menuItems: _controller.type.value == 'all'
+                        ? []
+                        : ['Edit', 'Delete', 'Group Info'],
+                    onSelected: (val) {
+                      if (val == 'Delete') {
+                        showDeleteORSuccessDialog(context, onTap: () {
+                          _editGroupController.deleteGroup(context, data.id!);
+                        });
+                      } else if (val == 'Edit') {
+                        context.pushNamed(
+                          AppRoutes.editGroupScreen,
+                          extra: {
+                            'id': data.id!,
+                            'name': data.name ?? '',
+                            'image':
+                                '${ApiUrls.imageBaseUrl}${data.coverPhoto ?? ''}',
+                            'des': data.description ?? '',
+                          },
+                        );
+                      } else if (val == 'Group Info') {
+                        context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
+                          'id': data.id!,
+                        },
+                        );
+                      }
+                    },
                     title: data.name ?? '',
                     subTitle: '${data.totalMembers} Members',
                     coverImage: '${ApiUrls.imageBaseUrl}${data.coverPhoto}',
                     detailAction: () {
-                      context.pushNamed(AppRoutes.groupDetailsScreen,extra: {
-                        'id' : data.id!,
+                      context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
+                        'id': data.id!,
                       });
+                    },
+
+
+                    onTapPostAction: (){
+                      if(_controller.type.value == 'join' || _controller.type.value == 'my'){
+                        context.pushNamed(AppRoutes.postScreen,extra: {
+                          'id': data.id!,
+                        },);
+                      }
                     },
                   );
                 });

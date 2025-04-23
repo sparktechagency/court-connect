@@ -32,7 +32,7 @@ class CreateGroupController extends GetxController {
           ApiUrls.communityCreate,
           bodyParams,
           multipartBody: [
-            MultipartBody('photo', profileImage!),
+            MultipartBody('photo', coverImage!),
             MultipartBody('coverPhoto', coverImage!),
           ]
       );

@@ -14,8 +14,8 @@ class GroupAllMembersWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int displayCount = members.length > 3 ? 3 : members.length;
-    double imageSize = 50.w;
-    double spacing = 8.w;
+    double imageSize = 60.w;
+    double spacing = 20.w;
     double totalWidth = imageSize + (displayCount - 1) * (imageSize - spacing);
 
     return GestureDetector(

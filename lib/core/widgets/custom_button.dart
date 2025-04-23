@@ -60,7 +60,7 @@ class CustomButton extends StatelessWidget {
           child != null
               ? child!
               : child == null && label != null
-              ? Text(label!)
+              ? Text(label!,)
               : const SizedBox.shrink(),
       icon: icon != null ? Icon(icon, color: Colors.white) : null,
     );
