@@ -1,42 +1,37 @@
 import 'dart:io';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
-import 'package:courtconnect/pregentaition/screens/group/controller/group_controller.dart';
+import 'package:courtconnect/pregentaition/screens/group/post/comment/comtroller/comment_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
-class EditGroupController extends GetxController {
+class CommentEditController extends GetxController {
   final RxBool isLoading = false.obs;
 
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController desController = TextEditingController();
-  File? coverImage;
+  final TextEditingController commentController = TextEditingController();
+  List<File> images = [];
 
 
 
 
 
 
-  Future<void> editMyGroup(BuildContext context, String id) async {
+  Future<void> editComment(String postId,commentId) async {
     try {
+
       isLoading.value = true;
 
       final response =
-      await ApiClient.patchMultipartData(ApiUrls.editGroup(id), {
-        'name': nameController.text.trim(),
-      }, multipartBody: [
-        MultipartBody('photo', coverImage!),
-        MultipartBody('coverPhoto', coverImage!),
-      ]);
+      await ApiClient.patchMultipartData(ApiUrls.editComment(postId,commentId), {
+        'comment': commentController.text.trim(),
+      },
+      );
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
-        Get.find<GroupController>().getGroup();
-        nameController.clear();
-        coverImage = null;
-        context.pop();
+        Get.find<CommentController>().getComment(postId);
+        commentController.clear();
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -51,17 +46,16 @@ class EditGroupController extends GetxController {
 
 
 
-  Future<void> deleteGroup(BuildContext context,String id) async {
+  Future<void> deleteComment(String postId,commentId) async {
     try {
       isLoading.value = true;
 
-      final response = await ApiClient.deleteData(ApiUrls.deleteGroup(id));
+      final response = await ApiClient.deleteData(ApiUrls.deleteComment(postId,commentId));
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
-        context.pop();
-        Get.find<GroupController>().getGroup();
+        Get.find<CommentController>().getComment(postId);
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -74,8 +68,7 @@ class EditGroupController extends GetxController {
 
   @override
   void dispose() {
-    nameController.dispose();
-    desController.dispose();
+    commentController.dispose();
     super.dispose();
   }
 }

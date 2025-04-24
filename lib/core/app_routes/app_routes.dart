@@ -5,7 +5,9 @@ import 'package:courtconnect/pregentaition/screens/group/group_details_screen.da
 import 'package:courtconnect/pregentaition/screens/group/members_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
 import 'package:courtconnect/pregentaition/screens/group/post/create_post_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/post/models/post_data.dart';
 import 'package:courtconnect/pregentaition/screens/group/post/post_screen.dart';
+import 'package:courtconnect/pregentaition/screens/group/post/edit_post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/create_session_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/payement_screen.dart';
@@ -68,6 +70,7 @@ class AppRoutes {
   static const String membersScreen = "/membersScreen";
   static const String editGroupScreen = "/EditGroupScreen";
   static const String otherProfileScreen = "/OtherProfileScreen";
+  static const String editPostScreen = "/editPostScreen";
 
 
 
@@ -303,11 +306,16 @@ class AppRoutes {
         GoRoute(
           path: createPostScreen,
           name: createPostScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const CreatePostScreen(), state),
+          pageBuilder: (context, state) {
+            final userInfo = state.extra as Map<String, dynamic>;
+
+            return _customTransitionPage( CreatePostScreen(userInfo: userInfo,), state);
+
+  }
         ),
 
 
- ///=========ForgetScreen Screen========>>
+ ///  =========  ForgetScreen Screen  ========>>
 
         GoRoute(
           path: chatScreen,
@@ -326,7 +334,28 @@ class AppRoutes {
         ),
 
 
- ///=========ForgetScreen Screen========>>
+///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: editPostScreen,
+          name: editPostScreen,
+          pageBuilder: (context, state) {
+            final Map<String, dynamic> postData = state.extra as Map<String, dynamic>;
+            final List<Media> media = postData['media'] as List<Media>;
+
+            return _customTransitionPage(
+              EditPostScreen(
+                media: media,
+                postData: postData,
+              ),
+              state,
+            );
+          },
+        ),
+
+
+
+        ///=========ForgetScreen Screen========>>
 
         GoRoute(
           path: paymentScreen,

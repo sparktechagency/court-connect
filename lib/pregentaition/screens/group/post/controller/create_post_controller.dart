@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/group/post/controller/post_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
@@ -16,43 +17,41 @@ class CreatePostController extends GetxController {
 
 
 
-  Future<void> createGroup(BuildContext context,String id) async {
-    if (descriptionController.text.trim().isEmpty && images.isEmpty) {
-      ToastMessageHelper.showToastMessage('Description or Image is required.');
-      return;
-    }
+  Future<void> createPost(BuildContext context,String id) async {
+    ToastMessageHelper.showToastMessage('Your post is on its way, please wait a moment...');
     isLoading.value = true;
 
-    var bodyParams = {
-      "description": descriptionController.text.trim(),
-    };
+      var bodyParams = {
+        "description": descriptionController.text.trim(),
+      };
 
-    try {
-      List<MultipartBody> multipartFiles = images.map((image) {
-        return MultipartBody('media', image);
-      }).toList();
+      try {
+        List<MultipartBody> multipartFiles = images.map((image) {
+          return MultipartBody('media', image);
+        }).toList();
 
-      final response = await ApiClient.postMultipartData(
-        ApiUrls.postCreate(id),
-        bodyParams,
-        multipartBody: multipartFiles,
-      );
+        final response = await ApiClient.postMultipartData(
+          ApiUrls.postCreate(id),
+          bodyParams,
+          multipartBody: multipartFiles,
+        );
 
-      final responseBody = response.body;
-      if ((response.statusCode == 200 || response.statusCode == 201) &&
-          responseBody['success'] == true) {
-        context.pushReplacementNamed(AppRoutes.postScreen);
-        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+        final responseBody = response.body;
+        if ((response.statusCode == 200 || response.statusCode == 201) && responseBody['success'] == true) {
+          ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+          _cleanField();
+        } else {
+          ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+          _cleanField();
+        }
+      } catch (e) {
+        ToastMessageHelper.showToastMessage("Error: $e");
         _cleanField();
-      } else {
-        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+      } finally {
+        isLoading.value = false;
       }
-    } catch (e) {
-      ToastMessageHelper.showToastMessage("Error: $e");
-    } finally {
-      isLoading.value = false;
     }
-  }
+
 
   void _cleanField() {
     descriptionController.clear();

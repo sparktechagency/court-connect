@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 
 class TimeFormatHelper {
@@ -43,7 +44,22 @@ class TimeFormatHelper {
     return DateFormat('MMMM').format(dateTime); // Only day (date)
   }
 
-  // static Future<void> isFutureDate(String input) async {
+
+
+  static String getTimeAgo(DateTime postTime) {
+    String time = timeago.format(postTime);
+    return time
+        .replaceAll('seconds', 'sec')
+        .replaceAll('second', 'sec')
+        .replaceAll('minutes', 'min')
+        .replaceAll('minute', 'min')
+        .replaceAll('hours', 'hr')
+        .replaceAll('hour', 'hr');
+  }
+
+
+
+// static Future<void> isFutureDate(String input) async {
   //   try {
   //     DateTime date = DateTime.parse(input);
   //     DateTime now = DateTime.now();

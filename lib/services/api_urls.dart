@@ -36,4 +36,10 @@ class ApiUrls {
   static   String  editGroup (String id)=> '/community/edit?communityId=$id';
   static   String  otherProfile (String id)=> '/auth/other-profile?userId=$id';
   static   String  postCreate (String id)=> '/post/create?communityId=$id';
+  static   String  commentCreate (String id)=> '/comment/add?postId=$id';
+  static   String  postDelete (String postId,communityId)=> '/post/delete?postId=$postId&communityId=$communityId';
+  static   String  postEdit (String postId,communityId,mediaId)=> '/post/edit?communityId=$communityId&postId=$postId&mediaId=$mediaId';
+  static   String  getComment (String postId,limit)=> '/comment?postId=$postId&limit=$limit';
+  static   String  editComment (String postId,commentId)=> '/comment/edit?postId=$postId&commentId=$commentId';
+  static   String  deleteComment (String postId,commentId)=> '/comment/delete?postId=$postId&commentId=$commentId';
 }

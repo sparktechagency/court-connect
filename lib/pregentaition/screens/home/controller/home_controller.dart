@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   RxString userName = ''.obs;
+  RxString userImage = ''.obs;
+  RxString userId = ''.obs;
   RxString type = 'all'.obs;
   RxString price = ''.obs;
   RxString date = ''.obs;
@@ -27,14 +29,16 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _getUserName();
+    _getUser();
     _getBanner();
     getSession();
     getCharge();
   }
 
-  void _getUserName() async {
+  void _getUser() async {
     userName.value = await PrefsHelper.getString(AppConstants.name);
+    userImage.value = await PrefsHelper.getString(AppConstants.image);
+    userId.value = await PrefsHelper.getString(AppConstants.userId);
   }
 
   /// <==================== Get Banner Data ======================>

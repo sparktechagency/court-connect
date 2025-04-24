@@ -38,12 +38,16 @@ class LoginController extends GetxController {
 
         final String? token = responseBody['data']?['token'];
         final String? userName = responseBody['data']?['user']['name'];
+        final String? userImage = responseBody['data']?['user']['image'];
+        final String? userId = responseBody['data']?['user']['_id'];
 
         if (token != null) {
           debugPrint('====================> response token save: $token');
           debugPrint('====================> response userName save: $userName');
           await PrefsHelper.setString(AppConstants.bearerToken, token);
           await PrefsHelper.setString(AppConstants.name, userName);
+          await PrefsHelper.setString(AppConstants.image, userImage);
+          await PrefsHelper.setString(AppConstants.userId, userId);
           context.pushReplacementNamed(AppRoutes.customBottomNavBar);
         }
       } else {

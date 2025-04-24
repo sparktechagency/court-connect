@@ -45,6 +45,8 @@ dependencies:
   syncfusion_flutter_pdf: ^29.1.38
   path_provider: ^2.1.5
   open_file: ^3.5.10
+  dots_indicator: ^4.0.1
+  timeago: ^3.7.0
 
 dev_dependencies:
   flutter_test:

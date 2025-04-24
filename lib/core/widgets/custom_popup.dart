@@ -1,4 +1,3 @@
-import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,16 +6,18 @@ class CustomPopupMenu extends StatelessWidget {
   const CustomPopupMenu({
     super.key,
     required this.items,
-    required this.onSelected,
+    required this.onSelected, this.iconColor, this.icon,
   });
 
   final List<String> items;
   final Function(String)? onSelected;
+  final Color? iconColor;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert,color: Colors.white,),
+      icon: Icon(icon ?? Icons.more_vert,color: iconColor ?? Colors.white,),
       //constraints: BoxConstraints(maxHeight: 200.h),
       color: Colors.white,
       onSelected: onSelected,
