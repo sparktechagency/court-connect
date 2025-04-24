@@ -51,9 +51,20 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
+  build_runner: ^2.4.10
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/img.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/img.png"
+
+
 
   flutter_lints: ^4.0.0
-  build_runner: ^2.4.10
   flutter_gen_runner: null
 
 
