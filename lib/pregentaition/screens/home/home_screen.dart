@@ -1,4 +1,5 @@
 import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/book_mark_controller.dart';
 import 'package:courtconnect/pregentaition/screens/home/session_edit/controller/session_edit_controller.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           Obx(() => CarouselSlider(
-                options: CarouselOptions(autoPlay: true, aspectRatio: 14 / 4),
+                options: CarouselOptions(
+                  viewportFraction: .7,
+                    enlargeCenterPage: true,
+                    autoPlay: true, aspectRatio: 14 / 4),
                 items: _homeController.bannerList.map((item) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(8.r),
@@ -90,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (await launchUrl(url)) await launchUrl(url);
                             },
                             child: CachedNetworkImage(
+                              width: double.infinity,
                               fit: BoxFit.cover,
                               height: 114.h,
                               imageUrl: '${ApiUrls.imageBaseUrl}${item.image}',
@@ -176,7 +181,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               );
                             }else if(val == 'Delete'){
-                              _sessionEditController.deleteMySession(session.sId!);
+                              showDeleteORSuccessDialog(context, onTap: () {
+                                context.pop();
+                                _sessionEditController.deleteMySession(session.sId!);
+                              });
                             }
 
                           },

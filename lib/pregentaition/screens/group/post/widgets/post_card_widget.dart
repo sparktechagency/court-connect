@@ -122,28 +122,24 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                             color: Colors.black.withOpacity(0.5),
                             child: CustomText(
                               text:
-                                  '${_currentPage + 1}/${widget.media!.length}',
+                              '${_currentPage + 1}/${widget.media!.length}',
                               color: Colors.white,
                               fontsize: 10.sp,
                               fontWeight: FontWeight.w600,
                             )))
+
                   ],
                 ),
               ),
               if ((widget.media?.length ?? 0) > 1)
-                Positioned(
-                  left: 0.0.w,
-                  right: 0.0.w,
-                  bottom: 0.0.h,
-                  child: DotsIndicator(
-                    position: _currentPage.toDouble(),
-                    dotsCount: widget.media!.length,
-                    decorator: DotsDecorator(
-                      size: Size.square(5.0.r),
-                      spacing: EdgeInsets.symmetric(
-                          horizontal: 2.w, vertical: 6.h), // Space between dots
-                      activeColor: AppColors.primaryColor,
-                    ),
+                DotsIndicator(
+                  position: _currentPage.toDouble(),
+                  dotsCount: widget.media!.length,
+                  decorator: DotsDecorator(
+                    size: Size.square(5.0.r),
+                    spacing: EdgeInsets.symmetric(
+                        horizontal: 2.w, vertical: 6.h), // Space between dots
+                    activeColor: AppColors.primaryColor,
                   ),
                 )
             ],
