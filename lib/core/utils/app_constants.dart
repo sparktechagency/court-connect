@@ -6,6 +6,7 @@ class AppConstants{
   static const String image = "image";
   static const String role = "role";
   static const String userId = "userId";
+  static const String bio = "bio";
   static const String isLogged = "isLogged";
   static const String managerType = "managerType";
   static const String fcmToken = "fcmToken";

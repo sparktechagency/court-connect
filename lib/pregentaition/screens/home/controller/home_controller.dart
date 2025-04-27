@@ -15,6 +15,7 @@ class HomeController extends GetxController {
   RxString price = ''.obs;
   RxString date = ''.obs;
   RxString id = ''.obs;
+  RxString bio = ''.obs;
   RxBool isLoading = false.obs;
 
   RxString searchText = ''.obs;
@@ -37,6 +38,7 @@ class HomeController extends GetxController {
     userName.value = await PrefsHelper.getString(AppConstants.name);
     userImage.value = await PrefsHelper.getString(AppConstants.image);
     userId.value = await PrefsHelper.getString(AppConstants.userId);
+    bio.value = await PrefsHelper.getString(AppConstants.bio);
   }
 
   /// <==================== Get Banner Data ======================>

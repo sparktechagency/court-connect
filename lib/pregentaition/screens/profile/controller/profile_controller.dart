@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/profile/models/my_profile_data.dart';
 import 'package:courtconnect/pregentaition/screens/profile/models/other_profile_data.dart';
@@ -72,12 +74,24 @@ class ProfileController extends GetxController {
         ];
       }
 
+
+
       final response = await ApiClient.patchMultipartData(
           ApiUrls.updateProfile, bodyParams,
           multipartBody: multipartBody);
       final responseBody = response.body;
 
+      final String? userName = responseBody['data']?['user']?['name'] ?? '';
+      final String? userImage = responseBody['data']?['user']?['image'] ?? '';
+      final String? bio = responseBody['data']?['user']?['boi'] ?? '';
+
       if (response.statusCode == 200 && responseBody['success'] == true) {
+        await PrefsHelper.remove(AppConstants.name);
+        await PrefsHelper.remove(AppConstants.image);
+        await PrefsHelper.remove(AppConstants.bio);
+        await PrefsHelper.setString(AppConstants.name, userName);
+        await PrefsHelper.setString(AppConstants.image, userImage);
+        await PrefsHelper.setString(AppConstants.bio, bio);
         getMyProfile();
         context.pop();
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? '');

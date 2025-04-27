@@ -3,8 +3,10 @@ import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
 import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class ChatProfileViewScreen extends StatelessWidget {
   const ChatProfileViewScreen({super.key, required this.chatData});
@@ -39,7 +41,7 @@ class ChatProfileViewScreen extends StatelessWidget {
           Divider(thickness: 0.2,color: Colors.black,),
           SizedBox(height: 24.h),
           CustomText(text: 'Bio : ',textAlign: TextAlign.start,fontWeight: FontWeight.w600,),
-          CustomText(text: "hy i'm mobile app developer ",fontsize: 13.sp,),
+          CustomText(text: Get.find<HomeController>().bio.value,fontsize: 13.sp,),
 
 
           SizedBox(height: 24.h),

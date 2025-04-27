@@ -69,16 +69,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 radiusAll: 8.r,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    offset: Offset(0, 2),
-                    blurRadius: 16,
+                    color: Colors.black.withOpacity(0.2),
+                    offset: Offset(0, 1),
+                    blurRadius: 4,
                   )
                 ],
                 marginAll: 12.r,
                 paddingAll: 16.r,
                   color: Colors.white,
 
-                child: Text(_controller.notificationData[index].msg ?? ''),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    CustomText(text: 'Notification',fontWeight: FontWeight.w600,),
+                    CustomText(
+                      textAlign: TextAlign.start,
+                      text: _controller.notificationData[index].msg ?? '',fontsize: 12.sp,),
+                  ],
+                ),
               );
 
 
