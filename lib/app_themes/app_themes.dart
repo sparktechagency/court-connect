@@ -5,11 +5,14 @@ import '../core/utils/app_colors.dart';
 class Themes {
   final lightTheme = ThemeData.light().copyWith(
       scaffoldBackgroundColor: AppColors.bgColor,
+      shadowColor: Colors.black,
+
+
 
       ///-----------------app bar theme------------------>
       appBarTheme: const AppBarTheme(
           color: Colors.white,
-          // backgroundColor: Colors.white10,
+          //backgroundColor: Colors.white10,
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 0)
@@ -44,7 +47,7 @@ class Themes {
 
 
       scrollbarTheme: ScrollbarThemeData(
-          thumbColor: MaterialStatePropertyAll(Colors.red.withOpacity(.50))
+          //thumbColor: MaterialStatePropertyAll(Colors.red.withOpacity(.50))
       ),
 
       ///-----------------app bar theme------------------>

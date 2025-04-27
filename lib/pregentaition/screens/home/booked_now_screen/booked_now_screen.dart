@@ -21,6 +21,19 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
 
   final HomeController _controller = Get.put(HomeController());
 
+  @override
+  void initState() {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.getCharge();
+    });
+
+
+
+
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +43,14 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomText(
-              text: 'Create Your Session for Only \$${_controller.charge.value.toInt()}!',
-              fontWeight: FontWeight.w600,
-              fontsize: 18.sp,
-              color: AppColors.primaryColor,
+            Obx(() {
+                return CustomText(
+                  text: 'Create Your Session for Only \$${_controller.charge.value.toInt()}!',
+                  fontWeight: FontWeight.w600,
+                  fontsize: 18.sp,
+                  color: AppColors.primaryColor,
+                );
+              }
             ),
             CustomText(
               top: 10.h,

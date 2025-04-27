@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/comment/comtroller/comment_controller.dart';
+import 'package:courtconnect/pregentaition/screens/post/controller/post_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-class CommentEditController extends GetxController {
+class EditPostController extends GetxController {
   final RxBool isLoading = false.obs;
 
-  final TextEditingController commentController = TextEditingController();
+  final TextEditingController desController = TextEditingController();
   List<File> images = [];
 
 
@@ -17,21 +17,28 @@ class CommentEditController extends GetxController {
 
 
 
-  Future<void> editComment(String postId,commentId) async {
+  Future<void> editMyPost(BuildContext context, String postId,communityId,[String? mediaId]) async {
     try {
+      if(mediaId!.isEmpty)
+        ToastMessageHelper.showToastMessage('Your post is on its way, please wait a moment...');
 
       isLoading.value = true;
 
+      List<MultipartBody> multipartFiles = images.map((image) {
+        return MultipartBody('media', image);
+      }).toList();
+
       final response =
-      await ApiClient.patchMultipartData(ApiUrls.editComment(postId,commentId), {
-        'comment': commentController.text.trim(),
-      },
+      await ApiClient.patchMultipartData(ApiUrls.postEdit(postId,communityId,mediaId ?? ''), {
+        'description': desController.text.trim(),
+      }, multipartBody: multipartFiles,
       );
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
-        Get.find<CommentController>().getComment(postId);
-        commentController.clear();
+        Get.find<PostController>().getPost();
+        images = [];
+
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -46,16 +53,16 @@ class CommentEditController extends GetxController {
 
 
 
-  Future<void> deleteComment(String postId,commentId) async {
+  Future<void> deletePost(BuildContext context,String postId,communityId) async {
     try {
       isLoading.value = true;
 
-      final response = await ApiClient.deleteData(ApiUrls.deleteComment(postId,commentId));
+      final response = await ApiClient.deleteData(ApiUrls.postDelete(postId,communityId));
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
-        Get.find<CommentController>().getComment(postId);
+        Get.find<PostController>().getPost();
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -68,7 +75,7 @@ class CommentEditController extends GetxController {
 
   @override
   void dispose() {
-    commentController.dispose();
+    desController.dispose();
     super.dispose();
   }
 }

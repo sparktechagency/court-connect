@@ -1,21 +1,24 @@
+import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/create_group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/edit_group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/group_details_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/members_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/create_post_screen.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/models/post_data.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/post_screen.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/edit_post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/create_session_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/payement_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
-import 'package:courtconnect/pregentaition/screens/home/models/session_data.dart';
 import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/registered_users_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/session_edit/session_edit_screen.dart';
+import 'package:courtconnect/pregentaition/screens/message/chat_profile_view_screen.dart';
 import 'package:courtconnect/pregentaition/screens/message/chat_screen.dart';
+import 'package:courtconnect/pregentaition/screens/notification/notification_screen.dart';
+import 'package:courtconnect/pregentaition/screens/post/create_post_screen.dart';
+import 'package:courtconnect/pregentaition/screens/post/edit_post_screen.dart';
+import 'package:courtconnect/pregentaition/screens/post/models/post_data.dart';
+import 'package:courtconnect/pregentaition/screens/post/post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/my_booking_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/other_profile/other_profile_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/profile_update.dart';
@@ -71,6 +74,8 @@ class AppRoutes {
   static const String editGroupScreen = "/EditGroupScreen";
   static const String otherProfileScreen = "/OtherProfileScreen";
   static const String editPostScreen = "/editPostScreen";
+  static const String notificationScreen = "/notificationScreen";
+  static const String chatProfileViewScreen = "/chatProfileViewScreen";
 
 
 
@@ -87,13 +92,12 @@ class AppRoutes {
           builder: (context, state) =>const SplashScreen(),
           redirect: (context, state) {
             Future.delayed(const Duration(seconds: 3), ()async{
-              // String role = await PrefsHelper.getString(AppConstants.role);
-              // String token = await PrefsHelper.getString(AppConstants.bearerToken);
-              // if(token.isNotEmpty){
-              //     // AppRoutes.goRouter.replaceNamed(AppRoutes.managerHomeScreen);
-              // }else{
+               String token = await PrefsHelper.getString(AppConstants.bearerToken);
+              if(token.isNotEmpty){
+                AppRoutes.goRouter.replaceNamed(AppRoutes.customBottomNavBar);
+              }else{
                 AppRoutes.goRouter.replaceNamed(AppRoutes.loginScreen);
-              // }
+              }
 
 
             });
@@ -320,7 +324,10 @@ class AppRoutes {
         GoRoute(
           path: chatScreen,
           name: chatScreen,
-          pageBuilder: (context, state) =>  _customTransitionPage( const ChatScreen(), state),
+          pageBuilder: (context, state) {
+  final groupParams = state.extra as Map<String, dynamic>;
+  return _customTransitionPage( ChatScreen(chatData: groupParams,), state);
+  }  ,
         ),
 
 
@@ -331,6 +338,17 @@ class AppRoutes {
           path: createSessionScreen,
           name: createSessionScreen,
           pageBuilder: (context, state) =>  _customTransitionPage( const CreateSessionScreen(), state),
+        ),
+
+///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: chatProfileViewScreen,
+          name: chatProfileViewScreen,
+          pageBuilder: (context, state) {
+            final chatData = state.extra as Map<String, dynamic>;
+            return _customTransitionPage( ChatProfileViewScreen(chatData: chatData,), state);
+  }  ,
         ),
 
 
@@ -361,6 +379,14 @@ class AppRoutes {
           path: paymentScreen,
           name: paymentScreen,
           pageBuilder: (context, state) =>  _customTransitionPage( const PaymentScreen(), state),
+        ),
+
+        ///=========ForgetScreen Screen========>>
+
+        GoRoute(
+          path: notificationScreen,
+          name: notificationScreen,
+          pageBuilder: (context, state) =>  _customTransitionPage( const NotificationScreen(), state),
         ),
 
 

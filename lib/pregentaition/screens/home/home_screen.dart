@@ -1,8 +1,10 @@
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
+import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/book_mark_controller.dart';
 import 'package:courtconnect/pregentaition/screens/home/session_edit/controller/session_edit_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -43,10 +45,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+
+    var info=dotenv.env['STRIPE_PUBLISHABLE_KEY'];
+    print(' ==================  >>$info');
+
     super.initState();
+    _homeController.getSession();
     _searchController.addListener(() {
       _homeController.searchText.value = _searchController.text.toLowerCase();
     });
+
   }
 
   @override
@@ -71,38 +79,49 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.pushNamed(AppRoutes.notificationScreen);
+            },
             icon: const Icon(Icons.notifications, color: Colors.black),
           ),
         ],
       ),
       body: Column(
         children: [
-          Obx(() => CarouselSlider(
-                options: CarouselOptions(
-                  viewportFraction: .7,
-                    enlargeCenterPage: true,
-                    autoPlay: true, aspectRatio: 14 / 4),
-                items: _homeController.bannerList.map((item) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(8.r),
-                    child: _homeController.isLoading.value
-                        ? _buildShimmer(height: 114.h)
-                        : GestureDetector(
-                            onTap: () async {
-                              final url = Uri.parse(item.link ?? '');
-                              if (await launchUrl(url)) await launchUrl(url);
-                            },
-                            child: CachedNetworkImage(
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              height: 114.h,
-                              imageUrl: '${ApiUrls.imageBaseUrl}${item.image}',
-                            ),
-                          ),
-                  );
-                }).toList(),
-              )),
+          Obx(() {
+            if (_homeController.bannerList.isEmpty) {
+              return const SizedBox();
+            }
+
+            return CarouselSlider(
+              options: CarouselOptions(
+                viewportFraction: .7,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                aspectRatio: 14 / 4,
+              ),
+              items: _homeController.bannerList.map((item) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: GestureDetector(
+                    onTap: () async {
+                      final url = Uri.parse(item.link ?? '');
+                      if (await launchUrl(url)) {
+                        await launchUrl(url);
+                      }
+                    },
+                    child: CachedNetworkImage(
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      height: 114.h,
+                      imageUrl: '${ApiUrls.imageBaseUrl}${item.image}',
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          }),
+
           SizedBox(height: 24.h),
           Row(
             children: [
@@ -196,16 +215,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
                           ],
                           onTap: () {
-                            if(_homeController.type.value == 'all'){
-                              _bookMarkController.getBookMark( context,session.sId ?? '');
+                            if(  session.isbooked == true){
+                              ToastMessageHelper.showToastMessage("It's Already Booked");
 
-                            }else{
+                            }else if(_homeController.type.value == 'all'){
+                              _bookMarkController.getBookMark( context,session.sId ?? '');
+                            }
+                            else{
                               context.pushNamed(AppRoutes.registeredUsersScreen,pathParameters: {'sessionId': session.sId!});
                             }
                           },
                           buttonLabel: _bookMarkController.isLoading.value &&
                               _bookMarkController.loadingSessionId.value == session.sId
-                              ? 'Please wait..'
+                              ? 'Please wait..' : session.isbooked == true ? 'Booked'
                               : _homeController.type.value == 'all'
                               ? 'Book Now'
                               : 'Registered Users',

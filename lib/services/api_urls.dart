@@ -1,5 +1,7 @@
 class ApiUrls {
   static const String baseUrl = "https://courtconnect-asifur-rahman.sarv.live/api/v1";
+
+
   static const String imageBaseUrl = "https://courtconnect-asifur-rahman.sarv.live";
 
   static const String register = '/auth/register';
@@ -38,8 +40,18 @@ class ApiUrls {
   static   String  postCreate (String id)=> '/post/create?communityId=$id';
   static   String  commentCreate (String id)=> '/comment/add?postId=$id';
   static   String  postDelete (String postId,communityId)=> '/post/delete?postId=$postId&communityId=$communityId';
-  static   String  postEdit (String postId,communityId,mediaId)=> '/post/edit?communityId=$communityId&postId=$postId&mediaId=$mediaId';
-  static   String  getComment (String postId,limit)=> '/comment?postId=$postId&limit=$limit';
+  static   String  postEdit (String postId,communityId,[String? mediaId])=> '/post/edit?communityId=$communityId&postId=$postId&mediaId=${mediaId ?? ''}';
+  static   String  getComment (String postId,limit,type)=> '/comment?postId=$postId&limit=$limit&type=$type';
   static   String  editComment (String postId,commentId)=> '/comment/edit?postId=$postId&commentId=$commentId';
   static   String  deleteComment (String postId,commentId)=> '/comment/delete?postId=$postId&commentId=$commentId';
+
+
+
+  static   String  createChat (String receiverId)=> '/chat/create?receiverId=$receiverId';
+  static   String  getChatMessage (String receiverId,chatId)=> '/chat/message?receiverId=$receiverId&chatId=$chatId';
+  static  const String  chatList = '/chat/list';
+
+
+  static  const String  notification = '/notification';
+
 }

@@ -31,8 +31,6 @@ class HomeController extends GetxController {
     super.onInit();
     _getUser();
     _getBanner();
-    getSession();
-    getCharge();
   }
 
   void _getUser() async {
@@ -115,6 +113,7 @@ class HomeController extends GetxController {
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
+
         charge.value = responseBody['data']['charge'];
 
     } else{

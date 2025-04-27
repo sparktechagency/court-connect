@@ -1,7 +1,6 @@
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-class PaymentKeys {
- static String publishAbleKey = 'pk_test_51RE5CTBAXOk4i1N0dYYtBsgGU6XH1EstVgeHWzodeWvXGyDZyjQVkHlPqIdgjukTl4AxCKfjzCEeCYFRXkivBlXQ00Ve6spk6T';
- static String  secretKey = 'sk_test_51RE5CTBAXOk4i1N0R115qs3PWDQOpHZM8ynCK2dWhvgF4d1iE6UmpomEvXkLBpkCXDK4NlilZffRYRhRlrgU56XB008quQlIBa';
-}
 
+class PaymentKeys {
+ static String publishAbleKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
+ static String secretKey = dotenv.env['STRIPE_SECRET_KEY']!;
+}

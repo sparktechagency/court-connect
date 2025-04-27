@@ -51,7 +51,7 @@ class SupportScreen extends StatelessWidget {
               onPressed: () async {
                 final Uri emailUrl = Uri(
                   scheme: 'mailto',
-                  path: 'jotter@gmail.com',
+                  path: 'exmple@gmail.com',
                   query:
                       'subject=Support Inquiry&body=Hello, I need assistance with...',
                 );
@@ -62,7 +62,7 @@ class SupportScreen extends StatelessWidget {
                 }
               },
               label: CustomText(
-                text: 'jotter@gmail.com',
+                text: 'exmple@gmail.com',
                 color: Colors.black,
               ),
               icon: Icon(

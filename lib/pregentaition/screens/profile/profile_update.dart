@@ -5,7 +5,6 @@ import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
 import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
-import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,6 +24,17 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   final ImagePicker _picker = ImagePicker();
   final ProfileController _controller = Get.put(ProfileController());
 
+
+
+  @override
+  void initState() {
+    _controller.nameTEController.text = _controller.profileData.name ?? '';
+    _controller.phoneTEController.text = _controller.profileData.phone ?? '';
+    _controller.addressTEController.text = _controller.profileData.address ?? '';
+    _controller.bioTEController.text = _controller.profileData.bio ?? '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -40,7 +50,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                 CustomImageAvatar(
                   radius: 60.r,
                   image: _controller.profileData.image ?? '',
-                  fileImage: _controller.profileImage,
+                  fileImage: _controller.profileImage.value,
                 ),
                 Positioned(
                   bottom: 6.h,
@@ -49,17 +59,20 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     onTap: _pickImage,
                     height: 32.h,
                     width: 32.w,
-                      color: AppColors.primaryColor,
-                      shape: BoxShape.circle,
-                    child: Center(child: Icon(Icons.camera_alt, color: Colors.white,size: 18.r,)),
+                    color: AppColors.primaryColor,
+                    shape: BoxShape.circle,
+                    child: Center(
+                        child: Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 18.r,
+                    )),
                   ),
                 ),
               ],
             ),
           ),
-
-
-          SizedBox(height: 60.h,),
+          SizedBox(height: 60.h),
           CustomTextField(
             controller: _controller.nameTEController,
             hintText: "User Name",
@@ -67,29 +80,47 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
             borderColor: Colors.black,
           ),
 
+          SizedBox(height: 10.h),
 
-
-          const Spacer(),
-          Obx(
-            () => _controller.isLoading.value ? const CustomLoader() : CustomButton(
-                label: 'Update Profile',
-                onPressed: () {
-                  if(_controller.profileImage != null || _controller.nameTEController.text.isNotEmpty){
-                    _controller.editProfile(context);
-                  }else{
-                    ToastMessageHelper.showToastMessage("Field the form");
-                  }
-                },
-              )
-
+          CustomTextField(
+            controller: _controller.phoneTEController,
+            hintText: "Phone",
+            filColor: Colors.transparent,
+            borderColor: Colors.black,
           ),
+
+          SizedBox(height: 10.h),
+
+          CustomTextField(
+            controller: _controller.addressTEController,
+            hintText: "Address",
+            filColor: Colors.transparent,
+            borderColor: Colors.black,
+          ),
+
+          SizedBox(height: 10.h),
+
+          CustomTextField(
+            maxLine: 5,
+            controller: _controller.bioTEController,
+            hintText: "Bio",
+            filColor: Colors.transparent,
+            borderColor: Colors.black,
+          ),
+          const Spacer(),
+          Obx(() => _controller.isLoading.value
+              ? const CustomLoader()
+              : CustomButton(
+                  label: 'Update Profile',
+                  onPressed: () =>
+                           _controller.editProfile(context)
+
+                )),
           SizedBox(height: 100.h),
         ],
       ),
     );
   }
-
-
 
   Future<void> _pickImage() async {
     showModalBottomSheet(
@@ -102,10 +133,10 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               title: const Text("Pick from Gallery"),
               onTap: () async {
                 final XFile? image =
-                await _picker.pickImage(source: ImageSource.gallery);
+                    await _picker.pickImage(source: ImageSource.gallery);
                 if (image != null) {
                   setState(() {
-                    _controller.profileImage = File(image.path);
+                    _controller.profileImage.value = File(image.path);
                   });
                 }
                 Navigator.pop(context);
@@ -116,10 +147,10 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               title: const Text("Take a Photo"),
               onTap: () async {
                 final XFile? image =
-                await _picker.pickImage(source: ImageSource.camera);
+                    await _picker.pickImage(source: ImageSource.camera);
                 if (image != null) {
                   setState(() {
-                    _controller.profileImage = File(image.path);
+                    _controller.profileImage.value = File(image.path);
                   });
                 }
                 Navigator.pop(context);
@@ -130,8 +161,4 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
       },
     );
   }
-
-
-
-
 }

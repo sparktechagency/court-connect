@@ -1,19 +1,20 @@
 import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/helpers/time_format.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/comment/models/commant_data.dart';
+import 'package:courtconnect/pregentaition/screens/comment/models/commant_data.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class CommentCardWidget extends StatelessWidget {
-  const CommentCardWidget({super.key, required this.commentData,  this.editAction, this.deleteAction});
+  const CommentCardWidget({super.key, required this.commentData,  this.editAction, this.deleteAction, this.otherUserAction});
 
 
   final CommentData commentData;
   final VoidCallback? editAction;
   final VoidCallback? deleteAction;
+  final VoidCallback? otherUserAction;
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +30,21 @@ class CommentCardWidget extends StatelessWidget {
 
             child: ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: CustomImageAvatar(
-                radius: 18.r,
+              leading: GestureDetector(
+                onTap: otherUserAction,
+                child: CustomImageAvatar(
+                  radius: 18.r,
+                  image: commentData.user?.image ?? '',
+                ),
               ),
-              title: CustomText(
-                textAlign: TextAlign.start,
-                text: commentData.user?.name ?? '',
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
+              title: GestureDetector(
+                onTap: otherUserAction,
+                child: CustomText(
+                  textAlign: TextAlign.start,
+                  text: commentData.user?.name ?? '',
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
               ),
               subtitle: CustomText(
                 textAlign: TextAlign.start,

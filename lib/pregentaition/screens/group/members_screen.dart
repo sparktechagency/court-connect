@@ -7,8 +7,10 @@ import 'package:courtconnect/core/widgets/custom_list_tile.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
 import 'package:courtconnect/pregentaition/screens/group/controller/group_controller.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -86,9 +88,14 @@ class _MembersScreenState extends State<MembersScreen> {
                 final member = filteredMembers[index];
                 return CustomListTile(
                   onTap: (){
-                    context.pushNamed(AppRoutes.otherProfileScreen,extra: {
-                      'id' : member.id!,
-                    });
+                    if(Get.find<HomeController>().userId.value == member.id!){
+                      context.pushNamed(AppRoutes.customBottomNavBar);
+                      Get.find<CustomBottomNavBarController>().onChange(3);
+                    }else{
+                      context.pushNamed(AppRoutes.otherProfileScreen,extra: {
+                        'id' : member.id!,
+                      });
+                    }
                   },
                   image: member.image ?? '',
                   title: member.name ?? '',

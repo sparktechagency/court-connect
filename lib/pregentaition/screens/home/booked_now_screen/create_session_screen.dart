@@ -9,6 +9,7 @@ import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/create_session_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,8 +23,9 @@ class CreateSessionScreen extends StatefulWidget {
 }
 
 class _CreateSessionScreenState extends State<CreateSessionScreen> {
-  final CreateSessionController _controller =
-      Get.put(CreateSessionController());
+  final CreateSessionController _controller = Get.put(CreateSessionController());
+
+
 
   final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
 

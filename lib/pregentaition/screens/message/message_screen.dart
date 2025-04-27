@@ -6,9 +6,12 @@ import 'package:courtconnect/core/widgets/custom_list_tile.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key});
@@ -20,6 +23,15 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
 
   final TextEditingController _searchController = TextEditingController();
+
+  final ChatController _controller = Get.put(ChatController());
+
+
+  @override
+  void initState() {
+    _controller.getChatList();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -44,35 +56,123 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
             SizedBox(height: 16.h),
             Expanded(
-              child: ListView.builder(
-                  itemCount: 7,
-                  itemBuilder: (context, index) {
-                    final bool selectedIndex = index == 0;
-                    return CustomListTile(
-                      onTap: (){
-                        context.pushNamed(AppRoutes.chatScreen);
-                      },
-                      selectedColor: selectedIndex
-                          ? AppColors.primaryColor.withOpacity(0.8)
-                          : null,
-                      image: '',
-                      title: 'Maxwell Bennett',
-                      subTitle: 'Hello, are you here?',
-                      trailing: selectedIndex
-                          ? CustomContainer(
-                              color: AppColors.primaryColor,
-                              shape: BoxShape.circle,
-                              child: Padding(
-                                padding: EdgeInsets.all(6.r),
-                                child: CustomText(
-                                    text: '2', color: Colors.white, fontsize: 10.sp),
-                              ),
-                            )
-                          : null,
-                    );
-                  }),
+              child: RefreshIndicator(
+                color: AppColors.primaryColor,
+                onRefresh: () async {
+                  await _controller.getChatList();
+
+                },
+                child: Obx(
+                  () {
+                    if (_controller.isLoading.value) {
+                      return ListView.builder(
+                        itemCount: 3,
+                        itemBuilder: (context, index) => _buildSimmer(),
+                      );
+                    }
+
+                    if (_controller.chatListData.isEmpty) {
+                      return const Center(child: Text("No chat available"));
+                    }
+
+
+                    return ListView.builder(
+                        itemCount: _controller.chatListData.length,
+                        itemBuilder: (context, index) {
+                          final chatData = _controller.chatListData[index];
+
+                          return Hero(
+                            tag: index,
+                            child: CustomListTile(
+                              onTap: (){
+                                context.pushNamed(AppRoutes.chatScreen,extra: {
+                                  'image' : chatData.receiver?.image ?? '',
+                                  'name' : chatData.receiver?.name ?? '',
+                                  'email' : chatData.receiver?.email ?? '',
+                                  'status' : chatData.receiver?.status ?? '',
+                                  'heroTag' : index,
+                                });
+                              },
+                              selectedColor: chatData.unreadCount! > 0
+                                  ? AppColors.primaryColor.withOpacity(0.8)
+                                  : null,
+                              image: chatData.receiver?.image ?? '',
+                              title: chatData.receiver?.name ?? '',
+                              subTitle: chatData.lastMessage?.message ?? '',
+                              trailing: chatData.unreadCount! > 0
+                                  ? CustomContainer(
+                                      color: AppColors.primaryColor,
+                                      shape: BoxShape.circle,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(6.r),
+                                        child: CustomText(
+                                            text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          );
+                        });
+                  }
+                ),
+              ),
             ),
           ],
         ));
   }
+
+  Widget _buildSimmer() {
+    return Padding(
+      padding:  EdgeInsets.symmetric(vertical: 8.0.h),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Profile Circle
+            Container(
+              width: 40.w,
+              height: 40.h,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(width: 12.w),
+
+            // Comment Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Name Placeholder
+                  Container(
+                    height: 12.h,
+                    width: 100.w,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 8.h),
+                  // Comment Line 1
+                  Container(
+                    height: 10.h,
+                    width: double.infinity,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 6.h),
+                  // Comment Line 2
+                  Container(
+                    height: 10.h,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
 }

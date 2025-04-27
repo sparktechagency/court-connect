@@ -6,6 +6,7 @@ import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
 import 'package:courtconnect/pregentaition/screens/group/widgets/group_card_widget.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -96,6 +97,16 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
               bottom: 10.h,
             ),
             CustomListTile(
+              onTap: (){
+                if(Get.find<HomeController>().userId.value == data.creator!.sId!){
+                  context.pushNamed(AppRoutes.customBottomNavBar);
+                  Get.find<CustomBottomNavBarController>().onChange(3);
+                }else{
+                  context.pushNamed(AppRoutes.otherProfileScreen,extra: {
+                    'id' : data.creator!.sId!,
+                  });
+                }
+              },
               image: data.creator?.image?.publicFileURL ?? '',
               title: data.creator?.name ?? '',
             ),

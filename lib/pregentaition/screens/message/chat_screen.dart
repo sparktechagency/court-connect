@@ -1,3 +1,4 @@
+import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
@@ -7,10 +8,14 @@ import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/pregentaition/screens/message/widgets/chat_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({super.key, required this.chatData});
+
+
+  final Map<String,dynamic> chatData;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -38,11 +43,22 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       appBar: CustomAppBar(
-        titleWidget: CustomListTile(
-          imageRadius: 20.r,
-          image: '',
-          title: 'Maxwell Bennett',
-          subTitle: '#User 12345',
+        titleWidget: Hero(
+          tag: widget.chatData['heroTag'] ?? '',
+          child: GestureDetector(
+            onTap: (){
+              context.pushNamed(AppRoutes.chatProfileViewScreen,
+                extra: widget.chatData,
+              );
+
+            },
+            child: CustomListTile(
+              imageRadius: 20.r,
+              image: widget.chatData['image'],
+              title: widget.chatData['name'],
+
+            ),
+          ),
         ),
       ),
       body: Column(
@@ -72,7 +88,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
-        spacing: 10.w,
         children: [
           Expanded(
             child: CustomTextField(
@@ -83,6 +98,8 @@ class _ChatScreenState extends State<ChatScreen> {
               hintText: 'Write your message',
             ),
           ),
+          SizedBox(width: 10.w),
+
           CustomContainer(
             onTap: _sendMessage,
             verticalPadding: 8.r,

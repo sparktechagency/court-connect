@@ -5,7 +5,7 @@ import 'package:courtconnect/core/widgets/custom_network_image.dart';
 import 'package:courtconnect/core/widgets/custom_popup.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/models/post_data.dart';
+import 'package:courtconnect/pregentaition/screens/post/models/post_data.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class PostCardWidget extends StatefulWidget {
       this.profileImage,
       this.onCommentsView,
       this.menuItems,
-      this.onSelected});
+      this.onSelected, this.profileViewAction});
 
   final bool isMyPost;
   final List<Media>? media;
@@ -34,6 +34,7 @@ class PostCardWidget extends StatefulWidget {
   final String? comments;
   final VoidCallback? onCommentsView;
   final List<String>? menuItems;
+  final VoidCallback? profileViewAction;
   final Function(String)? onSelected;
 
   @override
@@ -67,6 +68,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
           children: [
             SizedBox(height: 6.h),
             CustomListTile(
+              onTap: widget.profileViewAction,
               imageRadius: 22.r,
               image: widget.profileImage,
               title: widget.profileName,

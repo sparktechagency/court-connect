@@ -7,17 +7,15 @@ import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/two_button_widget.dart';
 import 'package:courtconnect/helpers/time_format.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/comment/comtroller/comment_controller.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/comment/comtroller/comment_edit_controller.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/comment/comtroller/create_comment_controller.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/controller/create_post_controller.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/controller/post_controller.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/controller/post_edit_controller.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/comment/comment_bottom_sheet.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/models/post_data.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/widgets/post_card_widget.dart';
+import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
+import 'package:courtconnect/pregentaition/screens/comment/comment_bottom_sheet.dart';
+import 'package:courtconnect/pregentaition/screens/comment/comtroller/comment_controller.dart';
+import 'package:courtconnect/pregentaition/screens/comment/comtroller/comment_edit_controller.dart';
+import 'package:courtconnect/pregentaition/screens/comment/comtroller/create_comment_controller.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
-import 'package:courtconnect/services/api_urls.dart';
+import 'package:courtconnect/pregentaition/screens/post/controller/post_controller.dart';
+import 'package:courtconnect/pregentaition/screens/post/controller/post_edit_controller.dart';
+import 'package:courtconnect/pregentaition/screens/post/widgets/post_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -114,6 +112,16 @@ class _PostScreenState extends State<PostScreen> {
                     itemBuilder: (context, index) {
                       final postData = _controller.postDataList[index];
                       return PostCardWidget(
+                        profileViewAction: (){
+                          if(Get.find<HomeController>().userId.value == postData.user!.sId!){
+                            context.pushNamed(AppRoutes.customBottomNavBar);
+                            Get.find<CustomBottomNavBarController>().onChange(3);
+                          }else{
+                            context.pushNamed(AppRoutes.otherProfileScreen,extra: {
+                              'id' : postData.user!.sId!,
+                            });
+                          }
+                        },
                         profileImage: postData.user?.image ?? '',
                         profileName: postData.user?.name ?? '',
                         description: postData.description ?? '',
@@ -124,17 +132,19 @@ class _PostScreenState extends State<PostScreen> {
                         comments: postData.totalComments.toString(),
                         onCommentsView: () {
                           showModalBottomSheet(
+                            isScrollControlled: true, // <-- Important!
                             context: context,
                             builder: (context) {
-                              return  CommentBottomSheet(id: postData.sId!,);
+                              return  CommentBottomSheet(id: postData.sId!, menuItems: [
+                                'newest comments',
+                                'all coments',
+                              ],);
                             },
                           );
                         },
-                        isMyPost: _controller.type.value == 'my',
+                        isMyPost: postData.user!.sId! == Get.find<HomeController>().userId.value,
 
-                        menuItems: _controller.type.value == 'all'
-                            ? []
-                            : ['Edit', 'Delete',],
+                        menuItems: ['Edit', 'Delete',],
                         onSelected: (val) {
                           if (val == 'Delete') {
                             showDeleteORSuccessDialog(context, onTap: () {
@@ -145,6 +155,8 @@ class _PostScreenState extends State<PostScreen> {
                             context.pushNamed(AppRoutes.editPostScreen,extra: {
                               'media' : postData.media ?? [],
                               'des' : postData.description ?? '',
+                              'postId' : postData.sId ?? '',
+                              'communityId' : widget.id ?? '',
                             });
                           }
                         },
@@ -158,6 +170,7 @@ class _PostScreenState extends State<PostScreen> {
           ),
         ],
       ),
+
     );
   }
 

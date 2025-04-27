@@ -27,7 +27,7 @@ void showDeleteORSuccessDialog(BuildContext context,
             if (!isSuccess)
               const Icon(Icons.warning_amber_rounded, color: Colors.red),
             SizedBox(width: 8.w),
-            Text(title?? 'Delete Item'),
+            Flexible(child: Text(title?? 'Delete Item')),
           ],
         ),
         content: Text(

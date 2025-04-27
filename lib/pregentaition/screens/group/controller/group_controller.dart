@@ -19,6 +19,7 @@ class GroupController extends GetxController {
   RxString name = ''.obs;
   RxString searchText = ''.obs;
   RxString communityId = ''.obs;
+  RxBool alreadyJoined = false.obs;
 
 
   final RxList<GroupData> _groupDataList = <GroupData>[].obs;

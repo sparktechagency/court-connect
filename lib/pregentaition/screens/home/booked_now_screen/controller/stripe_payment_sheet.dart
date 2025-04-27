@@ -89,9 +89,14 @@ class StripePaymentSheet {
   }
 
   /// ===========>   Step 3: Init Payment Sheet ===========>
-  Future<void> paymentSheetInit(
-      {required String amount, required BuildContext context}) async {
+  Future<void> paymentSheetInit({
+    required String amount,
+    required BuildContext context,
+  }) async {
     try {
+        Stripe.publishableKey = PaymentKeys.publishAbleKey; // <-- Add this
+        await Stripe.instance.applySettings(); // <-- Add this
+
       _intentPaymentData = await _makeIntentForPayment(amount);
 
       if (_intentPaymentData == null ||

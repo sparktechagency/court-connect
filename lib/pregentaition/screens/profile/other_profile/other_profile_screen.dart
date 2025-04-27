@@ -2,9 +2,10 @@ import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
-import 'package:courtconnect/pregentaition/screens/profile/controller/profile_controller.dart';
+import 'package:courtconnect/pregentaition/screens/profile/other_profile/controller/other_profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,7 @@ class OtherProfileScreen extends StatefulWidget {
 }
 
 class _OtherProfileScreenState extends State<OtherProfileScreen> {
-  final ProfileController _controller = Get.put(ProfileController());
+  final OtherProfileController _controller = Get.put(OtherProfileController());
 
   @override
   void initState() {
@@ -86,27 +87,39 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
               const Spacer(),
               Center(
-                child: CustomContainer(
-                  onTap: () {},
-                  paddingAll: 10.r,
-                  radiusAll: 8.r,
-                  width: 170.w,
-                  color: AppColors.primaryColor,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CustomText(
-                          color: Colors.white,
-                          text: 'Send Message',
-                          fontWeight: FontWeight.w500,
-                        ),
+                child: Obx(
+                  () {
+                    return _controller.isButtonLoading.value ? CustomLoader() : CustomContainer(
+                      onTap: () {
+                        _controller.createGroup(context, data.sId!,{
+                          'image' : data.image ?? '',
+                          'name' : data.name ?? '',
+                        });
+                      },
+                      paddingAll: 10.r,
+                      radiusAll: 8.r,
+                      width: 170.w,
+                      color: AppColors.primaryColor,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CustomText(
+                              color: Colors.white,
+                              text: 'Send Message',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Assets.icons.messageIcons.svg(),
+                          SizedBox(width: 6.w)
+                        ],
                       ),
-                      Assets.icons.messageIcons.svg(),
-                      SizedBox(width: 6.w)
-                    ],
-                  ),
+                    );
+                  }
                 ),
               ),
+
+
+              SizedBox(height: 24.h),
             ],
           );
         }),

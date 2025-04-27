@@ -1,5 +1,5 @@
 import 'package:courtconnect/helpers/toast_message_helper.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/comment/comtroller/comment_controller.dart';
+import 'package:courtconnect/pregentaition/screens/comment/comtroller/comment_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +29,9 @@ class CreateCommentController extends GetxController {
 
       final responseBody = response.body;
       if ((response.statusCode == 200 || response.statusCode == 201) && responseBody['success'] == true) {
-        
+
         _cleanField();
-        Get.find<CommentController>().getComment(id);
+        Get.find<CommentController>().getComment(id,'recent');
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }

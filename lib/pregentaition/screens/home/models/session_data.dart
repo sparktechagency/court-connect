@@ -7,6 +7,7 @@ class SessionData {
   String? time;
   String? image;
   String? createdAt;
+  bool? isbooked;
   Host? host;
 
   SessionData(
@@ -18,6 +19,7 @@ class SessionData {
         this.time,
         this.image,
         this.createdAt,
+        this.isbooked,
         this.host});
 
   SessionData.fromJson(Map<String, dynamic> json) {
@@ -29,8 +31,10 @@ class SessionData {
     time = json['time'];
     image = json['image'];
     createdAt = json['createdAt'];
-    host = json['host'] != null ? Host.fromJson(json['host']) : null;
+    isbooked = json['isbooked'];
+    host = json['host'] != null ? new Host.fromJson(json['host']) : null;
   }
+
 }
 
 class Host {
@@ -45,4 +49,5 @@ class Host {
     email = json['email'];
     image = json['image'];
   }
+
 }

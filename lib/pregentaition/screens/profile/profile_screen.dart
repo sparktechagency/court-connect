@@ -1,8 +1,10 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/pregentaition/screens/profile/controller/profile_controller.dart';
 import 'package:courtconnect/pregentaition/screens/profile/widgets/profile_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -75,9 +77,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
 
-            SizedBox(height: 44.h),
+            SizedBox(height: 100.h),
 
             // Log Out Button
+
             ProfileListTile(
               icon: Assets.icons.logOut.svg(),
               textColor: Colors.black,
@@ -92,7 +95,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onCancel: () {
                       context.pop();
                     },
-                    onConfirm: () {
+                    onConfirm: ()async {
+                      await PrefsHelper.remove(AppConstants.bearerToken);
                       context.go(AppRoutes.loginScreen);
                     },
                   ),

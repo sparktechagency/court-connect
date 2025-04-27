@@ -81,7 +81,7 @@ flutter_gen:
     #===========>>>>>>>>>> Flutter Gen Code ==============>>>>>>>>>>>
     # dart pub global activate flutter_gen
     # flutter pub run build_runner build --delete-conflicting-outputs
-#    dart run build_runner build
+#    flutter pub run build_runner build
 
 flutter:
 
@@ -93,6 +93,7 @@ flutter:
       - assets/images/
       - assets/icons/
       - assets/lottie/
+      - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

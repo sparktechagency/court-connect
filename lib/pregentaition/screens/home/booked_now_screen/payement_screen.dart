@@ -13,7 +13,9 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+
   StripePaymentSheet paymentController = Get.put(StripePaymentSheet());
+
 
   final emailController = TextEditingController();
   final nameController = TextEditingController();

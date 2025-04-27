@@ -1,37 +1,29 @@
 import 'package:courtconnect/helpers/toast_message_helper.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/models/post_data.dart';
+import 'package:courtconnect/pregentaition/screens/notification/models/notification_data.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:get/get.dart';
 
-class PostController extends GetxController {
+class GroupController extends GetxController {
   RxBool isLoading = false.obs;
-  RxString type = 'all'.obs;
-  RxString page = ''.obs;
-  RxString limit = ''.obs;
-  RxString date = ''.obs;
-  RxString communityId = ''.obs;
-
-
-  final RxList<PostData> postDataList = <PostData>[].obs;
 
 
 
+  RxList<NotificationData> notificationData = <NotificationData>[].obs;
 
 
-  Future<void> getPost() async {
-    postDataList.clear();
+  Future<void> getGroup() async {
     isLoading.value = true;
 
     try {
       final response = await ApiClient.getData(
-        ApiUrls.post(communityId.value, page.value, limit.value, type.value),
+        ApiUrls.notification,
       );
 
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
-        final List data = responseBody['data'];
-        postDataList.value = data.map((json) => PostData.fromJson(json)).toList();
+        final List data = responseBody['data']!['notifications'];
+        notificationData.value = data.map((json) => NotificationData.fromJson(json)).toList();
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -40,13 +32,5 @@ class PostController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-
-
-
-  void onChangeType(String newType) {
-    type.value = newType;
-    getPost();
   }
 }

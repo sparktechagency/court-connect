@@ -1,16 +1,17 @@
 import 'dart:io';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
-import 'package:courtconnect/pregentaition/screens/group/post/controller/post_controller.dart';
+import 'package:courtconnect/pregentaition/screens/comment/comtroller/comment_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 
-class EditPostController extends GetxController {
+class CommentEditController extends GetxController {
   final RxBool isLoading = false.obs;
 
-  final TextEditingController desController = TextEditingController();
+
+
+  final TextEditingController editCommentController = TextEditingController();
   List<File> images = [];
 
 
@@ -18,27 +19,21 @@ class EditPostController extends GetxController {
 
 
 
-  Future<void> editMyGroup(BuildContext context, String postId,communityId,mediaId) async {
+  Future<void> editComment(String postId,commentId) async {
     try {
 
       isLoading.value = true;
 
-      List<MultipartBody> multipartFiles = images.map((image) {
-        return MultipartBody('media', image);
-      }).toList();
-
       final response =
-      await ApiClient.patchMultipartData(ApiUrls.postEdit(postId,communityId,mediaId), {
-        'description': desController.text.trim(),
-      }, multipartBody: multipartFiles,
+      await ApiClient.patch(ApiUrls.editComment(postId,commentId), {
+        'comment': editCommentController.text.trim(),
+      },
       );
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
-        Get.find<PostController>().getPost();
-        desController.clear();
-        images = [];
-        context.pop();
+        Get.find<CommentController>().getComment(postId,'recent');
+        editCommentController.clear();
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -53,16 +48,17 @@ class EditPostController extends GetxController {
 
 
 
-  Future<void> deletePost(BuildContext context,String postId,communityId) async {
+
+  Future<void> deleteComment(String postId,commentId) async {
     try {
       isLoading.value = true;
 
-      final response = await ApiClient.deleteData(ApiUrls.postDelete(postId,communityId));
+      final response = await ApiClient.deleteData(ApiUrls.deleteComment(postId,commentId));
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
-        Get.find<PostController>().getPost();
+        Get.find<CommentController>().getComment(postId,'recent');
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -75,7 +71,7 @@ class EditPostController extends GetxController {
 
   @override
   void dispose() {
-    desController.dispose();
+    editCommentController.dispose();
     super.dispose();
   }
 }
