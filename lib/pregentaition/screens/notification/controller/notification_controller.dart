@@ -4,7 +4,7 @@ import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:get/get.dart';
 
-class GroupController extends GetxController {
+class NotificationController extends GetxController {
   RxBool isLoading = false.obs;
 
 
@@ -12,7 +12,7 @@ class GroupController extends GetxController {
   RxList<NotificationData> notificationData = <NotificationData>[].obs;
 
 
-  Future<void> getGroup() async {
+  Future<void> getNotification() async {
     isLoading.value = true;
 
     try {
