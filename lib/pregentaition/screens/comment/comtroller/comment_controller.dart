@@ -41,7 +41,10 @@ class CommentController extends GetxController {
         final comments = data.map((json) => CommentData.fromJson(json)).toList();
 
           commentData.addAll(comments);
+          update();
+          isLoading(false);
       } else {
+        isLoading(false);
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
     } catch (e) {
