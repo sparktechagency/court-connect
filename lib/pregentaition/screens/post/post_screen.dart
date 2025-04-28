@@ -3,6 +3,7 @@ import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/two_button_widget.dart';
@@ -53,6 +54,7 @@ class _PostScreenState extends State<PostScreen> {
     super.initState();
     _controller.communityId.value = widget.id;
     _controller.getPost();
+    _addScrollListener();
   }
 
 
@@ -92,7 +94,6 @@ class _PostScreenState extends State<PostScreen> {
           Expanded(
             child: Obx(
                   () {
-
                 return RefreshIndicator(
                   color: AppColors.primaryColor,
                   onRefresh: () async {
@@ -108,60 +109,67 @@ class _PostScreenState extends State<PostScreen> {
                       : _controller.postDataList.isEmpty
                       ? Center(child: CustomText(text: 'No posts available'))
                       : ListView.builder(
-                    itemCount: _controller.postDataList.length,
+                    controller: _controller.scrollController,
+                    itemCount: _controller.postDataList.length + 1,
                     itemBuilder: (context, index) {
-                      final postData = _controller.postDataList[index];
-                      return PostCardWidget(
-                        profileViewAction: (){
-                          if(Get.find<HomeController>().userId.value == postData.user!.sId!){
-                            context.pushNamed(AppRoutes.customBottomNavBar);
-                            Get.find<CustomBottomNavBarController>().onChange(3);
-                          }else{
-                            context.pushNamed(AppRoutes.otherProfileScreen,extra: {
-                              'id' : postData.user!.sId!,
-                            });
-                          }
-                        },
-                        profileImage: postData.user?.image ?? '',
-                        profileName: postData.user?.name ?? '',
-                        description: postData.description ?? '',
-                        media: postData.media ?? [],
-                        time: TimeFormatHelper.getTimeAgo(
-                          DateTime.parse(postData.createdAt ?? ''),
-                        ),
-                        comments: postData.totalComments.toString(),
-                        onCommentsView: () {
-                          showModalBottomSheet(
-                            isScrollControlled: true, // <-- Important!
-                            context: context,
-                            builder: (context) {
-                              return  CommentBottomSheet(id: postData.sId!, menuItems: [
-                                'newest comments',
-                                'all coments',
-                              ],);
-                            },
-                          );
-                        },
-                        isMyPost: postData.user!.sId! == Get.find<HomeController>().userId.value,
+                      if(index < _controller.postDataList.length){
 
-                        menuItems: ['Edit', 'Delete',],
-                        onSelected: (val) {
-                          if (val == 'Delete') {
-                            showDeleteORSuccessDialog(context, onTap: () {
-                              context.pop();
-                              _editPostController.deletePost(context,postData.sId!,widget.id);
-                            });
-                          } else if (val == 'Edit') {
-                            context.pushNamed(AppRoutes.editPostScreen,extra: {
-                              'media' : postData.media ?? [],
-                              'des' : postData.description ?? '',
-                              'postId' : postData.sId ?? '',
-                              'communityId' : widget.id ?? '',
-                            });
-                          }
-                        },
+                        final postData = _controller.postDataList[index];
+                        return PostCardWidget(
+                          profileViewAction: (){
+                            if(Get.find<HomeController>().userId.value == postData.user!.sId!){
+                              context.pushNamed(AppRoutes.customBottomNavBar);
+                              Get.find<CustomBottomNavBarController>().onChange(3);
+                            }else{
+                              context.pushNamed(AppRoutes.otherProfileScreen,extra: {
+                                'id' : postData.user!.sId!,
+                              });
+                            }
+                          },
+                          profileImage: postData.user?.image ?? '',
+                          profileName: postData.user?.name ?? '',
+                          description: postData.description ?? '',
+                          media: postData.media ?? [],
+                          time: TimeFormatHelper.getTimeAgo(
+                            DateTime.parse(postData.createdAt ?? ''),
+                          ),
+                          comments: postData.totalComments.toString(),
+                          onCommentsView: () {
+                            showModalBottomSheet(
+                              isScrollControlled: true, // <-- Important!
+                              context: context,
+                              builder: (context) {
+                                return  CommentBottomSheet(id: postData.sId!, menuItems: [
+                                  'newest comments',
+                                  'all coments',
+                                ],);
+                              },
+                            );
+                          },
+                          isMyPost: postData.user!.sId! == Get.find<HomeController>().userId.value,
 
-                      );
+                          menuItems: ['Edit', 'Delete',],
+                          onSelected: (val) {
+                            if (val == 'Delete') {
+                              showDeleteORSuccessDialog(context, onTap: () {
+                                context.pop();
+                                _editPostController.deletePost(context,postData.sId!,widget.id);
+                              });
+                            } else if (val == 'Edit') {
+                              context.pushNamed(AppRoutes.editPostScreen,extra: {
+                                'media' : postData.media ?? [],
+                                'des' : postData.description ?? '',
+                                'postId' : postData.sId ?? '',
+                                'communityId' : widget.id ?? '',
+                              });
+                            }
+                          },
+
+                        );
+
+                      }else{
+                        return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
+                      }
                     },
                   ),
                 );
@@ -190,5 +198,17 @@ class _PostScreenState extends State<PostScreen> {
       ),
     );
   }
+
+
+  void _addScrollListener() {
+    _controller.scrollController.addListener(() {
+      if (_controller.scrollController.position.pixels ==
+          _controller.scrollController.position.maxScrollExtent) {
+        _controller.loadMore();
+        print("load more true");
+      }
+    });
+  }
+
 
 }

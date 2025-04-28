@@ -1,11 +1,14 @@
+import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
+import 'package:courtconnect/helpers/time_format.dart';
 import 'package:courtconnect/pregentaition/screens/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -15,7 +18,6 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-
   final NotificationController _controller = Get.put(NotificationController());
 
   @override
@@ -30,78 +32,189 @@ class _NotificationScreenState extends State<NotificationScreen> {
       appBar: CustomAppBar(
         title: 'Notification',
       ),
-
-
-
       body: Expanded(
         child: Obx(() {
-            return ListView.builder(
+          if (_controller.isLoading.value) {
+
+            ListView.builder(
+              itemCount: 5,
+                itemBuilder: (context,index) => _buildSimmer());
+          }
+          return ListView.builder(
               itemCount: _controller.notificationData.length,
-                itemBuilder: (context,index) {
-
-              if(_controller.isLoading.value){
-
-              }
-
-              if(_controller.notificationData.isEmpty){
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-
-                      Image.asset('assets/images/noti_emt.png',height: 220.h,width: 220.w,),
-
-                      CustomText(
-                        top: 16.h,
-                        maxline: 2,
-                        text: 'There Are No Notifications Available',fontWeight: FontWeight.w500,fontsize: 20.sp,),
+              itemBuilder: (context, index) {
 
 
-                      CustomText(
-                        top: 16.h,
-                        maxline: 4,
-                        text: 'No notifications available at the moment, once it’s available, it will appear here.',fontWeight: FontWeight.w400,fontsize: 14.sp,color: Colors.grey,),
-                    ],
-                  ),
-                );
-              }
-              return CustomContainer(
+                if (_controller.notificationData.isEmpty) {
+                  return buildEmptyNotification();
+                }
+                return buildNotificationCard(index);
+              });
+        }),
+      ),
+    );
+  }
+
+  Widget buildNotificationCard(int index) {
+    return CustomContainer(
+                border: Border(
+                    bottom: BorderSide(
+                        color:
+                            _controller.notificationData[index].isReadable ==
+                                    true
+                                ? Colors.transparent
+                                : AppColors.primaryColor)),
                 radiusAll: 8.r,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    offset: Offset(0, 1),
-                    blurRadius: 4,
-                  )
-                ],
-                marginAll: 12.r,
-                paddingAll: 16.r,
-                  color: Colors.white,
-
-                child: Column(
+                marginAll: 6.r,
+                paddingAll: 10.r,
+                color: Colors.white,
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                    CustomText(text: 'Notification',fontWeight: FontWeight.w600,),
-                    CustomText(
-                      textAlign: TextAlign.start,
-                      text: _controller.notificationData[index].msg ?? '',fontsize: 12.sp,),
+                    Icon(
+                      Icons.notifications_active_outlined,
+                      color: AppColors.primaryColor,
+                      size: 28.r,
+                    ),
+                    SizedBox(width: 6.w),
+                    Flexible(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomText(
+                                text: 'Notification',
+                                fontWeight: FontWeight.w600,
+                                fontsize: 12.sp,
+                              ),
+                              if (_controller
+                                      .notificationData[index].isReadable ==
+                                  false)
+                                CustomContainer(
+                                    verticalMargin: 4,
+                                    horizontalPadding: 8,
+                                    verticalPadding: 2,
+                                    radiusAll: 8.r,
+                                    color: Colors.amber,
+                                    child: CustomText(
+                                      text: 'new',
+                                      fontWeight: FontWeight.w600,
+                                      fontsize: 10.sp,
+                                      color: Colors.black,
+                                    )),
+                            ],
+                          ),
+                          CustomText(
+                            maxline: 5,
+                            textAlign: TextAlign.start,
+                            text:
+                                _controller.notificationData[index].msg ?? '',
+                            fontsize: 10.sp,
+                          ),
+                          CustomText(
+                            top: 6,
+                            maxline: 5,
+                            textAlign: TextAlign.start,
+                            text: TimeFormatHelper.formatDate(DateTime.parse(
+                                _controller
+                                        .notificationData[index].createdAt ??
+                                    '')),
+                            fontsize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               );
+  }
 
+  Widget buildEmptyNotification() {
+    return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/noti_emt.png',
+                        height: 220.h,
+                        width: 220.w,
+                      ),
+                      CustomText(
+                        top: 16.h,
+                        maxline: 2,
+                        text: 'There Are No Notifications Available',
+                        fontWeight: FontWeight.w500,
+                        fontsize: 20.sp,
+                      ),
+                      CustomText(
+                        top: 16.h,
+                        maxline: 4,
+                        text:
+                            'No notifications available at the moment, once it’s available, it will appear here.',
+                        fontWeight: FontWeight.w400,
+                        fontsize: 14.sp,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                );
+  }
 
-            }
+  Widget _buildSimmer() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Profile Circle
+            Container(
+              width: 40.w,
+              height: 40.h,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(width: 12.w),
 
-
-            );
-          }
+            // Comment Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Name Placeholder
+                  Container(
+                    height: 12.h,
+                    width: 100.w,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 8.h),
+                  // Comment Line 1
+                  Container(
+                    height: 10.h,
+                    width: double.infinity,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 6.h),
+                  // Comment Line 2
+                  Container(
+                    height: 10.h,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
-
-
-
-
     );
   }
 }

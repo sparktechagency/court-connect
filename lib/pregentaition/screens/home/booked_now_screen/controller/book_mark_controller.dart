@@ -2,6 +2,7 @@ import 'package:courtconnect/core/widgets/custom_button.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
@@ -12,19 +13,23 @@ import 'package:go_router/go_router.dart';
 class BookMarkController extends GetxController {
   RxBool isLoading = false.obs;
   RxString loadingSessionId = ''.obs;
+  RxMap<String, bool> isBookedMap = <String, bool>{}.obs;
+  RxMap<String, bool> isLoadingMap = <String, bool>{}.obs;
+
+
 
 
 
   Future<void> getBookMark(BuildContext context, String id) async {
-    loadingSessionId.value = id;
-    isLoading.value = true;
+    isLoadingMap[id] = true;
+    isBookedMap[id] = false;
 
     try {
       final response = await ApiClient.postData(ApiUrls.bookmark(id),{});
 
       final responseBody = response.body;
 
-      if ((response.statusCode == 200 || response.statusCode == 201) || responseBody['errorType'] == 'Bad Request') {
+      if (response.statusCode == 201) {
         showDialog(
           context: context,
           builder: (_) => Dialog(
@@ -33,9 +38,6 @@ class BookMarkController extends GetxController {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if(responseBody['errorType'] == 'Bad Request')
-                  Assets.icons.bookingError.svg(),
-                  if((response.statusCode == 200 || response.statusCode == 201))
                   Assets.icons.bookingSuccess.svg(),
                   SizedBox(height: 24.h),
                   CustomText(
@@ -45,7 +47,11 @@ class BookMarkController extends GetxController {
                   ),
                   SizedBox(height: 24.h),
                   CustomButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () {
+                      context.pop();
+                      isBookedMap[id] = true;  // Update booked state for this session only
+
+                    },
                     label: 'Go Back',
                     width: 160.w,
                     radius: 8.r,
@@ -62,6 +68,7 @@ class BookMarkController extends GetxController {
       ToastMessageHelper.showToastMessage("Error: $e");
     } finally {
       isLoading.value = false;
-      loadingSessionId.value = '';    }
+      isLoadingMap[id] = false;
+    }
   }
 }

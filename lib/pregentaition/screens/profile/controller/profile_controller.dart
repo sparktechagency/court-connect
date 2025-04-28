@@ -86,9 +86,6 @@ class ProfileController extends GetxController {
       final String? bio = responseBody['data']?['user']?['boi'] ?? '';
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
-        await PrefsHelper.remove(AppConstants.name);
-        await PrefsHelper.remove(AppConstants.image);
-        await PrefsHelper.remove(AppConstants.bio);
         await PrefsHelper.setString(AppConstants.name, userName);
         await PrefsHelper.setString(AppConstants.image, userImage);
         await PrefsHelper.setString(AppConstants.bio, bio);

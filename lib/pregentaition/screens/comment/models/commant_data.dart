@@ -38,6 +38,7 @@ class CommentData {
     createdAt = json['createdAt'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
+
 }
 
 class User {

@@ -35,7 +35,7 @@ dependencies:
   chat_bubbles:
   logger: ^2.5.0
   carousel_slider: ^5.0.0
-  flutter_stripe:
+  flutter_stripe: ^11.0.0
   country_picker: ^2.0.27
   flutter_local_notifications: ^18.0.1
   badges:
@@ -47,6 +47,7 @@ dependencies:
   open_file: ^3.5.10
   dots_indicator: ^4.0.1
   timeago: ^3.7.0
+  bottom_sheet: ^4.0.4
 
 dev_dependencies:
   flutter_test:

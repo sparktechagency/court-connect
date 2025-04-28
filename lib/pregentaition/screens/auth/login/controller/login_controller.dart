@@ -40,7 +40,7 @@ class LoginController extends GetxController {
         final String? userName = responseBody['data']?['user']['name'];
         final String? userImage = responseBody['data']?['user']['image'];
         final String? userId = responseBody['data']?['user']['_id'];
-        final String? bio = responseBody['data']?['user']['boi'];
+        //final String? bio = responseBody['data']?['user']['boi'];
 
         if (token != null) {
           debugPrint('====================> response token save: $token');
@@ -49,7 +49,6 @@ class LoginController extends GetxController {
           await PrefsHelper.setString(AppConstants.name, userName);
           await PrefsHelper.setString(AppConstants.image, userImage);
           await PrefsHelper.setString(AppConstants.userId, userId);
-          await PrefsHelper.setString(AppConstants.bio, bio);
           context.pushReplacementNamed(AppRoutes.customBottomNavBar);
         }
       } else {

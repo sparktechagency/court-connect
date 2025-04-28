@@ -10,6 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../message/models/chat_list_data.dart';
+
 class GroupController extends GetxController {
   RxBool isLoading = false.obs;
   RxString type = 'all'.obs;
@@ -22,6 +24,14 @@ class GroupController extends GetxController {
   RxBool alreadyJoined = false.obs;
 
 
+  final currentPage = 1.obs;
+  final totalPages = 1.obs;
+  Rx<Pagination?> groupPagination = Rxn<Pagination>();
+
+  // ScrollController to manage scrolling
+  final ScrollController scrollController = ScrollController();
+
+
   final RxList<GroupData> _groupDataList = <GroupData>[].obs;
   Rx<GroupDetailsData> groupDetailsData = GroupDetailsData().obs;
 
@@ -31,7 +41,7 @@ class GroupController extends GetxController {
     getGroup();
   }
 
-  Future<void> getGroup() async {
+  Future<void> getGroup({bool loadMore = false}) async {
     _groupDataList.clear();
     isLoading.value = true;
 
@@ -52,6 +62,25 @@ class GroupController extends GetxController {
       ToastMessageHelper.showToastMessage("Error: $e");
     } finally {
       isLoading.value = false;
+    }
+  }
+
+
+
+
+  Future<void> loadMoreComments() async {
+    if (groupPagination.value != null &&
+        currentPage.value < (groupPagination.value!.totalPage ?? 1) &&
+        !isLoading.value) {
+      currentPage.value++;
+      await getGroup(loadMore: true);
+    }
+  }
+
+  void onScroll() {
+    if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 100) {
+      // trigger load more a bit before reaching exact end
+      loadMoreComments();
     }
   }
 

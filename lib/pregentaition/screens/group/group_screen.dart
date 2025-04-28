@@ -37,6 +37,7 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     super.initState();
+    _controller.scrollController.addListener(_controller.onScroll);
     _searchController.addListener(() {
       _controller.searchText.value = _searchController.text.toLowerCase();
     });

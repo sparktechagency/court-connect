@@ -25,8 +25,8 @@ class ApiUrls {
   static  const String  joinCommunity = '/community/join';
   static  const String  communityLeave = '/community/leave';
   static  const String  removeMember = '/community/remove-member';
-  static   String  session (String? type,price,date)=> '/session?type=$type&price=$price&date=$date';
-  static   String  post (String? communityId,page,limit,type)=> '/post?communityId=$communityId&page=$page&limit=$limit&type=$type';
+  static   String  session (String? type,price,date,currentPage,totalPage)=> '/session?type=$type&price=$price&date=$date&currentPage=$currentPage&totalPage=$totalPage';
+  static   String  post (String? communityId,type,page,)=> '/post?communityId=$communityId&page=$page&type=$type';
   static   String  community (String? type,page,date,limit,)=> '/community?page=$page&limit=$limit&type=$type&date=$date';
   static   String  communityDetails (String? communityId,limit,page,name,)=> '/community/details?communityId=$communityId&limit=$limit&page=$page&name=$name';
   static   String  user (String id)=> '/session/registered-users?sessionId=$id';
@@ -41,7 +41,7 @@ class ApiUrls {
   static   String  commentCreate (String id)=> '/comment/add?postId=$id';
   static   String  postDelete (String postId,communityId)=> '/post/delete?postId=$postId&communityId=$communityId';
   static   String  postEdit (String postId,communityId,[String? mediaId])=> '/post/edit?communityId=$communityId&postId=$postId&mediaId=${mediaId ?? ''}';
-  static   String  getComment (String postId,limit,type)=> '/comment?postId=$postId&limit=$limit&type=$type';
+  static   String  getComment (String postId,type,page)=> '/comment?postId=$postId&type=$type&page=$page';
   static   String  editComment (String postId,commentId)=> '/comment/edit?postId=$postId&commentId=$commentId';
   static   String  deleteComment (String postId,commentId)=> '/comment/delete?postId=$postId&commentId=$commentId';
 
@@ -53,5 +53,6 @@ class ApiUrls {
 
 
   static  const String  notification = '/notification';
+  static  const String  notificationBadge = '/notification/badge-count';
 
 }

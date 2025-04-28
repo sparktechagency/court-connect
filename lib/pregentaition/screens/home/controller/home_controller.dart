@@ -1,31 +1,37 @@
 import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/comment/models/commant_data.dart';
 import 'package:courtconnect/pregentaition/screens/home/models/banner_data.dart';
 import 'package:courtconnect/pregentaition/screens/home/models/session_data.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  RxString userName = ''.obs;
-  RxString userImage = ''.obs;
-  RxString userId = ''.obs;
-  RxString type = 'all'.obs;
-  RxString price = ''.obs;
-  RxString date = ''.obs;
-  RxString id = ''.obs;
-  RxString bio = ''.obs;
-  RxBool isLoading = false.obs;
+  final userName = ''.obs;
+  final userImage = ''.obs;
+  final userId = ''.obs;
+  final bio = ''.obs;
 
-  RxString searchText = ''.obs;
+  final type = 'all'.obs;
+  final price = ''.obs;
+  final date = ''.obs;
 
+  final isLoading = false.obs;
+  final searchText = ''.obs;
+  final charge = 0.obs;
 
+  final bannerList = <BannerData>[].obs;
+  final sessionList = <SessionData>[].obs;
 
-  RxInt charge = 0.obs;
+  final currentPage = 1.obs;
+  final totalPages = 1.obs;
+  Rx<Pagination?> sessionPagination = Rxn<Pagination>();
 
-  RxList<BannerData> bannerList = <BannerData>[].obs;
-  final RxList<SessionData> _sessionList = <SessionData>[].obs;
+  // ScrollController to manage scrolling
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
@@ -66,19 +72,31 @@ class HomeController extends GetxController {
   /// <==================== get Session Data ======================>
 
 
-  Future<void> getSession() async {
-    _sessionList.clear();
+  Future<void> getSession({bool loadMore = false}) async {
+    if(!loadMore){
+      filteredSessionList.clear();
+      currentPage.value = 1;
+    }
     isLoading.value = true;
 
     try {
       final response = await ApiClient.getData(
-          ApiUrls.session(type.value, price.value, date.value));
+          ApiUrls.session(type.value, price.value, date.value,currentPage.value,totalPages.value));
 
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
+
         List data = responseBody['data'] ?? [];
-        _sessionList.value = data.map((e) => SessionData.fromJson(e)).toList();
+        sessionPagination.value = Pagination.fromJson(responseBody['pagination']);
+
+        final session = data.map((e) => SessionData.fromJson(e)).toList();
+
+        if(loadMore){
+          filteredSessionList.addAll(session);
+        }else{
+          sessionList.value = session;
+        }
       } else{
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -89,16 +107,31 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> loadMoreSessions() async {
+    if (sessionPagination.value != null && currentPage.value < sessionPagination.value!.totalPage!) {
+      currentPage.value++;
+      await getSession(loadMore: true);
+    }
+  }
 
+  void onScroll() {
+    if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      // Load more sessions when scrolled to the bottom
+      if (!isLoading.value) {
+        loadMoreSessions();
+      }
+    }
+  }
 
 
   List<SessionData> get filteredSessionList {
     final query = searchText.value;
-    if (query.isEmpty) return _sessionList;
-    return _sessionList
+    if (query.isEmpty) return sessionList;
+    return sessionList
         .where((group) => (group.name ?? '').toLowerCase().contains(query))
         .toList();
   }
+
 
 
 

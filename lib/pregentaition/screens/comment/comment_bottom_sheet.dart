@@ -2,6 +2,7 @@ import 'package:courtconnect/core/app_routes/app_routes.dart';
 import  'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
@@ -49,83 +50,87 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
   @override
   void initState() {
-    _controller.getComment(widget.id,_selectedValue);
+    _controller.getComment(widget.id,_selectedValue.value);
+    _addScrollListener(widget.id,_selectedValue.value);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(
-      builder: (context, bottomSheetSetState) {
-        return CustomContainer(
-          height: 550.h,
-          width: double.infinity,
-          color: Colors.white,
-          child: Column(
-            children: [
-              SizedBox(
-                width: 40.w,
-                child: const Divider(
-                  color: Colors.black,
-                  thickness: 2,
-                ),
-              ),
-              CustomText(
-                text: 'Comments',
-                color: Colors.black,
-                fontsize: 18.sp,
-              ),
-              Divider(
-                color: AppColors.primaryColor.withOpacity(0.1),
-                height: 25.h,
-              ),
+    return CustomContainer(
+      height: 550.h,
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        children: [
+          SizedBox(
+            width: 40.w,
+            child: const Divider(
+              color: Colors.black,
+              thickness: 2,
+            ),
+          ),
+          CustomText(
+            text: 'Comments',
+            color: Colors.black,
+            fontsize: 18.sp,
+          ),
+          Divider(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            height: 25.h,
+          ),
 
-              Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () {
-                    bottomSheetSetState(() {
-                      showModalBottomSheet(
-                        isDismissible: true,
-                        context: context,
-                        builder: (context) {
-                          return buildCommentFillerBottomSheet();
-                        },
-                      );
-                    });
+          Align(
+            alignment: Alignment.centerLeft,
+            child: GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                    isDismissible: true,
+                    context: context,
+                    builder: (context)
+                {
+                  return buildCommentFillerBottomSheet();});
 
-                  },
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: CustomText(
-                          color: Colors.black,
-                          left: 16.w,
-                          text: commentOptions[_selectedValue] ?? '',
-                        ),
-                      ),
-                      Icon(Icons.arrow_drop_down,color: Colors.black,),
-
-                    ],
+              },
+              child: Row(
+                children: [
+                  Flexible(
+                    child: CustomText(
+                      color: Colors.black,
+                      left: 16.w,
+                      text: commentOptions[_selectedValue] ?? '',
+                    ),
                   ),
-                ),
+                  Icon(Icons.arrow_drop_down,color: Colors.black,),
+
+                ],
               ),
+            ),
+          ),
 
 
-              Expanded(
-                child: Obx(() {
-                  if (_controller.isLoading.value) {
-                    return ListView.builder(
-                      itemCount: 5,
-                      itemBuilder: (context,index) => _buildSimmer(),
-                    );
-                  }
-                  if (_controller.commentData.isEmpty) {
-                    return Center(child: CustomText(text: 'No comments yet.'));
-                  }
+          Expanded(
+            child: RefreshIndicator(
+              color: AppColors.primaryColor,
+              onRefresh: ()async{
+              await  _controller.getComment(widget.id,_selectedValue.value);
+
+              },
+              child: Obx(() {
+                if (_controller.isLoading.value) {
                   return ListView.builder(
-                    itemCount: _controller.commentData.length,
-                    itemBuilder: (context, index) {
+                    itemCount: 5,
+                    itemBuilder: (context,index) => _buildSimmer(),
+                  );
+                }
+                if (_controller.commentData.isEmpty) {
+                  return Center(child: CustomText(text: 'No comments yet.'));
+                }
+                return ListView.builder(
+                  controller: _controller.scrollController,
+                  itemCount: _controller.commentData.length + 1,
+                  itemBuilder: (context, index) {
+                    if(index < _controller.commentData.length){
                       final commentData = _controller.commentData[index];
                       return CommentCardWidget(
                         commentData: commentData,
@@ -149,112 +154,117 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
                         },
                       );
-                    },
-                  );
-                }),
-              ),
-              _buildCommentSender()
-            ],
+                    }else{
+                      return index < _controller.totalPage ? Center(child: CustomLoader(),) : SizedBox.shrink();
+
+                    }
+                  },
+                );
+              }),
+            ),
           ),
-        );
-      }
+          _buildCommentSender()
+        ],
+      ),
     );
   }
 
-  Widget buildCommentFillerBottomSheet() {
-    return SafeArea(
-                    child: StatefulBuilder(
-                      builder: (context, bottomSheetSetState) {
-                        return CustomContainer(
-                          paddingAll: 6.r,
-                          width: double.infinity,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: commentOptions.entries.map((entry) {
-                              return GestureDetector(
-                                onTap: (){
-                                  _selectedValue.value = entry.key;
-                                  _controller.getComment(widget.id, _selectedValue);
-                                  _selectedValue.value = entry.key;
-                                  _controller.getComment(widget.id, _selectedValue);
-                                  bottomSheetSetState(() {
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: Row(
-                                  children: [
-                                    Radio<String>(
-                                      activeColor: AppColors.primaryColor,
-                                      value: entry.key,
-                                      groupValue: _selectedValue.value,
-                                      onChanged: (val) {
-                                      },
-                                    ),
-                                    CustomText(text: entry.value),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-  }
 
   Widget _buildCommentSender() {
     return SafeArea(
-        child: StatefulBuilder(
-          builder: (context, bottomSheetSetState) {
-            return Obx(
-              () {
-                final isEditing = editingCommentId.value != null;
+        child: Obx(
+                () {
+              final isEditing = editingCommentId.value != null;
 
-                return ListTile(
-                      leading: CustomImageAvatar(
-                image: Get.find<HomeController>().userImage.value,
-                radius: 18.r,
-                      ),
-                      title: CustomTextField(
-                validator: (_) => null,
-                controller: isEditing
-                    ? _commentEditController.editCommentController
-                    : _createCommentController.commentController,
-                contentPaddingVertical: 0,
-                hintText: 'Leave your comment..',
-                hintextSize: 10.sp,
-                      ),
-                      trailing: CustomContainer(
-                onTap: () {
-                  bottomSheetSetState((){
-                    if(isEditing){
-                      _commentEditController.editComment(widget.id, editingCommentId.value!);
-                      _commentEditController.editCommentController.clear();
-                      editingCommentId.value = null;
-                    }else{
-                      _createCommentController.createComment(widget.id);
-                      _createCommentController.commentController.clear();
-                    }
-                  });
+              return ListTile(
+                leading: CustomImageAvatar(
+                  image: Get.find<HomeController>().userImage.value,
+                  radius: 18.r,
+                ),
+                title: CustomTextField(
+                  validator: (_) => null,
+                  controller: isEditing
+                      ? _commentEditController.editCommentController
+                      : _createCommentController.commentController,
+                  contentPaddingVertical: 0,
+                  hintText: _createCommentController.isLoading.value ? 'Please wait....' : 'Leave your comment..',
+                  hintextSize: 10.sp,
+                ),
+                trailing: CustomContainer(
+                  onTap: () async {
+                      if(isEditing){
+                        _commentEditController.editComment(widget.id, editingCommentId.value!);
+                        _commentEditController.editCommentController.clear();
+                        editingCommentId.value = null;
+                      }else{
+                        _createCommentController.createComment(widget.id);
+                        _createCommentController.commentController.clear();
+                      }
 
 
-                },
-                color: AppColors.primaryColor,
-                shape: BoxShape.circle,
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.send,
-                    color: Colors.white,
+                  },
+                  color: AppColors.primaryColor,
+                  shape: BoxShape.circle,
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                      ),
-                    );
-              }
-            );
-          }
-        ));
+              );
+            }
+        ),
+    );
   }
+
+
+
+  Widget buildCommentFillerBottomSheet() {
+    return SafeArea(
+      child: CustomContainer(
+        paddingAll: 6.r,
+        width: double.infinity,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: commentOptions.entries.map((entry) {
+            return GestureDetector(
+              onTap: (){
+                _selectedValue.value = entry.key;
+                _controller.getComment(widget.id, _selectedValue.value);
+                _selectedValue.value = entry.key;
+                _controller.getComment(widget.id, _selectedValue.value);
+                setState(() {
+                });
+                Navigator.pop(context);
+              },
+              child: Row(
+                children: [
+                  Radio<String>(
+                    activeColor: AppColors.primaryColor,
+                    value: entry.key,
+                    groupValue: _selectedValue.value,
+                    onChanged: (val) {
+                      _selectedValue.value = entry.key;
+                      _controller.getComment(widget.id, _selectedValue.value);
+                      _selectedValue.value = entry.key;
+                      _controller.getComment(widget.id, _selectedValue.value);
+                      setState(() {
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  CustomText(text: entry.value),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
 
 
   Widget _buildSimmer() {
@@ -309,6 +319,17 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
         ),
       ),
     );
+  }
+
+
+  void _addScrollListener(String id,type) {
+    _controller.scrollController.addListener(() {
+      if (_controller.scrollController.position.pixels ==
+          _controller.scrollController.position.maxScrollExtent) {
+        _controller.loadMore(id,type);
+        print("load more true");
+      }
+    });
   }
 
 }
