@@ -6,6 +6,7 @@ import 'package:courtconnect/core/widgets/custom_list_tile.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,14 +25,22 @@ class _MessageScreenState extends State<MessageScreen> {
 
   final TextEditingController _searchController = TextEditingController();
 
-  final ChatController _controller = Get.put(ChatController());
+  final ChatController _controller = Get.find<ChatController>();
 
 
   @override
   void initState() {
+    _controller.listenActiveStatus();
     _controller.getChatList();
     super.initState();
   }
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -64,6 +73,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 },
                 child: Obx(
                   () {
+
                     if (_controller.isLoading.value) {
                       return ListView.builder(
                         itemCount: 3,
@@ -74,8 +84,6 @@ class _MessageScreenState extends State<MessageScreen> {
                     if (_controller.chatListData.isEmpty) {
                       return const Center(child: Text("No chat available"));
                     }
-
-
                     return ListView.builder(
                         itemCount: _controller.chatListData.length,
                         itemBuilder: (context, index) {
@@ -83,33 +91,49 @@ class _MessageScreenState extends State<MessageScreen> {
 
                           return Hero(
                             tag: index,
-                            child: CustomListTile(
-                              onTap: (){
-                                context.pushNamed(AppRoutes.chatScreen,extra: {
-                                  'image' : chatData.receiver?.image ?? '',
-                                  'name' : chatData.receiver?.name ?? '',
-                                  'email' : chatData.receiver?.email ?? '',
-                                  'status' : chatData.receiver?.status ?? '',
-                                  'heroTag' : index,
-                                });
-                              },
-                              selectedColor: chatData.unreadCount! > 0
-                                  ? AppColors.primaryColor.withOpacity(0.8)
-                                  : null,
-                              image: chatData.receiver?.image ?? '',
-                              title: chatData.receiver?.name ?? '',
-                              subTitle: chatData.lastMessage?.message ?? '',
-                              trailing: chatData.unreadCount! > 0
-                                  ? CustomContainer(
-                                      color: AppColors.primaryColor,
-                                      shape: BoxShape.circle,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(6.r),
-                                        child: CustomText(
-                                            text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
-                                      ),
-                                    )
-                                  : null,
+                            child: Obx(
+                              () {
+                                final String userId = chatData.receiver?.id ?? '';
+                                int userIndex = _controller.userList.indexWhere((id) => id == userId);
+
+                                String status = userIndex != -1 ? _controller.statusList[userIndex] : 'offline';
+
+                                bool isActive = status == 'online';
+
+
+                                return CustomListTile(
+                                  onTap: (){
+                                    context.pushNamed(AppRoutes.chatScreen,extra: {
+                                      'image' : chatData.receiver?.image ?? '',
+                                      'name' : chatData.receiver?.name ?? '',
+                                      'email' : chatData.receiver?.email ?? '',
+                                      'status' : chatData.receiver?.status ?? '',
+                                      'chatId' : chatData.chatId ?? '',
+                                      'receiverId' : chatData.receiver?.id ?? '',
+                                      'lastActive' : chatData.receiver?.lastActive ?? '',
+                                      'heroTag' : index,
+                                    });
+                                  },
+                                  selectedColor: (chatData.unreadCount ?? 0) > 0
+                                      ? AppColors.primaryColor.withOpacity(0.8)
+                                      : null,
+                                  image: chatData.receiver?.image ?? '',
+                                  title: chatData.receiver?.name ?? '',
+                                  activeColor:  isActive == 'online' ? Colors.green : Colors.grey,
+                                  subTitle: chatData.lastMessage?.message ?? '',
+                                  trailing: (chatData.unreadCount ?? 0) > 0
+                                      ? CustomContainer(
+                                    color: AppColors.primaryColor,
+                                    shape: BoxShape.circle,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(6.r),
+                                      child: CustomText(
+                                          text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
+                                    ),
+                                  )
+                                      : null,
+                                );
+                              }
                             ),
                           );
                         });
@@ -174,5 +198,6 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
     );
   }
+
 
 }

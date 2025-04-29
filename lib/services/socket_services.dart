@@ -1,90 +1,90 @@
-// import 'dart:async';
-// import 'package:qping/services/api_urls.dart';
-// import 'package:qping/utils/app_constant.dart';
-// import 'package:socket_io_client/socket_io_client.dart' as IO;
-// import 'package:socket_io_client/socket_io_client.dart';
-//
-// import '../helpers/prefs_helper.dart';
-//
-//
-// class SocketServices {
-//
-//   static var token = '';
-//
-//   factory SocketServices() {
-//     return _socketApi;
-//   }
-//
-//
-//
-//   SocketServices._internal();
-//
-//   static final SocketServices _socketApi = SocketServices._internal();
-//   static IO.Socket socket = IO.io(ApiConstants.imageBaseUrl,
-//       IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders({"authorization":'Bearer ${token}'}).build());
-//
-//
-//
-//
-//   static void init() async {
-//     token = await PrefsHelper.getString(AppConstants.bearerToken);
-//     print("Initializing socket with token: $token");
-//
-//     // Validate token
-//     if (token.isEmpty || token == null) {
-//       print("Error: Token is missing or invalid.");
-//       return;
-//     }
-//
-//     // Disconnect existing socket if connected
-//     if (socket.connected) {
-//       socket.disconnect();
-//     }
-//
-//     // Reinitialize socket
-//     socket = IO.io(
-//       '${ApiConstants.imageBaseUrl}',
-//       IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders({"authorization":'Bearer ${token}'}).enableReconnection().build(),
-//     );
-//
-//     // Setup event listeners
-//     socket.onConnect((_) {
-//       print('✅Socket connected successfully');
-//     });
-//
-//     socket.onConnectError((err) {
-//       print('❌Socket connection error: $err');
-//     });
-//
-//     socket.onError((err) {
-//       print('❌Socket error: $err');
-//     });
-//
-//     socket.onDisconnect((reason) {
-//       print('⚠️Socket disconnected. Reason: $reason');
-//     });
-//
-//
-//     socket.connect(); // Connect to the server
-//   }
-//
-//   static Future<dynamic> emitWithAck(String event, dynamic body) async {
-//     Completer<dynamic> completer = Completer<dynamic>();
-//     socket.emitWithAck(event, body, ack: (data) {
-//       if (data != null) {
-//         completer.complete(data);
-//       } else {
-//         completer.complete(1);
-//       }
-//     });
-//     return completer.future;
-//   }
-//
-//
-//   static emit(String event, dynamic body) {
-//     if (body != null) {
-//       socket.emit(event, body);
-//       print('===========> Emit $event and \n $body');
-//     }
-//   }
-// }
+import 'dart:async';
+import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+class SocketServices {
+  static final SocketServices _socketApi = SocketServices._internal();
+  late IO.Socket socket;
+  static String? token;
+
+  factory SocketServices() {
+    return _socketApi;
+  }
+
+  SocketServices._internal();
+
+
+  Future<void> init() async {
+    token = await PrefsHelper.getString(AppConstants.bearerToken) ?? "";
+
+    print("-------------------------------------------------------------\n Socket call \n token = $token");
+
+    socket = IO.io(
+        'https://courtconnect-asifur-rahman.sarv.live/',
+        // '${ApiConstants.imageBaseUrl}?token=$token',
+        IO.OptionBuilder()
+            .setTransports(['websocket'])
+            .setExtraHeaders({"token": "$token"})
+            .enableReconnection()
+            .build()
+    );
+
+    _setupSocketListeners(token.toString());
+    socket.connect(); // Ensure connection starts
+  }
+
+
+  void _setupSocketListeners(String token) {
+    socket.onConnect((_) {
+      print('========> Socket connected: ${socket.connected}');
+    });
+
+    socket.onConnectError((err) {
+      print('========> Socket connect error: $err');
+    });
+
+    socket.onDisconnect((_) {
+      print('========> Socket disconnected! Attempting to reconnect...');
+      Future.delayed(Duration(seconds: 2), () {
+        if (!socket.connected) {
+          socket.connect(); // Force reconnect if needed
+        }
+      });
+    });
+
+    socket.onReconnecting((_) {
+      init();
+      print('========> Socket reconnecting...');
+    });
+
+    socket.onReconnect((_) {
+      print('========> Socket reconnected! $token');
+      init();
+    });
+
+    socket.onError((error) {
+      print('========> Socket error: $error');
+    });
+  }
+
+  Future<dynamic> emitWithAck(String event, dynamic body) async {
+    Completer<dynamic> completer = Completer<dynamic>();
+    socket.emitWithAck(event, body, ack: (data) {
+      completer.complete(data ?? 1);
+    });
+    return completer.future;
+  }
+
+  void emit(String event, dynamic body) {
+    if (body != null) {
+      socket.emit(event, body);
+      print('===========> Emit $event \n $body');
+    }
+  }
+
+  void disconnect() {
+    socket.disconnect();
+    print('========> Socket manually disconnected');
+  }
+}

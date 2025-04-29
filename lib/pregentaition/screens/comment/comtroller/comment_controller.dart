@@ -15,21 +15,18 @@ class CommentController extends GetxController {
   var currentPage = (-1);
   var totalResult = (-1);
 
-
   final ScrollController scrollController = ScrollController();
   final RxList<CommentData> commentData = <CommentData>[].obs;
 
-
-
   Future<void> getComment(String id, String type) async {
-
     try {
-
-      if(page.value == 1){
+      if (page.value == 1) {
         commentData.clear();
         isLoading(true);
       }
-      var response = await ApiClient.getData(ApiUrls.getComment(id,type,"${page.value}"),);
+      var response = await ApiClient.getData(
+        ApiUrls.getComment(id, type, "${page.value}"),
+      );
 
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
@@ -38,11 +35,15 @@ class CommentController extends GetxController {
         totalResult = int.tryParse(responseBody['pagination']['totalItem'].toString()) ?? 0;
         final List data = responseBody['data'];
 
-        final comments = data.map((json) => CommentData.fromJson(json)).toList();
-
+        final comments =
+            data.map((json) => CommentData.fromJson(json)).toList();
+        if (page.value == 1) {
           commentData.addAll(comments);
-          update();
-          isLoading(false);
+        } else {
+          commentData.addAll(comments);
+        }
+        update();
+        isLoading(false);
       } else {
         isLoading(false);
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
@@ -54,16 +55,15 @@ class CommentController extends GetxController {
     }
   }
 
-  void loadMore(String id,type) {
-    print("==========================================total page ${totalPage} page No: ${page.value} == total result ${totalResult}");
+  void loadMore(String id, type) {
+    print(
+        "==========================================total page ${totalPage} page No: ${page.value} == total result ${totalResult}");
     if (totalPage > page.value) {
       page.value += 1;
-      getComment(id,type);
+      getComment(id, type);
       print("**********************print here");
       update();
     }
     print("**********************print here**************");
   }
-
-
 }

@@ -1,6 +1,7 @@
 import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/pregentaition/screens/auth/login/log_in_screen.dart';
+import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
 import 'package:courtconnect/pregentaition/screens/group/create_group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/edit_group_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/group_details_screen.dart';
@@ -29,6 +30,7 @@ import 'package:courtconnect/pregentaition/screens/profile/setting/setting_scree
 import 'package:courtconnect/pregentaition/screens/profile/setting/terms_screen.dart';
 import 'package:courtconnect/pregentaition/screens/profile/support_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../pregentaition/screens/auth/forget/forget_screen.dart';
 import '../../pregentaition/screens/auth/otp/otp_screen.dart';
@@ -95,6 +97,7 @@ class AppRoutes {
                String token = await PrefsHelper.getString(AppConstants.bearerToken);
               if(token.isNotEmpty){
                 AppRoutes.goRouter.replaceNamed(AppRoutes.customBottomNavBar);
+                Get.find<CustomBottomNavBarController>().onChange(0);
               }else{
                 AppRoutes.goRouter.replaceNamed(AppRoutes.loginScreen);
               }

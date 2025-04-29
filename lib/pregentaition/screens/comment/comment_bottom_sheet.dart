@@ -237,6 +237,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                 _controller.getComment(widget.id, _selectedValue.value);
                 setState(() {
                 });
+                _controller.page.value = 1;
                 Navigator.pop(context);
               },
               child: Row(
@@ -253,6 +254,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                       setState(() {
                       });
                       Navigator.pop(context);
+                      _controller.page.value = 1;
                     },
                   ),
                   CustomText(text: entry.value),
