@@ -4,12 +4,13 @@ import 'package:go_router/go_router.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar(
-      {super.key, this.title, this.showLeading = true, this.actions, this.titleWidget});
+      {super.key, this.title, this.showLeading = true, this.actions, this.titleWidget, this.backAction});
 
   final String? title;
   final Widget? titleWidget;
   final bool showLeading;
   final List<Widget>? actions;
+  final VoidCallback? backAction;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: showLeading
           ? GestureDetector(
               onTap: () {
-                context.pop();
+                if(backAction != null){
+                  backAction!();
+                  context.pop();
+                }else{
+                  context.pop();
+                }
               },
               child: Padding(
                 padding: EdgeInsets.all(10.r),

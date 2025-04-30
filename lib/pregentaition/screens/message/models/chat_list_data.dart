@@ -35,6 +35,9 @@ class Pagination {
   }
 }
 
+
+
+
 class ChatListData {
   String? chatId;
   Receiver? receiver;
@@ -89,7 +92,20 @@ class Receiver {
     lastActive = json['lastActive'];
   }
 
+
+  Receiver copyWith({String? status,String? name, String ? id }){
+    return Receiver(
+      status: status,
+      name: name,
+      id: id
+    );
+  }
+
 }
+
+
+
+
 
 class LastMessage {
   String? message;

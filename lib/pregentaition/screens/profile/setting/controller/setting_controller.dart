@@ -1,7 +1,12 @@
+import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingController extends GetxController {
   RxBool isLoading = false.obs;
@@ -79,4 +84,28 @@ class SettingController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
+  Future<void> deleteAccount(BuildContext context,String userId) async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiClient.deleteData(ApiUrls.accountDelete(userId));
+      final responseBody = response.body;
+
+      if (response.statusCode == 200 && responseBody['success'] == true) {
+
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+        await PrefsHelper.remove(AppConstants.bearerToken);
+        context.go(AppRoutes.loginScreen);
+      } else {
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+      }
+    } catch (e) {
+      ToastMessageHelper.showToastMessage("Something went wrong: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }

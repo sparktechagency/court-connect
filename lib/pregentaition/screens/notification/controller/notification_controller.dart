@@ -27,6 +27,7 @@ class NotificationController extends GetxController {
       if (response.statusCode == 200 && responseBody['success'] == true) {
         final List data = responseBody['data']!['notifications'];
         notificationData.value = data.map((json) => NotificationData.fromJson(json)).toList();
+        isUnread.value = true;
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }

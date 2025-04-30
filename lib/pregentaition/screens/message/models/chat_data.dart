@@ -51,7 +51,9 @@ class ChatData {
     iV = json['__v'];
     isSender = json['isSender'];
   }
+
 }
+
 
 class Files {
   String? publicFileURL;

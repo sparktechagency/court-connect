@@ -32,7 +32,13 @@ class ChatProfileViewScreen extends StatelessWidget {
             ),
           ),
           Center(child: CustomText(text: chatData['name'],top: 16.h,fontsize: 18.sp,fontWeight: FontWeight.w600,)),
-          Center(child: CustomText(text: 'Status: ${chatData['status']}',top: 6.h,fontsize: 10.sp,fontWeight: FontWeight.w500,)),
+          Center(child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomText(text: 'Status: ',top: 6.h,fontsize: 10.sp,fontWeight: FontWeight.w500,),
+              Flexible(child: CustomText(text: ' ${chatData['status']}',top: 6.h,fontsize: 10.sp,fontWeight: FontWeight.w600,color: chatData['status'] == 'online' ? Colors.green : Colors.amber)),
+            ],
+          )),
 
 
 

@@ -12,6 +12,7 @@ class ApiUrls {
   static  const String  resetPassword = '/auth/reset-password';
   static  const String  myProfile = '/auth/my-profile';
   static  const String  updateProfile = '/auth/profile-update';
+  static   String  accountDelete(String id) => '/auth/account-delete?id=$id';
   static  const String  getBanner = '/banner';
   static  const String  terms = '/terms';
   static  const String  about = '/about';
@@ -48,7 +49,7 @@ class ApiUrls {
 
 
   static   String  createChat (String receiverId)=> '/chat/create?receiverId=$receiverId';
-  static   String  getChatMessage (String receiverId,chatId)=> '/chat/message?receiverId=$receiverId&chatId=$chatId';
+  static   String  getChatMessage (String receiverId,chatId,page)=> '/chat/message?receiverId=$receiverId&chatId=$chatId&page=$page';
   static  const String  chatList = '/chat/list';
 
 

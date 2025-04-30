@@ -8,6 +8,7 @@ import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
+import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -25,12 +26,13 @@ class _MessageScreenState extends State<MessageScreen> {
 
   final TextEditingController _searchController = TextEditingController();
 
-  final ChatController _controller = Get.find<ChatController>();
+  final ChatController _controller =   Get.put(ChatController());
+  final SocketChatController _socketChatController =   Get.put(SocketChatController());
 
 
   @override
   void initState() {
-    _controller.listenActiveStatus();
+    _socketChatController.listenActiveStatus();
     _controller.getChatList();
     super.initState();
   }
@@ -84,59 +86,50 @@ class _MessageScreenState extends State<MessageScreen> {
                     if (_controller.chatListData.isEmpty) {
                       return const Center(child: Text("No chat available"));
                     }
-                    return ListView.builder(
-                        itemCount: _controller.chatListData.length,
-                        itemBuilder: (context, index) {
-                          final chatData = _controller.chatListData[index];
+                    return Obx(() =>
+                       ListView.builder(
+                          itemCount: _controller.chatListData.length,
+                          itemBuilder: (context, index) {
+                            final chatData = _controller.chatListData[index];
 
-                          return Hero(
-                            tag: index,
-                            child: Obx(
-                              () {
-                                final String userId = chatData.receiver?.id ?? '';
-                                int userIndex = _controller.userList.indexWhere((id) => id == userId);
+                            return Hero(
+                              tag: index,
+                              child: CustomListTile(
+                                onTap: (){
 
-                                String status = userIndex != -1 ? _controller.statusList[userIndex] : 'offline';
-
-                                bool isActive = status == 'online';
-
-
-                                return CustomListTile(
-                                  onTap: (){
-                                    context.pushNamed(AppRoutes.chatScreen,extra: {
-                                      'image' : chatData.receiver?.image ?? '',
-                                      'name' : chatData.receiver?.name ?? '',
-                                      'email' : chatData.receiver?.email ?? '',
-                                      'status' : chatData.receiver?.status ?? '',
-                                      'chatId' : chatData.chatId ?? '',
-                                      'receiverId' : chatData.receiver?.id ?? '',
-                                      'lastActive' : chatData.receiver?.lastActive ?? '',
-                                      'heroTag' : index,
-                                    });
-                                  },
-                                  selectedColor: (chatData.unreadCount ?? 0) > 0
-                                      ? AppColors.primaryColor.withOpacity(0.8)
-                                      : null,
-                                  image: chatData.receiver?.image ?? '',
-                                  title: chatData.receiver?.name ?? '',
-                                  activeColor:  isActive == 'online' ? Colors.green : Colors.grey,
-                                  subTitle: chatData.lastMessage?.message ?? '',
-                                  trailing: (chatData.unreadCount ?? 0) > 0
-                                      ? CustomContainer(
-                                    color: AppColors.primaryColor,
-                                    shape: BoxShape.circle,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(6.r),
-                                      child: CustomText(
-                                          text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
-                                    ),
-                                  )
-                                      : null,
-                                );
-                              }
-                            ),
-                          );
-                        });
+                                  context.pushNamed(AppRoutes.chatScreen,extra: {
+                                    'image' : chatData.receiver?.image ?? '',
+                                    'name' : chatData.receiver?.name ?? '',
+                                    'email' : chatData.receiver?.email ?? '',
+                                    'status' : chatData.receiver?.status ?? '',
+                                    'chatId' : chatData.chatId ?? '',
+                                    'receiverId' : chatData.receiver?.id ?? '',
+                                    'lastActive' : chatData.receiver?.lastActive ?? '',
+                                    'heroTag' : index,
+                                  });
+                                },
+                                selectedColor: (chatData.unreadCount ?? 0) > 0
+                                    ? AppColors.primaryColor.withOpacity(0.8)
+                                    : null,
+                                image: chatData.receiver?.image ?? '',
+                                title: chatData.receiver?.name ?? '',
+                                activeColor: chatData.receiver?.status == 'online' ? Colors.green : Colors.grey,
+                                subTitle: chatData.lastMessage?.message ?? '',
+                                trailing: (chatData.unreadCount ?? 0) > 0
+                                    ? CustomContainer(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(6.r),
+                                    child: CustomText(
+                                        text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
+                                  ),
+                                )
+                                    : null,
+                              ),
+                            );
+                          }),
+                    );
                   }
                 ),
               ),

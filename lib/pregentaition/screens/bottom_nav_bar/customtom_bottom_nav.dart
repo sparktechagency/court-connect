@@ -14,7 +14,7 @@ import '../../../global/custom_assets/assets.gen.dart';
 class CustomBottomNavBar extends StatelessWidget {
   CustomBottomNavBar({super.key});
 
-  final CustomBottomNavBarController _navBarController = Get.put(CustomBottomNavBarController());
+  final CustomBottomNavBarController _navBarController = Get.find<CustomBottomNavBarController>();
 
 
   final List<Widget> _screens = const [

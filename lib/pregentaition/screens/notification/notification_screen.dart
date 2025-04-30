@@ -27,6 +27,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    _controller.getNotification();
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       appBar: CustomAppBar(

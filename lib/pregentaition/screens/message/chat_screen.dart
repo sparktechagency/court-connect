@@ -3,12 +3,15 @@ import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_list_tile.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/helpers/time_format.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
+import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/widgets/chat_card.dart';
+import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -31,15 +34,21 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
 
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   final ChatController _controller = Get.put(ChatController());
+  final SocketChatController _socketChatController = Get.put(SocketChatController());
   HomeController homeController = Get.find<HomeController>();
 
 
   @override
   void initState() {
     super.initState();
-    _controller.listenMessage();
+    _socketChatController.listenActiveStatus();
+    _socketChatController.listenMessage();
+    _socketChatController.seenChat(widget.chatData['chatId']);
+    _socketChatController.listenSeenStatus(widget.chatData['chatId']);
+    _addScrollListener();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.getChat(widget.chatData['receiverId'], widget.chatData['chatId']);
     });
@@ -50,6 +59,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return CustomScaffold(
       appBar: CustomAppBar(
+        backAction: (){
+          _socketChatController.unseenChat(widget.chatData['chatId']);
+          _socketChatController.listenUnseenStatus(widget.chatData['chatId']);
+        },
         titleWidget: Hero(
           tag: widget.chatData['heroTag'] ?? '',
           child: GestureDetector(
@@ -63,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
               imageRadius: 20.r,
               image: widget.chatData['image'],
               title: widget.chatData['name'],
-              subTitle: widget.chatData['status'] == 'online' ? 'online' : TimeFormatHelper.getTimeAgo(DateTime.parse(widget.chatData['lastActive'].toString() ?? '')),
+              subTitle:  widget.chatData['status'] == 'online' ? 'online' : TimeFormatHelper.getTimeAgo(DateTime.tryParse(widget.chatData['lastActive'] ?? '') ?? DateTime.now()),
               statusColor: widget.chatData['status'] == 'online' ? Colors.green : Colors.grey,
 
             ),
@@ -80,18 +93,38 @@ class _ChatScreenState extends State<ChatScreen> {
                         return _buildShimmer();
                       }if(_controller.chatData.isEmpty){
                         Center(child: CustomText(text: 'No chat yet',));
+            
                       }
                 return ListView.builder(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  controller: _scrollController,
                   reverse: true,
                   itemCount: _controller.chatData.length,
                   itemBuilder: (context, index) {
-                    final chat = _controller.chatData[index];
-                    return ChatBubbleMessage(
-                      time: TimeFormatHelper.timeFormat(DateTime.now()),
-                      profileImage: '',
-                      text: chat.message ?? '',
-                      isMe: homeController.userId.value == chat.senderId,
-                    );
+
+
+                    if(index < _controller.chatData.length){
+                      final chat = _controller.chatData[index];
+
+                      return Obx((){
+                       // final createdAt = DateTime.tryParse(chat.createdAt ?? '');
+                        /*final formattedTime = createdAt != null
+                            ? DateFormat('h:mm a').format(createdAt.toLocal())
+                            : DateTime.now().toLocal().toString();*/
+                        return ChatBubbleMessage(
+                        status: widget.chatData['status'],
+                          isSeen: chat.seenList?.contains(chat.receiverId) ?? false || _socketChatController.socketSeen.value,
+                        time: TimeFormatHelper.timeFormat(DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now()),
+                        //time:formattedTime,
+                        text: chat.message ?? '',
+                        isMe: homeController.userId.value == chat.senderId,
+                      );});
+                    }else{
+                      return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
+                    }
+
+
+
                   },
                 );
               }
@@ -105,7 +138,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageSender() {
-    return Padding(
+    return Container(
+      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         children: [
@@ -137,7 +171,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     if(_messageController.text.trim() == '') return;
     setState(() {
-      _controller.sendMessage(_messageController.text, "${widget.chatData['receiverId']}");
+      _socketChatController.sendMessage(_messageController.text, "${widget.chatData['receiverId']}");
       _messageController.clear();
     });
   }
@@ -170,50 +204,22 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
 
-  String _getFormattedTime(dynamic updatedAt) {
-    if (updatedAt == null) return 'Invalid date';
-
-    try {
-      DateTime date;
-
-      if (updatedAt is DateTime) {
-        date = updatedAt;
-      } else if (updatedAt is int) {
-        // If timestamp (milliseconds since epoch), convert to DateTime
-        date = DateTime.fromMillisecondsSinceEpoch(updatedAt);
-      } else if (updatedAt is String) {
-        date = DateTime.tryParse(updatedAt) ?? DateTime.fromMillisecondsSinceEpoch(int.tryParse(updatedAt) ?? 0);
-      } else {
-        return 'Invalid date format';
+  void _addScrollListener() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _controller.loadMore(widget.chatData['receiverId'], widget.chatData['chatId']);
+        print("load more true");
       }
-
-      if (date.year == 1970) return 'Invalid date format'; // Handle default conversion errors
-
-      final now = DateTime.now();
-      final difference = now.difference(date);
-
-      if (difference.inMinutes < 1) {
-        return "Just now";
-      } else if (difference.inMinutes < 60) {
-        return "${difference.inMinutes} min ago";
-      } else if (difference.inHours < 24) {
-        return "${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago";
-      } else if (difference.inDays == 1) {
-        return "Yesterday";
-      } else if (difference.inDays < 7) {
-        return "${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago";
-      } else {
-        return DateFormat('dd/MM/yy').format(date); // e.g., 12/01/25
-      }
-    } catch (e) {
-      return 'Invalid date format';
-    }
+    });
   }
+
+
 
   @override
   void dispose() {
     _messageController.dispose();
-    _controller.offSocket(widget.chatData['chatId']);
+    _socketChatController.offSocket(widget.chatData['chatId']);
     super.dispose();
   }
 }
