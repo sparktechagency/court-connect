@@ -91,7 +91,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   () {
                     return _controller.isButtonLoading.value ? CustomLoader() : CustomContainer(
                       onTap: () {
-                        _controller.createChat(context, data.sId?? '',{
+                        _controller.createChat(context, data.sId ?? '',{
                           'image' : data.image ?? '',
                           'name' : data.name ?? '',
                           'email' : data.email ?? '',

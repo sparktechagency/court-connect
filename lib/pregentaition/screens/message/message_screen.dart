@@ -84,6 +84,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 child: Obx(
                   () {
 
+
                     if (_controller.isLoading.value) {
                       return ListView.builder(
                         itemCount: 3,
@@ -99,6 +100,8 @@ class _MessageScreenState extends State<MessageScreen> {
                           itemCount: _controller.filteredChatList.length,
                           itemBuilder: (context, index) {
                             final chatData = _controller.filteredChatList[index];
+                            _controller.chatId.value = chatData.chatId ?? '' ?? '';
+                            _controller.receveId.value = chatData.receiver?.id ?? '';
 
                             if(index < _controller.filteredChatList.length){
                               return Hero(

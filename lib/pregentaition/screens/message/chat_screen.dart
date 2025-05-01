@@ -48,11 +48,11 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.currentChatData.refresh();
     _socketChatController.listenActiveStatus();
     _socketChatController.listenMessage();
-    _socketChatController.seenChat(widget.chatData['chatId']);
-    _socketChatController.listenSeenStatus(widget.chatData['chatId'],);
+    _socketChatController.seenChat(_controller.chatId.value);
+    _socketChatController.listenSeenStatus(_controller.chatId.value);
     _addScrollListener();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.getChat(widget.chatData['receiverId'], widget.chatData['chatId']);
+      _controller.getChat(_controller.receveId.value, _controller.chatId.value);
     });
   }
 
@@ -62,8 +62,8 @@ class _ChatScreenState extends State<ChatScreen> {
     return CustomScaffold(
       appBar: CustomAppBar(
         backAction: (){
-          _socketChatController.unseenChat(widget.chatData['chatId']);
-          _socketChatController.listenUnseenStatus(widget.chatData['chatId']);
+         // _socketChatController.unseenChat(widget.chatData['chatId']);
+          //_socketChatController.listenUnseenStatus(widget.chatData['chatId']);
         },
         titleWidget: Obx(
           () {
@@ -118,7 +118,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
                       return ChatBubbleMessage(
-                        status: currentChatData['status'],
+                        status: currentChatData['status'] ?? '',
                         isSeen: chat.seenList!.length > 1,
                         time: TimeFormatHelper.timeFormat(DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now()),
                         //time:formattedTime,

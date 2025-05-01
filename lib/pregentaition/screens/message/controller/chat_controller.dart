@@ -12,6 +12,8 @@ class ChatController extends GetxController {
   RxMap<String, dynamic> currentChatData = <String, dynamic>{}.obs;
 
   RxString searchText = ''.obs;
+  RxString chatId = ''.obs;
+  RxString receveId = ''.obs;
 
   RxInt page = 1.obs;
   var totalPage = (-1);
