@@ -44,10 +44,12 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    _controller.currentChatData.value = widget.chatData;
+    _controller.currentChatData.refresh();
     _socketChatController.listenActiveStatus();
     _socketChatController.listenMessage();
     _socketChatController.seenChat(widget.chatData['chatId']);
-    _socketChatController.listenSeenStatus(widget.chatData['chatId']);
+    _socketChatController.listenSeenStatus(widget.chatData['chatId'],);
     _addScrollListener();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.getChat(widget.chatData['receiverId'], widget.chatData['chatId']);
@@ -63,24 +65,32 @@ class _ChatScreenState extends State<ChatScreen> {
           _socketChatController.unseenChat(widget.chatData['chatId']);
           _socketChatController.listenUnseenStatus(widget.chatData['chatId']);
         },
-        titleWidget: Hero(
-          tag: widget.chatData['heroTag'] ?? '',
-          child: GestureDetector(
-            onTap: (){
-              context.pushNamed(AppRoutes.chatProfileViewScreen,
-                extra: widget.chatData,
-              );
+        titleWidget: Obx(
+          () {
+            var currentChatData = _controller.currentChatData;
 
-            },
-            child: CustomListTile(
-              imageRadius: 20.r,
-              image: widget.chatData['image'],
-              title: widget.chatData['name'],
-              subTitle:  widget.chatData['status'] == 'online' ? 'online' : TimeFormatHelper.getTimeAgo(DateTime.tryParse(widget.chatData['lastActive'] ?? '') ?? DateTime.now()),
-              statusColor: widget.chatData['status'] == 'online' ? Colors.green : Colors.grey,
+            return Hero(
+              tag: currentChatData['heroTag'] ?? '',
+              child: GestureDetector(
+                onTap: (){
+                  context.pushNamed(AppRoutes.chatProfileViewScreen,
+                    extra: widget.chatData,
+                  );
 
-            ),
-          ),
+                },
+                child: CustomListTile(
+                  imageRadius: 20.r,
+                  image: currentChatData['image'],
+                  title: currentChatData['name'],
+                  subTitle: currentChatData['status'] == 'online'
+                      ? 'online'
+                      : TimeFormatHelper.getTimeAgo(DateTime.tryParse(currentChatData['lastActive'] ?? '') ?? DateTime.now()),
+                  statusColor: currentChatData['status'] == 'online' ? Colors.green : Colors.grey,
+
+                ),
+              ),
+            );
+          }
         ),
       ),
       body: Column(
@@ -89,12 +99,6 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: Obx(
                     () {
-                      if(_controller.isLoading.value){
-                        return _buildShimmer();
-                      }if(_controller.chatData.isEmpty){
-                        Center(child: CustomText(text: 'No chat yet',));
-            
-                      }
                 return ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
@@ -102,23 +106,25 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemCount: _controller.chatData.length,
                   itemBuilder: (context, index) {
 
+                    if(_controller.isLoading.value){
+                      return _buildShimmer();
+                    }if(_controller.chatData.isEmpty){
+                      Center(child: CustomText(text: 'No chat yet',));
 
+                    }
                     if(index < _controller.chatData.length){
                       final chat = _controller.chatData[index];
+                      var currentChatData = _controller.currentChatData;
 
-                      return Obx((){
-                       // final createdAt = DateTime.tryParse(chat.createdAt ?? '');
-                        /*final formattedTime = createdAt != null
-                            ? DateFormat('h:mm a').format(createdAt.toLocal())
-                            : DateTime.now().toLocal().toString();*/
-                        return ChatBubbleMessage(
-                        status: widget.chatData['status'],
-                          isSeen: chat.seenList?.contains(chat.receiverId) ?? false || _socketChatController.socketSeen.value,
+
+                      return ChatBubbleMessage(
+                        status: currentChatData['status'],
+                        isSeen: chat.seenList!.length > 1,
                         time: TimeFormatHelper.timeFormat(DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now()),
                         //time:formattedTime,
                         text: chat.message ?? '',
                         isMe: homeController.userId.value == chat.senderId,
-                      );});
+                      );
                     }else{
                       return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
                     }
@@ -179,25 +185,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
   Widget _buildShimmer() {
-    return ListView.builder(
-      itemCount: 8,
-      itemBuilder: (_, __) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          children: [
-            Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                width: 200,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          width: 200,
+          height: 20,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );

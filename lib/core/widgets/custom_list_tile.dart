@@ -43,13 +43,15 @@ class CustomListTile extends StatelessWidget {
         children: [
           if(statusColor != null)
             Icon(Icons.circle,color: statusColor,size: 10.r,),
-          CustomText(
-            left: 4,
-            textAlign: TextAlign.left,
-            text: subTitle??'',
-            fontWeight: FontWeight.w500,
-            fontsize: 11.sp,
-            color: statusColor ?? Colors.grey,
+          Flexible(
+            child: CustomText(
+              left: 4,
+              textAlign: TextAlign.left,
+              text: subTitle??'',
+              fontWeight: FontWeight.w500,
+              fontsize: 11.sp,
+              color: statusColor ?? Colors.grey,
+            ),
           ),
 
         ],

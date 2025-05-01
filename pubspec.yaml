@@ -49,6 +49,7 @@ dependencies:
   timeago: ^3.7.0
   bottom_sheet: ^4.0.4
   socket_io_client: ^2.0.3+1
+  audioplayers: ^6.4.0
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +96,8 @@ flutter:
       - assets/images/
       - assets/icons/
       - assets/lottie/
+      - assets/audio/
+
       - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

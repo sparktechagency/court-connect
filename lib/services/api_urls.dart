@@ -50,7 +50,7 @@ class ApiUrls {
 
   static   String  createChat (String receiverId)=> '/chat/create?receiverId=$receiverId';
   static   String  getChatMessage (String receiverId,chatId,page)=> '/chat/message?receiverId=$receiverId&chatId=$chatId&page=$page';
-  static  const String  chatList = '/chat/list';
+  static   String  chatList(String page) => '/chat/list?page=$page';
 
 
   static  const String  notification = '/notification';

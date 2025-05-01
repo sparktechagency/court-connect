@@ -4,19 +4,14 @@ import 'package:courtconnect/pregentaition/screens/message/models/chat_list_data
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:get/get.dart';
-import '../../../../services/socket_services.dart';
 
 class ChatController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<ChatListData> chatListData = <ChatListData>[].obs;
   RxList<ChatData> chatData = <ChatData>[].obs;
-  SocketServices socketService = SocketServices();
+  RxMap<String, dynamic> currentChatData = <String, dynamic>{}.obs;
 
-
-  RxString seenStatus = ''.obs;
-  RxBool socketSeen = false.obs;
-
-
+  RxString searchText = ''.obs;
 
   RxInt page = 1.obs;
   var totalPage = (-1);
@@ -24,22 +19,38 @@ class ChatController extends GetxController {
   var totalResult = (-1);
 
 
+  RxInt chatListPage = 1.obs;
+  var chatListTotalPage = (-1);
+  var chatListCurrentPage = (-1);
+  var chatListTotalResult = (-1);
+
+
 
 
 
 
   Future<void> getChatList() async {
+    if(page.value == 1){
+      chatListData.clear();
+      isLoading(true);
+    }
     try {
       isLoading.value = true;
 
-      final response = await ApiClient.getData(ApiUrls.chatList);
+      final response = await ApiClient.getData(ApiUrls.chatList('${page.value}'));
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
+        totalPage = int.tryParse(responseBody['pagination']['totalPage'].toString()) ?? 0;
+        currentPage = int.tryParse(responseBody['pagination']['currentPage'].toString()) ?? 0;
+        totalResult = int.tryParse(responseBody['pagination']['totalItem'].toString()) ?? 0;
 
         List  data =  responseBody['data'];
 
-        chatListData.value = data.map((json) => ChatListData.fromJson(json)).toList();
+        final chatList = data.map((json) => ChatListData.fromJson(json)).toList();
+
+        chatListData.addAll(chatList);
+
       } else {
         ToastMessageHelper.showToastMessage("Failed to fetch profile data");
       }
@@ -68,6 +79,7 @@ class ChatController extends GetxController {
 
         List  data =  responseBody['data'];
 
+
         final chatList = data.map((json) => ChatData.fromJson(json)).toList();
         chatData.addAll(chatList);
 
@@ -82,11 +94,31 @@ class ChatController extends GetxController {
   }
 
 
+  List<ChatListData> get filteredChatList {
+    final query = searchText.value;
+    if (query.isEmpty) return chatListData;
+    return chatListData
+        .where((chat) => (chat.receiver?.name ?? '').toLowerCase().contains(query))
+        .toList();
+  }
+
+
   void loadMore(String receiverId,chatId) {
     print("==========================================total page ${totalPage} page No: ${page.value} == total result ${totalResult}");
     if (totalPage > page.value) {
       page.value += 1;
       getChat(receiverId, chatId);
+      print("**********************print here");
+    }
+    print("**********************print here**************");
+  }
+
+
+  void loadMoreChatList() {
+    print("==========================================total page ${totalPage} page No: ${page.value} == total result ${totalResult}");
+    if (totalPage > page.value) {
+      page.value += 1;
+      getChatList();
       print("**********************print here");
     }
     print("**********************print here**************");

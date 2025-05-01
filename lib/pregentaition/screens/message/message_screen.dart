@@ -3,6 +3,7 @@ import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_list_tile.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
@@ -25,6 +26,7 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
 
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   final ChatController _controller =   Get.put(ChatController());
   final SocketChatController _socketChatController =   Get.put(SocketChatController());
@@ -34,6 +36,8 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     _socketChatController.listenActiveStatus();
     _controller.getChatList();
+    _controller.searchText.value = _searchController.text.toLowerCase();
+    _addScrollListener();
     super.initState();
   }
 
@@ -53,6 +57,10 @@ class _MessageScreenState extends State<MessageScreen> {
         body: Column(
           children: [
             CustomTextField(
+              onChanged: (val){
+                _controller.searchText.value = val.toLowerCase();
+
+              },
               validator: (_) {
                 return null;
               },
@@ -83,59 +91,75 @@ class _MessageScreenState extends State<MessageScreen> {
                       );
                     }
 
-                    if (_controller.chatListData.isEmpty) {
+                    if (_controller.filteredChatList.isEmpty) {
                       return const Center(child: Text("No chat available"));
                     }
-                    return Obx(() =>
-                       ListView.builder(
-                          itemCount: _controller.chatListData.length,
+
+                       return ListView.builder(
+                          itemCount: _controller.filteredChatList.length,
                           itemBuilder: (context, index) {
-                            final chatData = _controller.chatListData[index];
+                            final chatData = _controller.filteredChatList[index];
 
-                            return Hero(
-                              tag: index,
-                              child: CustomListTile(
-                                onTap: (){
+                            if(index < _controller.filteredChatList.length){
+                              return Hero(
+                                tag: index,
+                                child: CustomListTile(
+                                  onTap: (){
 
-                                  context.pushNamed(AppRoutes.chatScreen,extra: {
-                                    'image' : chatData.receiver?.image ?? '',
-                                    'name' : chatData.receiver?.name ?? '',
-                                    'email' : chatData.receiver?.email ?? '',
-                                    'status' : chatData.receiver?.status ?? '',
-                                    'chatId' : chatData.chatId ?? '',
-                                    'receiverId' : chatData.receiver?.id ?? '',
-                                    'lastActive' : chatData.receiver?.lastActive ?? '',
-                                    'heroTag' : index,
-                                  });
-                                },
-                                selectedColor: (chatData.unreadCount ?? 0) > 0
-                                    ? AppColors.primaryColor.withOpacity(0.8)
-                                    : null,
-                                image: chatData.receiver?.image ?? '',
-                                title: chatData.receiver?.name ?? '',
-                                activeColor: chatData.receiver?.status == 'online' ? Colors.green : Colors.grey,
-                                subTitle: chatData.lastMessage?.message ?? '',
-                                trailing: (chatData.unreadCount ?? 0) > 0
-                                    ? CustomContainer(
-                                  color: AppColors.primaryColor,
-                                  shape: BoxShape.circle,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(6.r),
-                                    child: CustomText(
-                                        text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
-                                  ),
-                                )
-                                    : null,
-                              ),
-                            );
-                          }),
-                    );
+                                    context.pushNamed(AppRoutes.chatScreen,extra: {
+                                      'image' : chatData.receiver?.image ?? '',
+                                      'name' : chatData.receiver?.name ?? '',
+                                      'email' : chatData.receiver?.email ?? '',
+                                      'status' : chatData.receiver?.status ?? '',
+                                      'chatId' : chatData.chatId ?? '',
+                                      'receiverId' : chatData.receiver?.id ?? '',
+                                      'lastActive' : chatData.receiver?.lastActive ?? '',
+                                      'heroTag' : index,
+                                    });
+                                  },
+                                  selectedColor: (chatData.unreadCount ?? 0) > 0
+                                      ? AppColors.primaryColor.withOpacity(0.8)
+                                      : null,
+                                  image: chatData.receiver?.image ?? '',
+                                  title: chatData.receiver?.name ?? '',
+                                  activeColor: chatData.receiver?.status == 'online' ? Colors.green : Colors.grey,
+                                  subTitle: chatData.lastMessage?.message ?? '',
+                                  trailing: (chatData.unreadCount ?? 0) > 0
+                                      ? CustomContainer(
+                                    color: AppColors.primaryColor,
+                                    shape: BoxShape.circle,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(6.r),
+                                      child: CustomText(
+                                          text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
+                                    ),
+                                  )
+                                      : null,
+                                ),
+                              );
+
+                            }else{
+                              return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
+
+                            }
+                          });
                   }
                 ),
               ),
             ),
           ],
         ));
+  }
+
+
+  void _addScrollListener() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _controller.loadMoreChatList();
+        print("load more true");
+      }
+    });
   }
 
   Widget _buildSimmer() {

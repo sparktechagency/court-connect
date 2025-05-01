@@ -1,3 +1,5 @@
+import 'package:audioplayers/audioplayers.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/models/chat_data.dart';
 import 'package:courtconnect/pregentaition/screens/message/models/chat_list_data.dart';
@@ -11,6 +13,9 @@ class SocketChatController extends GetxController {
   RxList<ChatListData> chatListData = Get.find<ChatController>().chatListData;
   RxList<ChatData> chatData = Get.find<ChatController>().chatData;
   SocketServices socketService = SocketServices();
+  ChatController _controller = Get.find<ChatController>();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
   RxBool socketSeen = false.obs;
 
   userActiveOff() {
@@ -29,8 +34,16 @@ class SocketChatController extends GetxController {
       if (data != null) {
         ChatData demoData = ChatData.fromJson(data);
 
+
+        var prev = chatData.length;
+
         chatData.insert(0, demoData);
 
+        var next = chatData.length;
+
+        if(next > prev){
+          seenChat(data['chatId']);
+        }
 
         debugPrint('=======================================>   ${demoData.isSender}');
 
@@ -43,7 +56,7 @@ class SocketChatController extends GetxController {
   void listenActiveStatus() {
     socketService.socket.on("user-active-status", (data) {
       if (data != null) {
-        print("=========> Response Message: $data -------------------------");
+        print("=========> Socket active $data -------------------------");
 
         int index = chatListData.indexWhere((x) => x.receiver?.id == data['userId']);
         if (index != -1) {
@@ -52,7 +65,13 @@ class SocketChatController extends GetxController {
                 name: data['name'],
                 id: data['userId'],
               );
+
+
           chatListData.refresh();
+
+          _controller.currentChatData['status'] = data['status'];
+          _controller.currentChatData['name'] = data['name'];
+          _controller.currentChatData.refresh();
           update();
 
           print('--------------------------status changed ');
@@ -63,21 +82,24 @@ class SocketChatController extends GetxController {
 
   /// ===============> Listen for seen status updates via socket
   void listenSeenStatus(String chatId) {
-    socketService.socket.on("check-seen", (data) {
+    socketService.socket.on("check-seen", (data) async {
+      print('==============> ====> ${data}');
       if (data != null) {
-        int index = chatData.indexWhere((x) => x.chatId == chatId);
-        if (index != -1) {
-          bool isSeen = chatData[index].seenList?.contains(chatData[index].receiverId) ?? false;
+        int index = chatData.indexWhere((x) => x.sId == data['messageId']);
+        print('==============> tanvir====> ${index}, ${data}');
 
-          if (isSeen) {
-            socketSeen.value = true;
-            print("=========> Chat marked as seen -------------------------");
-          } else {
-            socketSeen.value = false;
-            print("=========> Chat marked as unseen -------------------------");
-          }
+        if (index != -1) {
+      chatData[0].seenList?.insert(0, "bmnbnnv");
+
+
           chatData.refresh();
-          update();
+          chatListData.refresh();
+          if(Get.find<HomeController>().userId.value != chatData[0].seenList?.contains(Get.find<HomeController>().userId.value)){
+            await _audioPlayer.play(AssetSource('audio/seen.mp3'));
+
+          }
+
+      update();
         }
       }
     });
@@ -87,6 +109,7 @@ class SocketChatController extends GetxController {
     socketService.socket.on("check-unseen", (data) {
       if (data != null) {
         int index = chatData.indexWhere((x) => x.chatId == chatId);
+        print('==============> tanvir====> ${index}');
         if (index != -1) {
           bool isUnseen = !(chatData[index].seenList?.contains(chatData[index].receiverId) ?? false);
 
@@ -103,12 +126,15 @@ class SocketChatController extends GetxController {
 
 
   /// ================> Send a new message via socket.
-  void sendMessage(String message, String receiverId) {
+  void sendMessage(String message, String receiverId) async {
     final body = {
       "message": message,
       "receiverId": receiverId,
     };
     socketService.emit('send-message', body);
+
+    await _audioPlayer.play(AssetSource('audio/text_audio.mp3'));
+
   }
 
   /// ================> Handle seen chat.
@@ -116,6 +142,7 @@ class SocketChatController extends GetxController {
     final body = {"chatId": chatId};
     if (socketService.socket.connected) {
       socketService.emit('check-seen', body);
+
     } else {
       socketService.socket.on('connect', (_) {
         socketService.emit('check-seen', body);

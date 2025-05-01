@@ -33,12 +33,14 @@ class ChatBubbleMessage extends StatelessWidget {
           Row(
             mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
-              CustomContainer(
-                horizontalPadding: 16.w,
-                verticalPadding: 8.h,
-                color: isMe ? AppColors.primaryColor : const Color(0xffEEEEEE),
-                radiusAll: 10.r,
-                child: _buildMessageContent(),
+              Flexible(
+                child: CustomContainer(
+                  horizontalPadding: 16.w,
+                  verticalPadding: 8.h,
+                  color: isMe ? AppColors.primaryColor : const Color(0xffEEEEEE),
+                  radiusAll: 10.r,
+                  child: _buildMessageContent(),
+                ),
               ),
             ],
           ),

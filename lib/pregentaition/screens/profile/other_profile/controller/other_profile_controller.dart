@@ -17,7 +17,7 @@ class OtherProfileController extends GetxController {
 
 
 
-  Future<void> createGroup(BuildContext context,String receiverId,Map<String,dynamic>chatData) async {
+  Future<void> createChat(BuildContext context,String receiverId,Map<String,dynamic>chatData) async {
     isButtonLoading.value = true;
 
 
@@ -32,6 +32,7 @@ class OtherProfileController extends GetxController {
         context.pushReplacementNamed(AppRoutes.chatScreen,extra: {
           'image' : chatData['image'] ?? '',
           'name' : chatData['name'] ?? '',
+          'email' : chatData['email'] ?? '',
         });
       } else {
 
