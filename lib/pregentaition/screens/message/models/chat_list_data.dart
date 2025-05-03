@@ -1,43 +1,3 @@
-class Pagination {
-  int? totalPage;
-  int? currentPage;
-  int? prevPage;
-  int? nextPage;
-  int? limit;
-  int? totalItem;
-
-  Pagination(
-      {this.totalPage,
-        this.currentPage,
-        this.prevPage,
-        this.nextPage,
-        this.limit,
-        this.totalItem});
-
-  Pagination.fromJson(Map<String, dynamic> json) {
-    totalPage = json['totalPage'];
-    currentPage = json['currentPage'];
-    prevPage = json['prevPage'];
-    nextPage = json['nextPage'];
-    limit = json['limit'];
-    totalItem = json['totalItem'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['totalPage'] = this.totalPage;
-    data['currentPage'] = this.currentPage;
-    data['prevPage'] = this.prevPage;
-    data['nextPage'] = this.nextPage;
-    data['limit'] = this.limit;
-    data['totalItem'] = this.totalItem;
-    return data;
-  }
-}
-
-
-
-
 class ChatListData {
   String? chatId;
   Receiver? receiver;
@@ -104,22 +64,6 @@ class Receiver {
 }
 
 
-
-
-
-class LastMessage {
-  String? message;
-  String? createdAt;
-
-  LastMessage({this.message, this.createdAt});
-
-  LastMessage.fromJson(Map<String, dynamic> json) {
-    message = json['message'];
-    createdAt = json['createdAt'];
-  }
-
-}
-
 class BlockBy {
   String? id;
   String? name;
@@ -131,3 +75,39 @@ class BlockBy {
     name = json['name'];
   }
 }
+
+
+class LastMessage {
+  String? message;
+  List<ChatFile>? files;
+  String? messageType;
+  String? createdAt;
+
+  LastMessage({this.message, this.files, this.messageType, this.createdAt});
+
+  LastMessage.fromJson(Map<String, dynamic> json) {
+    message = json['message'];
+    if (json['files'] != null) {
+      files = <ChatFile>[];
+      json['files'].forEach((v) {
+        files!.add(ChatFile.fromJson(v));
+      });
+    }
+    messageType = json['messageType'];
+    createdAt = json['createdAt'];
+  }
+}
+
+class ChatFile {
+  String? url;
+  String? type;
+
+  ChatFile({this.url, this.type});
+
+  ChatFile.fromJson(Map<String, dynamic> json) {
+    url = json['url'];
+    type = json['type'];
+  }
+}
+
+

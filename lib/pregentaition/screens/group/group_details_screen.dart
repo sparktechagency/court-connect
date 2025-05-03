@@ -144,7 +144,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                       return _controller.isLoading.value ? const CustomLoader() : CustomButton(
                   onPressed: () {
                     if(data.alreadyJoined == true){
-                      showDeleteORSuccessDialog(context,message:'Do you really want to leave this group?',onTap: (){
+                      showDeleteORSuccessDialog(context,message:'Are you sure you want to leave this group?',onTap: (){
                         _controller.leaveGroup(context, data.id!);
                         context.pop();
                         context.pushNamed(AppRoutes.customBottomNavBar);

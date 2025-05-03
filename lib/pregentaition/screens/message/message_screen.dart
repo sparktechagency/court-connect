@@ -7,7 +7,6 @@ import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
-import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +58,6 @@ class _MessageScreenState extends State<MessageScreen> {
             CustomTextField(
               onChanged: (val){
                 _controller.searchText.value = val.toLowerCase();
-
               },
               validator: (_) {
                 return null;
@@ -85,7 +83,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   () {
 
 
-                    if (_controller.isLoading.value) {
+                    if (_controller.isChatListDataLoading.value) {
                       return ListView.builder(
                         itemCount: 3,
                         itemBuilder: (context, index) => _buildSimmer(),
@@ -100,8 +98,9 @@ class _MessageScreenState extends State<MessageScreen> {
                           itemCount: _controller.filteredChatList.length,
                           itemBuilder: (context, index) {
                             final chatData = _controller.filteredChatList[index];
-                            _controller.chatId.value = chatData.chatId ?? '' ?? '';
                             _controller.receveId.value = chatData.receiver?.id ?? '';
+                            _controller.chatId.value = chatData.chatId ?? '';
+
 
                             if(index < _controller.filteredChatList.length){
                               return Hero(
@@ -117,6 +116,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                       'chatId' : chatData.chatId ?? '',
                                       'receiverId' : chatData.receiver?.id ?? '',
                                       'lastActive' : chatData.receiver?.lastActive ?? '',
+                                      'lastMessageType' : chatData.lastMessage?.messageType ?? '',
+                                      'blockId' : chatData.blockBy?.id ?? '',
                                       'heroTag' : index,
                                     });
                                   },
@@ -142,7 +143,7 @@ class _MessageScreenState extends State<MessageScreen> {
                               );
 
                             }else{
-                              return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
+                              return index < _controller.chatListTotalPage ? CustomLoader() : SizedBox.shrink();
 
                             }
                           });

@@ -2,6 +2,7 @@ import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/core/widgets/two_button_widget.dart';
@@ -29,7 +30,7 @@ class _GroupScreenState extends State<GroupScreen> {
 
   final _sessionTypes = [
     {'label': 'Explore Groups', 'value': 'all'},
-    {'label': 'Joined Groups', 'value': 'join'},
+    {'label': 'My Groups', 'value': 'join'},
     {'label': 'My Creations', 'value': 'my'},
   ];
 
@@ -37,11 +38,10 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.scrollController.addListener(_controller.onScroll);
     _searchController.addListener(() {
       _controller.searchText.value = _searchController.text.toLowerCase();
     });
-
+    _addScrollListener();
   }
 
   @override
@@ -80,7 +80,7 @@ class _GroupScreenState extends State<GroupScreen> {
               child: const Icon(Icons.search),
             ),
             controller: _searchController,
-            hintText: 'Search Community...',
+            hintText: "Search Community's...",
             contentPaddingVertical: 0,
           ),
           Expanded(child: Obx(() {
@@ -97,58 +97,75 @@ class _GroupScreenState extends State<GroupScreen> {
             return ListView.builder(
                 itemCount: _controller.filteredGroupList.length,
                 itemBuilder: (context, index) {
-                  final data = _controller.filteredGroupList[index];
-                  return GroupCardWidget(
-                    menuItems: _controller.type.value == 'all'
-                        ? []
-                        : ['Edit', 'Delete', 'Group Info'],
-                    onSelected: (val) {
-                      if (val == 'Delete') {
-                        showDeleteORSuccessDialog(context, onTap: () {
-                          _editGroupController.deleteGroup(context, data.id!);
-                        });
-                      } else if (val == 'Edit') {
-                        context.pushNamed(
-                          AppRoutes.editGroupScreen,
-                          extra: {
+                  if(index < _controller.filteredGroupList.length){
+                    final data = _controller.filteredGroupList[index];
+
+                    return GroupCardWidget(
+                      menuItems: _controller.type.value == 'all'
+                          ? []
+                          : ['Edit', 'Delete', 'Group Info'],
+                      onSelected: (val) {
+                        if (val == 'Delete') {
+                          showDeleteORSuccessDialog(context, onTap: () {
+                            _editGroupController.deleteGroup(context, data.id!);
+                          });
+                        } else if (val == 'Edit') {
+                          context.pushNamed(
+                            AppRoutes.editGroupScreen,
+                            extra: {
+                              'id': data.id!,
+                              'name': data.name ?? '',
+                              'image':
+                              '${ApiUrls.imageBaseUrl}${data.coverPhoto ?? ''}',
+                              'des': data.description ?? '',
+                            },
+                          );
+                        } else if (val == 'Group Info') {
+                          context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
                             'id': data.id!,
-                            'name': data.name ?? '',
-                            'image':
-                                '${ApiUrls.imageBaseUrl}${data.coverPhoto ?? ''}',
-                            'des': data.description ?? '',
                           },
-                        );
-                      } else if (val == 'Group Info') {
+                          );
+                        }
+                      },
+                      title: data.name ?? '',
+                      subTitle: '${data.totalMembers} Members',
+                      coverImage: '${ApiUrls.imageBaseUrl}${data.coverPhoto}',
+                      detailAction: () {
                         context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
                           'id': data.id!,
-                        },
-                        );
-                      }
-                    },
-                    title: data.name ?? '',
-                    subTitle: '${data.totalMembers} Members',
-                    coverImage: '${ApiUrls.imageBaseUrl}${data.coverPhoto}',
-                    detailAction: () {
-                      context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
-                        'id': data.id!,
-                      });
-                    },
+                        });
+                      },
 
 
-                    onTapPostAction: (){
-                      if(_controller.type.value == 'join' || _controller.type.value == 'my'){
-                        context.pushNamed(AppRoutes.postScreen,extra: {
-                          'id': data.id!,
-                        },);
-                      }
-                    },
-                  );
+                      onTapPostAction: (){
+                        if(_controller.type.value == 'join' || _controller.type.value == 'my'){
+                          context.pushNamed(AppRoutes.postScreen,extra: {
+                            'id': data.id!,
+                          },);
+                        }
+                      },
+                    );
+                  }else{
+                    return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
+
+                  }
                 });
           }))
         ],
       ),
     );
   }
+
+  void _addScrollListener() {
+    _controller.scrollController.addListener(() {
+      if (_controller.scrollController.position.pixels ==
+          _controller.scrollController.position.maxScrollExtent) {
+        _controller.loadMore();
+        print("load more true");
+      }
+    });
+  }
+
 
   Widget _buildShimmer({required double height}) {
     return Padding(

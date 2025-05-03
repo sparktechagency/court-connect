@@ -81,8 +81,8 @@ class CustomBottomNavBar extends StatelessWidget {
 
   final List<Map<String, dynamic>> _navItems = [
     {"icon": Assets.icons.homeBottom.path, "label": "Home"},
-    {"icon": Assets.icons.groupBottom.path, "label": "Group"},
-    {"icon": Assets.icons.message.path, "label": "Message"},
+    {"icon": Assets.icons.groupBottom.path, "label": "Community"},
+    {"icon": Assets.icons.message.path, "label": "Messages"},
     {"icon": Assets.icons.profileNav.path, "label": "Profile"},
   ];
 }

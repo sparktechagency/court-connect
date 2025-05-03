@@ -26,11 +26,11 @@ class HomeController extends GetxController {
   final bannerList = <BannerData>[].obs;
   final sessionList = <SessionData>[].obs;
 
-  final currentPage = 1.obs;
-  final totalPages = 1.obs;
-  Rx<Pagination?> sessionPagination = Rxn<Pagination>();
+  RxInt page = 1.obs;
+  var totalPage = (-1);
+  var currentPage = (-1);
+  var totalResult = (-1);
 
-  // ScrollController to manage scrolling
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -72,31 +72,31 @@ class HomeController extends GetxController {
   /// <==================== get Session Data ======================>
 
 
-  Future<void> getSession({bool loadMore = false}) async {
-    if(!loadMore){
+  Future<void> getSession() async {
+
+    if(page.value == 1){
       filteredSessionList.clear();
-      currentPage.value = 1;
+      isLoading(true);
     }
     isLoading.value = true;
 
     try {
       final response = await ApiClient.getData(
-          ApiUrls.session(type.value, price.value, date.value,currentPage.value,totalPages.value));
+          ApiUrls.session(type.value, price.value, date.value,page.value));
 
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
 
         List data = responseBody['data'] ?? [];
-        sessionPagination.value = Pagination.fromJson(responseBody['pagination']);
+
+        totalPage = int.tryParse(responseBody['pagination']['totalPage'].toString()) ?? 0;
+        currentPage = int.tryParse(responseBody['pagination']['currentPage'].toString()) ?? 0;
+        totalResult = int.tryParse(responseBody['pagination']['totalItem'].toString()) ?? 0;
 
         final session = data.map((e) => SessionData.fromJson(e)).toList();
 
-        if(loadMore){
           filteredSessionList.addAll(session);
-        }else{
-          sessionList.value = session;
-        }
       } else{
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -107,21 +107,7 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> loadMoreSessions() async {
-    if (sessionPagination.value != null && currentPage.value < sessionPagination.value!.totalPage!) {
-      currentPage.value++;
-      await getSession(loadMore: true);
-    }
-  }
 
-  void onScroll() {
-    if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
-      // Load more sessions when scrolled to the bottom
-      if (!isLoading.value) {
-        loadMoreSessions();
-      }
-    }
-  }
 
 
   List<SessionData> get filteredSessionList {
@@ -161,8 +147,23 @@ class HomeController extends GetxController {
     }
   }
 
+
+
+  void loadMore() {
+    print("==========================================total page ${totalPage} page No: ${page.value} == total result ${totalResult}");
+    if (totalPage > page.value) {
+      page.value += 1;
+      getSession();
+      print("**********************print here");
+    }
+    print("**********************print here**************");
+  }
+
+
+
   void onChangeType(String newType) {
     type.value = newType;
+    page.value = 1;
     getSession();
   }
 }

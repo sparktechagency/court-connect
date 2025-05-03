@@ -2,12 +2,14 @@ import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
 import 'package:courtconnect/core/widgets/custom_list_tile.dart';
 import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/helpers/time_format.dart';
+import 'package:courtconnect/pregentaition/screens/message/controller/block_unblock_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/widgets/chat_card.dart';
@@ -38,6 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final ChatController _controller = Get.put(ChatController());
   final SocketChatController _socketChatController = Get.put(SocketChatController());
+  final BlockUnblockController _blockUnblockController = Get.put(BlockUnblockController());
   HomeController homeController = Get.find<HomeController>();
 
 
@@ -48,16 +51,20 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.currentChatData.refresh();
     _socketChatController.listenActiveStatus();
     _socketChatController.listenMessage();
-    _socketChatController.seenChat(_controller.chatId.value);
-    _socketChatController.listenSeenStatus(_controller.chatId.value);
+    _socketChatController.seenChat(widget.chatData['chatId'] ?? '');
+    _socketChatController.listenSeenStatus(widget.chatData['chatId'] ?? '');
     _addScrollListener();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.getChat(_controller.receveId.value, _controller.chatId.value);
+      _controller.getChat(widget.chatData['receiverId'] ?? '', widget.chatData['chatId'] ?? '');
     });
   }
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
 
     return CustomScaffold(
       appBar: CustomAppBar(
@@ -99,13 +106,15 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: Obx(
                     () {
+
+
                 return ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   reverse: true,
                   itemCount: _controller.chatData.length,
                   itemBuilder: (context, index) {
-
+                    print("my response on ${_controller.chatData.last.messageType} ${_controller.chatData.last.senderId != homeController.userId.value}");
                     if(_controller.isLoading.value){
                       return _buildShimmer();
                     }if(_controller.chatData.isEmpty){
@@ -115,7 +124,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     if(index < _controller.chatData.length){
                       final chat = _controller.chatData[index];
                       var currentChatData = _controller.currentChatData;
-
 
                       return ChatBubbleMessage(
                         status: currentChatData['status'] ?? '',
@@ -136,7 +144,45 @@ class _ChatScreenState extends State<ChatScreen> {
               }
             ),
           ),
+
+
+          if (_controller.chatData.last.messageType == 'block' &&
+              (_controller.chatData.last.senderId == homeController.userId.value &&
+                  _controller.chatData.last.message!.contains('blocked')))
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: CustomText(text: "You are blocked by this user."),
+            ),
+
+          if (_controller.chatData.last.messageType == 'block' &&
+              _controller.chatData.last.senderId != homeController.userId.value &&
+    _controller.chatData.last.message!.contains('blocked'))
+       GestureDetector(
+         onTap: () {
+           showDeleteORSuccessDialog(
+             context,
+             title: 'Unblock ${widget.chatData['name']}',
+             buttonLabel: 'Unblock',
+             message:
+             'Are you sure you want to unblock ${widget.chatData['name']}? They will be able to contact you again.',
+             onTap: () {
+               // Unblocking the user when the button is pressed
+               _blockUnblockController.unblockUser(widget.chatData['receiverId']!);
+               Navigator.of(context).pop();
+             },
+           );
+         },
+         child: CustomText(
+           text: 'Unblock ${widget.chatData['name']}',
+           color: Colors.red,
+           fontWeight: FontWeight.w800,
+         ),
+       ),
+
+    if(_controller.chatData.last.messageType == 'text' && (_controller.chatData.last.messageType != 'block' ))
           _buildMessageSender(),
+
+
           SizedBox(height: 10.h),
         ],
       ),

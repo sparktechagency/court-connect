@@ -105,21 +105,22 @@ class SocketChatController extends GetxController {
     });
   }
 
-  void listenUnseenStatus(String chatId) {
-    socketService.socket.on("check-unseen", (data) {
+  void listenBlockUser() {
+    socketService.socket.on("block-user", (data) {
       if (data != null) {
-        int index = chatData.indexWhere((x) => x.chatId == chatId);
-        print('==============> tanvir====> ${index}');
-        if (index != -1) {
-          bool isUnseen = !(chatData[index].seenList?.contains(chatData[index].receiverId) ?? false);
 
-          if (isUnseen) {
-            print("=========> Chat marked as unseen -------------------------");
-          }
+            print("=========> Response Data $data -------------------------");
+            update();
+      }
+    });
+  }
 
-          chatData.refresh();
-          update();
-        }
+  void listenUnblockUser() {
+    socketService.socket.on("unblock-user", (data) {
+      if (data != null) {
+
+            print("=========> Response Data $data -------------------------");
+            update();
       }
     });
   }
@@ -150,7 +151,31 @@ class SocketChatController extends GetxController {
     }
   }
 
-  /// ================> Handle unseen chat.
+  void blockUser(String receiverId) {
+    final body = {"receiverId": receiverId};
+    if (socketService.socket.connected) {
+      socketService.emit('block-user', body);
+
+    } else {
+      socketService.socket.on('connect', (_) {
+        socketService.emit('block-user', body);
+      });
+    }
+  }
+
+  void unblockUser(String receiverId) {
+    final body = {"receiverId": receiverId};
+    if (socketService.socket.connected) {
+      socketService.emit('unblock-user', body);
+
+    } else {
+      socketService.socket.on('connect', (_) {
+        socketService.emit('block-user', body);
+      });
+    }
+  }
+
+  /*/// ================> Handle unseen chat.
   void unseenChat(String chatId) {
     final body = {"chatId": chatId};
     if (socketService.socket.connected) {
@@ -160,7 +185,7 @@ class SocketChatController extends GetxController {
         socketService.emit('check-unseen', body);
       });
     }
-  }
+  }*/
 
   /// ===================> Turn off specific socket events when the chat is closed
   void offSocket(String chatId) {

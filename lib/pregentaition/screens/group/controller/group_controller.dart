@@ -15,8 +15,6 @@ import '../../message/models/chat_list_data.dart';
 class GroupController extends GetxController {
   RxBool isLoading = false.obs;
   RxString type = 'all'.obs;
-  RxString page = ''.obs;
-  RxString limit = ''.obs;
   RxString date = ''.obs;
   RxString name = ''.obs;
   RxString searchText = ''.obs;
@@ -24,11 +22,12 @@ class GroupController extends GetxController {
   RxBool alreadyJoined = false.obs;
 
 
-  final currentPage = 1.obs;
-  final totalPages = 1.obs;
-  Rx<Pagination?> groupPagination = Rxn<Pagination>();
+  RxInt page = 1.obs;
+  var totalPage = (-1);
+  var currentPage = (-1);
+  var totalResult = (-1);
 
-  // ScrollController to manage scrolling
+
   final ScrollController scrollController = ScrollController();
 
 
@@ -41,20 +40,27 @@ class GroupController extends GetxController {
     getGroup();
   }
 
-  Future<void> getGroup({bool loadMore = false}) async {
-    _groupDataList.clear();
-    isLoading.value = true;
+  Future<void> getGroup() async {
+    if(page.value == 1){
+      _groupDataList.clear();
+      isLoading(true);
+    }
 
     try {
       final response = await ApiClient.getData(
-        ApiUrls.community(type.value, page.value, date.value, limit.value),
+        ApiUrls.community(type.value, page.value, date.value,),
       );
 
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
         final List data = responseBody['data'];
-        _groupDataList.value =
-            data.map((json) => GroupData.fromJson(json)).toList();
+        totalPage = int.tryParse(responseBody['pagination']['totalPage'].toString()) ?? 0;
+        currentPage = int.tryParse(responseBody['pagination']['currentPage'].toString()) ?? 0;
+        totalResult = int.tryParse(responseBody['pagination']['totalItem'].toString()) ?? 0;
+
+        var groupData = data.map((json) => GroupData.fromJson(json)).toList();
+
+        _groupDataList.addAll(groupData);
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       }
@@ -65,24 +71,6 @@ class GroupController extends GetxController {
     }
   }
 
-
-
-
-  Future<void> loadMoreComments() async {
-    if (groupPagination.value != null &&
-        currentPage.value < (groupPagination.value!.totalPage ?? 1) &&
-        !isLoading.value) {
-      currentPage.value++;
-      await getGroup(loadMore: true);
-    }
-  }
-
-  void onScroll() {
-    if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 100) {
-      // trigger load more a bit before reaching exact end
-      loadMoreComments();
-    }
-  }
 
 
 
@@ -103,7 +91,7 @@ class GroupController extends GetxController {
 
     try {
       final response = await ApiClient.getData(
-        ApiUrls.communityDetails(id!, limit.value, page.value, name.value),
+        ApiUrls.communityDetails(id!),
       );
 
       final responseBody = response.body;
@@ -197,8 +185,23 @@ class GroupController extends GetxController {
     }
   }
 
+
+
+  void loadMore() {
+    print("==========================================total page ${totalPage} page No: ${page.value} == total result ${totalResult}");
+    if (totalPage > page.value) {
+      page.value += 1;
+      getGroup();
+      print("**********************print here");
+    }
+    print("**********************print here**************");
+  }
+
+
+
   void onChangeType(String newType) {
     type.value = newType;
+    page.value = 1;
     getGroup();
   }
 }

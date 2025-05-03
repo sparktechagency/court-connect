@@ -7,7 +7,6 @@ import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/contro
 import 'package:courtconnect/pregentaition/screens/home/session_edit/controller/session_edit_controller.dart';
 import 'package:courtconnect/pregentaition/screens/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -44,8 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
 
   final _sessionTypes = [
-    {'label': 'All Session', 'value': 'all'},
-    {'label': 'My Session', 'value': 'my'},
+    {'label': 'All Sessions', 'value': 'all'},
+    {'label': 'My Sessions', 'value': 'my'},
   ];
 
 
@@ -54,10 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _notificationController.getNotificationBadge();
     _homeController.getSession();
-    _homeController.scrollController.addListener(_homeController.onScroll);
-
     _searchController.addListener(() {
       _homeController.searchText.value = _searchController.text.toLowerCase();
+      _addScrollListener();
     });
 
   }
@@ -146,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: CustomTextField(
                   validator: (_) => null,
                   controller: _searchController,
-                  hintText: 'Search Session',
+                  hintText: 'Search Sessions',
                   prefixIcon: Padding(
                     padding: EdgeInsets.only(left: 8.0.w),
                     child: const Icon(Icons.search),
@@ -205,66 +203,72 @@ class _HomeScreenState extends State<HomeScreen> {
                     if(index == _homeController.filteredSessionList.length){
                       return _homeController.isLoading.value ? Center(child: CustomLoader(),) : SizedBox();
                     }
-                    final session = _homeController.filteredSessionList[index];
-                    return Obx(
-                            () {
-                          return CustomSessionCard(
-                            menuItems:  _homeController.type.value == 'all' ? []: [
-                              'Edit',
-                              'Delete'
-                            ],
-                            onSelected: (val){
-                              if(val == 'Edit'){
-                                context.pushNamed(
-                                  AppRoutes.editSessionScreen,  // Name of the route
-                                  extra: {
-                                    'id' : session.sId,
-                                    'name': session.name,
-                                    'image': '${ApiUrls.imageBaseUrl}${session.image}',
-                                    'price': session.price,
-                                    'location': session.location,
-                                    'date': session.date,
-                                    'time': session.time,
-                                  },
-                                );
-                              }else if(val == 'Delete'){
-                                showDeleteORSuccessDialog(context, onTap: () {
-                                  context.pop();
-                                  _sessionEditController.deleteMySession(session.sId!);
-                                });
-                              }
+                    if(index < _homeController.filteredSessionList.length){
+                      final session = _homeController.filteredSessionList[index];
+                      return Obx(
+                              () {
+                            return CustomSessionCard(
+                              menuItems:  _homeController.type.value == 'all' ? []: [
+                                'Edit',
+                                'Delete'
+                              ],
+                              onSelected: (val){
+                                if(val == 'Edit'){
+                                  context.pushNamed(
+                                    AppRoutes.editSessionScreen,  // Name of the route
+                                    extra: {
+                                      'id' : session.sId,
+                                      'name': session.name,
+                                      'image': '${ApiUrls.imageBaseUrl}${session.image}',
+                                      'price': session.price,
+                                      'location': session.location,
+                                      'date': session.date,
+                                      'time': session.time,
+                                    },
+                                  );
+                                }else if(val == 'Delete'){
+                                  showDeleteORSuccessDialog(context, onTap: () {
+                                    context.pop();
+                                    _sessionEditController.deleteMySession(session.sId!);
+                                  });
+                                }
 
-                            },
-                            image: '${ApiUrls.imageBaseUrl}${session.image}',
-                            title: session.name ?? '',
-                            subtitles: [
-                              '\$ ${session.price}',
-                              session.location ?? '',
-                              '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
-                            ],
-                            onTap: () {
-                              if(  session.isbooked == true || _bookMarkController.isBookedMap[session.sId] == true){
-                                ToastMessageHelper.showToastMessage("It's Already Booked");
+                              },
+                              image: '${ApiUrls.imageBaseUrl}${session.image}',
+                              title: session.name ?? '',
+                              subtitles: [
+                                '\$ ${session.price}',
+                                session.location ?? '',
+                                '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
+                              ],
+                              onTap: () {
+                                if(  session.isbooked == true || _bookMarkController.isBookedMap[session.sId] == true){
+                                  ToastMessageHelper.showToastMessage("It's Already Booked");
 
-                              }else if(_homeController.type.value == 'all'){
-                                _bookMarkController.getBookMark( context,session.sId ?? '');
-                              }
-                              else{
-                                context.pushNamed(AppRoutes.registeredUsersScreen,pathParameters: {'sessionId': session.sId!});
-                              }
-                            },
-                            buttonLabel: _bookMarkController.isLoadingMap[session.sId] == true
-                                ? 'Please wait..'
-                              :(_bookMarkController.isBookedMap[session.sId] == true || session.isbooked == true)
-                                ? 'Booked'
-                                : _homeController.type.value == 'all'
-                                ? 'Book Now'
-                                : 'Registered Users',
+                                }else if(_homeController.type.value == 'all'){
+                                  _bookMarkController.getBookMark( context,session.sId ?? '');
+                                }
+                                else{
+                                  context.pushNamed(AppRoutes.registeredUsersScreen,pathParameters: {'sessionId': session.sId!});
+                                }
+                              },
+                              buttonLabel: _bookMarkController.isLoadingMap[session.sId] == true
+                                  ? 'Please wait..'
+                                  :(_bookMarkController.isBookedMap[session.sId] == true || session.isbooked == true)
+                                  ? 'Booked'
+                                  : _homeController.type.value == 'all'
+                                  ? 'Book Now'
+                                  : 'Registered Users',
 
 
-                          );
-                        }
-                    );
+                            );
+                          }
+                      );
+
+                    }else{
+                      return index < _homeController.totalPage ? CustomLoader() : SizedBox.shrink();
+
+                    }
                   },
                 );
               }),
@@ -274,6 +278,18 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+
+  void _addScrollListener() {
+    _homeController.scrollController.addListener(() {
+      if (_homeController.scrollController.position.pixels ==
+          _homeController.scrollController.position.maxScrollExtent) {
+        _homeController.loadMore();
+        print("load more true");
+      }
+    });
+  }
+
 
   Widget _buildShimmer({required double height}) {
     return Padding(

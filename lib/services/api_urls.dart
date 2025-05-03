@@ -26,10 +26,10 @@ class ApiUrls {
   static  const String  joinCommunity = '/community/join';
   static  const String  communityLeave = '/community/leave';
   static  const String  removeMember = '/community/remove-member';
-  static   String  session (String? type,price,date,currentPage,totalPage)=> '/session?type=$type&price=$price&date=$date&currentPage=$currentPage&totalPage=$totalPage';
+  static   String  session (String? type,price,date,page)=> '/session?type=$type&price=$price&date=$date&page=$page';
   static   String  post (String? communityId,type,page,)=> '/post?communityId=$communityId&page=$page&type=$type';
-  static   String  community (String? type,page,date,limit,)=> '/community?page=$page&limit=$limit&type=$type&date=$date';
-  static   String  communityDetails (String? communityId,limit,page,name,)=> '/community/details?communityId=$communityId&limit=$limit&page=$page&name=$name';
+  static   String  community (String? type,page,date,)=> '/community?page=$page&type=$type&date=$date';
+  static   String  communityDetails (String? communityId)=> '/community/details?communityId=$communityId';
   static   String  user (String id)=> '/session/registered-users?sessionId=$id';
   static   String  bookmark (String id)=> '/booking/add?sessionId=$id';
   static   String  deleteBooking (String id)=> '/booking/delete?bookingId=$id';
@@ -51,6 +51,8 @@ class ApiUrls {
   static   String  createChat (String receiverId)=> '/chat/create?receiverId=$receiverId';
   static   String  getChatMessage (String receiverId,chatId,page)=> '/chat/message?receiverId=$receiverId&chatId=$chatId&page=$page';
   static   String  chatList(String page) => '/chat/list?page=$page';
+  static   String  blockUser(String receiverId) => '/chat/block-user?receiverId=$receiverId';
+  static   String  unblockUser(String receiverId) => '/chat/unblock-user?receiverId=$receiverId';
 
 
   static  const String  notification = '/notification';

@@ -7,9 +7,13 @@ import 'package:get/get.dart';
 
 class ChatController extends GetxController {
   RxBool isLoading = false.obs;
+  RxBool isChatListDataLoading = false.obs;
   RxList<ChatListData> chatListData = <ChatListData>[].obs;
   RxList<ChatData> chatData = <ChatData>[].obs;
   RxMap<String, dynamic> currentChatData = <String, dynamic>{}.obs;
+
+
+
 
   RxString searchText = ''.obs;
   RxString chatId = ''.obs;
@@ -32,20 +36,20 @@ class ChatController extends GetxController {
 
 
   Future<void> getChatList() async {
-    if(page.value == 1){
+    if(chatListPage.value == 1){
       chatListData.clear();
-      isLoading(true);
+      isChatListDataLoading(true);
     }
     try {
-      isLoading.value = true;
+      isChatListDataLoading.value = true;
 
       final response = await ApiClient.getData(ApiUrls.chatList('${page.value}'));
       final responseBody = response.body;
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
-        totalPage = int.tryParse(responseBody['pagination']['totalPage'].toString()) ?? 0;
-        currentPage = int.tryParse(responseBody['pagination']['currentPage'].toString()) ?? 0;
-        totalResult = int.tryParse(responseBody['pagination']['totalItem'].toString()) ?? 0;
+        chatListTotalPage = int.tryParse(responseBody['pagination']['totalPage'].toString()) ?? 0;
+        chatListCurrentPage = int.tryParse(responseBody['pagination']['currentPage'].toString()) ?? 0;
+        chatListTotalResult = int.tryParse(responseBody['pagination']['totalItem'].toString()) ?? 0;
 
         List  data =  responseBody['data'];
 
@@ -59,7 +63,7 @@ class ChatController extends GetxController {
     } catch (e) {
       ToastMessageHelper.showToastMessage("Something went wrong: $e");
     } finally {
-      isLoading.value = false;
+      isChatListDataLoading.value = false;
     }
   }
 
@@ -117,9 +121,9 @@ class ChatController extends GetxController {
 
 
   void loadMoreChatList() {
-    print("==========================================total page ${totalPage} page No: ${page.value} == total result ${totalResult}");
-    if (totalPage > page.value) {
-      page.value += 1;
+    print("==========================================total page ${chatListTotalPage} page No: ${chatListPage.value} == total result ${totalResult}");
+    if (chatListTotalPage > chatListPage.value) {
+      chatListPage.value += 1;
       getChatList();
       print("**********************print here");
     }
