@@ -2,6 +2,7 @@ import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,9 @@ class LoginController extends GetxController {
           await PrefsHelper.setString(AppConstants.name, userName);
           await PrefsHelper.setString(AppConstants.image, userImage);
           await PrefsHelper.setString(AppConstants.userId, userId);
-          context.pushReplacementNamed(AppRoutes.customBottomNavBar);
+          context.goNamed(AppRoutes.customBottomNavBar);
+          Get.find<CustomBottomNavBarController>().onChange(0);
+
         }
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "Login failed.");

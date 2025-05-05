@@ -27,7 +27,7 @@ class ResetPasswordController extends GetxController {
 
       final responseBody = response.body;
       if (response.statusCode == 200 && responseBody['success'] == true) {
-          context.pushReplacementNamed(AppRoutes.loginScreen);
+          context.goNamed(AppRoutes.loginScreen);
           ToastMessageHelper.showToastMessage(responseBody['message'] ?? "change your password successfully");
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "failed.");

@@ -11,6 +11,7 @@ class ChatController extends GetxController {
   RxList<ChatListData> chatListData = <ChatListData>[].obs;
   RxList<ChatData> chatData = <ChatData>[].obs;
   RxMap<String, dynamic> currentChatData = <String, dynamic>{}.obs;
+  RxMap<String, dynamic> blockUnblock = <String, dynamic>{}.obs;
 
 
 

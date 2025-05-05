@@ -33,7 +33,7 @@ class ForgetController extends GetxController {
         if (token != null) {
           debugPrint('====================> response token save: $token');
           await PrefsHelper.setString(AppConstants.bearerToken, token);
-          context.pushReplacementNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'forgetPass'});
+          context.pushNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'forgetPass'});
           ToastMessageHelper.showToastMessage(responseBody['message'] ?? "OTP sent to your email");
         }
       } else {

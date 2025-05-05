@@ -80,7 +80,7 @@ class _GroupScreenState extends State<GroupScreen> {
               child: const Icon(Icons.search),
             ),
             controller: _searchController,
-            hintText: "Search Community's...",
+            hintText: "Search Community...",
             contentPaddingVertical: 0,
           ),
           Expanded(child: Obx(() {

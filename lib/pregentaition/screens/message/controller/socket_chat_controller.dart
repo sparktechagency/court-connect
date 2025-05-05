@@ -34,23 +34,46 @@ class SocketChatController extends GetxController {
       if (data != null) {
         ChatData demoData = ChatData.fromJson(data);
 
-
         var prev = chatData.length;
 
         chatData.insert(0, demoData);
 
+
+
+
+
         var next = chatData.length;
 
-        if(next > prev){
+        if (next > prev) {
           seenChat(data['chatId']);
         }
 
         debugPrint('=======================================>   ${demoData.isSender}');
 
-        update();
+
+        if(demoData.messageType == 'block'){
+
+        }else{
+
+        }
+        if(demoData.messageType == 'block'){
+          _controller.blockUnblock.value = {
+            'lastMessageType': demoData.messageType,
+            'blockId': demoData.senderId,
+          };
+        }else{
+          _controller.blockUnblock.value = {
+            'lastMessageType': demoData.messageType,
+            'blockId': null,
+          };
+        }
+
+        _controller.currentChatData.refresh();
+
       }
     });
   }
+
 
   /// ===============> Listen for user active status updates via socket.
   void listenActiveStatus() {
@@ -94,9 +117,12 @@ class SocketChatController extends GetxController {
 
           chatData.refresh();
           chatListData.refresh();
-          if(Get.find<HomeController>().userId.value != chatData[0].seenList?.contains(Get.find<HomeController>().userId.value)){
-            await _audioPlayer.play(AssetSource('audio/seen.mp3'));
 
+          if(chatData[0].senderId != Get.find<HomeController>().userId.value){
+
+
+            print('djlkfksjhgkjfs ========>   ');
+            await _audioPlayer.play(AssetSource('audio/seen.mp3'));
           }
 
       update();

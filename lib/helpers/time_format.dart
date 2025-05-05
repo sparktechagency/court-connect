@@ -7,6 +7,11 @@ class TimeFormatHelper {
     return DateFormat('dd MMM, yyyy').format(date);
   }
 
+  static String formatDateTime(DateTime date) {
+    return DateFormat('HH:mm , dd MMM, yyyy').format(date);  // Example: 05 May, 2025 14:30
+  }
+
+
   static String formatDateWithHifen(DateTime date) {
     return DateFormat('yyyy-MM-dd').format(date);
   }

@@ -1,5 +1,7 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +31,13 @@ class OtherProfileController extends GetxController {
 
       final responseBody = response.body;
       if ((response.statusCode == 200 || response.statusCode == 201) && responseBody['success'] == true) {
-        context.pushReplacementNamed(AppRoutes.chatScreen,extra: {
+        context.goNamed(AppRoutes.customBottomNavBar);
+        Get.find<CustomBottomNavBarController>().onChange(2);
+        /*context.pushReplacementNamed(AppRoutes.chatScreen,extra: {
           'image' : chatData['image'] ?? '',
           'name' : chatData['name'] ?? '',
           'email' : chatData['email'] ?? '',
-        });
+        });*/
       } else {
 
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");

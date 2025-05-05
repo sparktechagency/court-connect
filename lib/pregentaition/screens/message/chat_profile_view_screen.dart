@@ -6,6 +6,7 @@ import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/block_unblock_controller.dart';
+import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,20 +22,22 @@ class ChatProfileViewScreen extends StatefulWidget {
 }
 
 class _ChatProfileViewScreenState extends State<ChatProfileViewScreen> {
-  final SocketChatController _socketChatController =
-  Get.put(SocketChatController());
-  final BlockUnblockController _blockUnblockController =
-  Get.put(BlockUnblockController());
+  final SocketChatController _socketChatController = Get.put(SocketChatController());
+  final BlockUnblockController _blockUnblockController = Get.put(BlockUnblockController());
+  final ChatController _chatController = Get.put(ChatController());
 
   @override
   void initState() {
     super.initState();
-    _socketChatController.listenBlockUser();
-    _socketChatController.listenUnblockUser();
+    //_socketChatController.listenMessage();
   }
 
   @override
   Widget build(BuildContext context) {
+    final String lastMessageType = Get.find<ChatController>().blockUnblock['lastMessageType'];
+    final bool isBlocked = _blockUnblockController.isBlocked.value;
+    final String blockId = Get.find<ChatController>().blockUnblock['blockId'] ?? '';
+    final String userId = Get.find<HomeController>().userId.value;
     return CustomScaffold(
       appBar: CustomAppBar(),
       body: Column(
@@ -107,45 +110,50 @@ class _ChatProfileViewScreenState extends State<ChatProfileViewScreen> {
             fontsize: 13.sp,
           ),
           SizedBox(height: 44.h),
-            GestureDetector(
+
+          if ((lastMessageType != 'block') || (userId == blockId))
+    Obx(() {
+      final String lastMessageType = Get.find<ChatController>().blockUnblock['lastMessageType'];
+      final bool isBlocked = _blockUnblockController.isBlocked.value;
+            return GestureDetector(
               onTap: () {
                 showDeleteORSuccessDialog(
                   context,
-                  title: _blockUnblockController.isUserBlocked.value
+                  title: lastMessageType == 'block' || isBlocked
                       ? 'Unblock ${widget.chatData['name']}'
                       : 'Block ${widget.chatData['name']}',
-
-                  buttonLabel: _blockUnblockController.isUserBlocked.value ? 'Unblock' : 'Block',
-
-                  message: _blockUnblockController.isUserBlocked.value
+                  buttonLabel: lastMessageType == 'block' || isBlocked
+                      ? 'Unblock'
+                      : 'Block',
+                  message: lastMessageType == 'block' || isBlocked
                       ? 'Are you sure you want to unblock ${widget.chatData['name']}? They will be able to contact you again.'
                       : 'Are you sure you want to block ${widget.chatData['name']}? They will no longer be able to contact you.',
-
-
                   onTap: () {
-                    if (_blockUnblockController.isUserBlocked.value) {
-
+                    if (lastMessageType == 'block' || isBlocked) {
                       _blockUnblockController.unblockUser(widget.chatData['receiverId']!);
                     } else {
-                      _blockUnblockController.blockUser(widget.chatData['receiverId']!);
+                      _blockUnblockController.blockUser(
+                          widget.chatData['receiverId']!,
+                          widget.chatData['receiverId']!);
                     }
-                    setState(() {
-                      _blockUnblockController.isUserBlocked.value = !_blockUnblockController.isUserBlocked.value;
-                    });
+
+                    _chatController.getChatList();
                     Navigator.of(context).pop();
                   },
                 );
               },
               child: CustomText(
-                text: _blockUnblockController.isUserBlocked.value
+                text: lastMessageType == 'block' || isBlocked
                     ? 'Unblock ${widget.chatData['name']}'
                     : 'Block ${widget.chatData['name']}',
                 color: Colors.red,
                 fontWeight: FontWeight.w800,
               ),
-            ),
+            );
+          }),
 
 
+          if ((lastMessageType == 'block' || isBlocked) && (userId != blockId))
             Center(
               child: CustomContainer(
                 radiusAll: 16,
@@ -153,16 +161,13 @@ class _ChatProfileViewScreenState extends State<ChatProfileViewScreen> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.red.withOpacity(0.3),
-                    offset: Offset(4, 4),
-                      blurRadius: 20
-
-                  ),BoxShadow(
-                    color: Colors.red.withOpacity(0.3),
-                    offset: Offset(-4, -4),
-                    blurRadius: 20
-
-                  ),
+                      color: Colors.red.withOpacity(0.1),
+                      offset: Offset(4, 4),
+                      blurRadius: 20),
+                  BoxShadow(
+                      color: Colors.red.withOpacity(0.1),
+                      offset: Offset(-4, -4),
+                      blurRadius: 20),
                 ],
                 child: CustomText(
                   text: "You are restricted by other user",

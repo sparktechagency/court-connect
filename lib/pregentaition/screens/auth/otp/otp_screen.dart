@@ -99,10 +99,10 @@ class _OtpScreenState extends State<OtpScreen> {
     final bool success = await _controller.otpSubmit();
     if(success){
       if(widget.screenType == 'signupScreen'){
-        context.pushReplacementNamed(AppRoutes.loginScreen);
+        context.goNamed(AppRoutes.loginScreen);
 
       }else{
-        context.pushReplacementNamed(AppRoutes.resetPasswordScreen);
+        context.pushNamed(AppRoutes.resetPasswordScreen);
       }
     }
   }

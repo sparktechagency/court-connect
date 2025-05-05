@@ -95,6 +95,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     }
 
                        return ListView.builder(
+                         //reverse: true,
                           itemCount: _controller.filteredChatList.length,
                           itemBuilder: (context, index) {
                             final chatData = _controller.filteredChatList[index];
@@ -120,6 +121,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                       'blockId' : chatData.blockBy?.id ?? '',
                                       'heroTag' : index,
                                     });
+
+
                                   },
                                   selectedColor: (chatData.unreadCount ?? 0) > 0
                                       ? AppColors.primaryColor.withOpacity(0.8)

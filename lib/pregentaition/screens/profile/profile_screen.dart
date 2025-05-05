@@ -7,6 +7,7 @@ import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/pregentaition/screens/profile/controller/profile_controller.dart';
 import 'package:courtconnect/pregentaition/screens/profile/widgets/profile_list_tile.dart';
+import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -97,6 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     onConfirm: ()async {
                       await PrefsHelper.remove(AppConstants.bearerToken);
+                      SocketServices().disconnect;
                       context.go(AppRoutes.loginScreen);
                     },
                   ),

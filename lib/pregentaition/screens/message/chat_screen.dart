@@ -48,7 +48,9 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     _controller.currentChatData.value = widget.chatData;
+    _controller.blockUnblock.value = widget.chatData;
     _controller.currentChatData.refresh();
+    _controller.blockUnblock.refresh();
     _socketChatController.listenActiveStatus();
     _socketChatController.listenMessage();
     _socketChatController.seenChat(widget.chatData['chatId'] ?? '');
@@ -68,10 +70,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return CustomScaffold(
       appBar: CustomAppBar(
-        backAction: (){
-         // _socketChatController.unseenChat(widget.chatData['chatId']);
-          //_socketChatController.listenUnseenStatus(widget.chatData['chatId']);
-        },
         titleWidget: Obx(
           () {
             var currentChatData = _controller.currentChatData;
@@ -87,8 +85,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
                 child: CustomListTile(
                   imageRadius: 20.r,
-                  image: currentChatData['image'],
-                  title: currentChatData['name'],
+                  image: currentChatData['image'] ?? '',
+                  title: currentChatData['name'] ?? '',
                   subTitle: currentChatData['status'] == 'online'
                       ? 'online'
                       : TimeFormatHelper.getTimeAgo(DateTime.tryParse(currentChatData['lastActive'] ?? '') ?? DateTime.now()),
@@ -105,82 +103,81 @@ class _ChatScreenState extends State<ChatScreen> {
           SizedBox(height: 8.h),
           Expanded(
             child: Obx(
-                    () {
-
-
+                  () {
                 return ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   reverse: true,
                   itemCount: _controller.chatData.length,
                   itemBuilder: (context, index) {
-                    print("my response on ${_controller.chatData.last.messageType} ${_controller.chatData.last.senderId != homeController.userId.value}");
-                    if(_controller.isLoading.value){
-                      return _buildShimmer();
-                    }if(_controller.chatData.isEmpty){
-                      Center(child: CustomText(text: 'No chat yet',));
 
+                    if (_controller.isLoading.value) {
+                      return _buildShimmer();
                     }
-                    if(index < _controller.chatData.length){
+
+                    if (_controller.chatData.isEmpty) {
+                      return Center(child: CustomText(text: 'No chat yet'));
+                    }
+
+                    if (index < _controller.chatData.length) {
                       final chat = _controller.chatData[index];
                       var currentChatData = _controller.currentChatData;
 
+                      // Check if the message is 'block' or 'unblock'
+                      if (chat.messageType == 'block' || chat.messageType == 'unblock') {
+                        final isBlock = chat.messageType == 'block';
+                        final currentUserId = Get.find<HomeController>().userId.value;
+                        final myName = Get.find<HomeController>().userName.value;
+
+
+                        final senderMessage = isBlock
+                            ? 'You blocked this user.'
+                            : 'You unblocked this user.';
+                        final receiverMessage = isBlock
+                            ? 'You have been blocked by this user.'
+                            : 'You have been unblocked by this user.';
+
+                        return Center(
+                          child: Column(
+                            children: [
+                              CustomText(
+                                fontsize: 7.h,
+                                text: TimeFormatHelper.formatDateTime(
+                                  DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now(),
+                                ),
+                              ),
+                              CustomText(
+                                fontsize: 12.sp,
+                                text: chat.senderId ==  currentUserId ? senderMessage : receiverMessage,
+                                bottom: 8,
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+
+
+                      // Regular message chat bubble
                       return ChatBubbleMessage(
                         status: currentChatData['status'] ?? '',
                         isSeen: chat.seenList!.length > 1,
-                        time: TimeFormatHelper.timeFormat(DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now()),
-                        //time:formattedTime,
+                        time: TimeFormatHelper.timeFormat(
+                            DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now()
+                        ),
                         text: chat.message ?? '',
                         isMe: homeController.userId.value == chat.senderId,
                       );
-                    }else{
+                    } else {
                       return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
                     }
-
-
-
                   },
                 );
-              }
+              },
             ),
           ),
 
-
-          if (_controller.chatData.last.messageType == 'block' &&
-              (_controller.chatData.last.senderId == homeController.userId.value &&
-                  _controller.chatData.last.message!.contains('blocked')))
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: CustomText(text: "You are blocked by this user."),
-            ),
-
-          if (_controller.chatData.last.messageType == 'block' &&
-              _controller.chatData.last.senderId != homeController.userId.value &&
-    _controller.chatData.last.message!.contains('blocked'))
-       GestureDetector(
-         onTap: () {
-           showDeleteORSuccessDialog(
-             context,
-             title: 'Unblock ${widget.chatData['name']}',
-             buttonLabel: 'Unblock',
-             message:
-             'Are you sure you want to unblock ${widget.chatData['name']}? They will be able to contact you again.',
-             onTap: () {
-               // Unblocking the user when the button is pressed
-               _blockUnblockController.unblockUser(widget.chatData['receiverId']!);
-               Navigator.of(context).pop();
-             },
-           );
-         },
-         child: CustomText(
-           text: 'Unblock ${widget.chatData['name']}',
-           color: Colors.red,
-           fontWeight: FontWeight.w800,
-         ),
-       ),
-
-    if(_controller.chatData.last.messageType == 'text' && (_controller.chatData.last.messageType != 'block' ))
-          _buildMessageSender(),
+          _buildBlockUnblockSection(context),
 
 
           SizedBox(height: 10.h),
@@ -188,6 +185,82 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+  Widget _buildBlockUnblockSection(BuildContext context) {
+    return Obx(() {
+      final blockInfo = _controller.blockUnblock;
+      final isBlocked = blockInfo['lastMessageType'] == 'block';
+      final isBlockedByMe = blockInfo['blockId'] == homeController.userId.value;
+      final name = widget.chatData['name'];
+      final receiverId = widget.chatData['receiverId'];
+
+      if (isBlocked) {
+        if (isBlockedByMe) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+            child: GestureDetector(
+              onTap: () {
+                showDeleteORSuccessDialog(
+                  context,
+                  title: 'Unblock $name',
+                  buttonLabel: 'Unblock',
+                  message: 'Are you sure you want to unblock $name? They will be able to contact you again.',
+                  onTap: () {
+                    _blockUnblockController.unblockUser(receiverId!);
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+              child: CustomContainer(
+                width: double.infinity,
+                  border: Border(top: BorderSide(color: Colors.grey.shade300)),
+                child: Center(
+                  child: Column(
+                    children: [
+
+                      CustomText(
+                        top: 10,
+                        text:
+                         "You've blocked $name ",
+                          color: Colors.grey,
+                          fontsize: 10.sp,
+                          fontWeight: FontWeight.w700,
+                      ),
+                      CustomText(text:
+                         "You can't message or call them in this chat, and you won't receive their messages",
+                          color: Colors.grey,
+                          fontsize: 10.sp,
+                      ),
+
+
+                      CustomText(
+                        top: 10,
+                        text:
+                        'Unblock $name',
+                          color: Colors.red,
+                          fontsize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        } else {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: CustomText(text: "You are blocked by $name."),
+          );
+        }
+      }
+
+      return _buildMessageSender();
+    });
+  }
+
+
+
 
   Widget _buildMessageSender() {
     return Container(
@@ -219,6 +292,8 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+
 
   void _sendMessage() {
     if(_messageController.text.trim() == '') return;

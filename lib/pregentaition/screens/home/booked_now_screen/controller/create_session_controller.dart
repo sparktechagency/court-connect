@@ -43,7 +43,7 @@ class CreateSessionController extends GetxController {
       final responseBody = response.body;
       if ((response.statusCode == 200 || response.statusCode == 201) &&
           responseBody['success'] == true) {
-        context.pushReplacementNamed(AppRoutes.customBottomNavBar);
+        context.goNamed(AppRoutes.customBottomNavBar);
         ToastMessageHelper.showToastMessage(
             responseBody['message'] ?? "");
         _cleanField();

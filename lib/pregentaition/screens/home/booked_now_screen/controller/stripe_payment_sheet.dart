@@ -49,31 +49,12 @@ class StripePaymentSheet {
     try {
       await Stripe.instance.presentPaymentSheet().then((_) {
         final transactionId = _intentPaymentData?['id'] ?? 'Unknown';
-        _intentPaymentData = null;
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Payment Successful 🎉"),
-            content: const Text("Your payment was successful."),
-            actions: [
-              Obx(
-                () => _controller.isLoading.value
-                    ? const CustomLoader()
-                    : CustomButton(
-                        onPressed: () {
-                          _controller.paymentParams(
-                            amount: int.parse(amount),
-                            transactionId: transactionId,
-                          );
-                          context.pushNamed(AppRoutes.createSessionScreen);
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("Create Session"),
-                      ),
-              ),
-            ],
-          ),
+        _intentPaymentData = null;_controller.paymentParams(
+          amount: int.parse(amount),
+          transactionId: transactionId,
         );
+        context.pushNamed(AppRoutes.createSessionScreen);
+
       }).onError((error, stackTrace) {
         debugPrint('❌ PaymentSheet Error: $error');
         ToastMessageHelper.showToastMessage("Oops! Payment failed. Please try again.");
