@@ -73,6 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
         titleWidget: Obx(
           () {
             var currentChatData = _controller.currentChatData;
+            bool blockActive = currentChatData['lastMessageType'] != 'block' && currentChatData['status'] == 'online';
 
             return Hero(
               tag: currentChatData['heroTag'] ?? '',
@@ -87,10 +88,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   imageRadius: 20.r,
                   image: currentChatData['image'] ?? '',
                   title: currentChatData['name'] ?? '',
-                  subTitle: currentChatData['status'] == 'online'
+                  subTitle: blockActive
                       ? 'online'
                       : TimeFormatHelper.getTimeAgo(DateTime.tryParse(currentChatData['lastActive'] ?? '') ?? DateTime.now()),
-                  statusColor: currentChatData['status'] == 'online' ? Colors.green : Colors.grey,
+                  statusColor: blockActive ? Colors.green : Colors.grey,
 
                 ),
               ),
@@ -131,11 +132,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
                         final senderMessage = isBlock
-                            ? 'You blocked this user.'
-                            : 'You unblocked this user.';
+                            ? 'You blocked $myName'
+                            : 'You unblocked $myName';
                         final receiverMessage = isBlock
-                            ? 'You have been blocked by this user.'
-                            : 'You have been unblocked by this user.';
+                            ? 'You have been blocked by ${currentChatData['name'] ?? ''}'
+                            : 'You have been unblocked by ${currentChatData['name'] ?? ''}';
 
                         return Center(
                           child: Column(
@@ -248,9 +249,16 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         } else {
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: CustomText(text: "You are blocked by $name."),
+          return CustomContainer(
+            width: double.infinity,
+            border: Border(top: BorderSide(color: Colors.grey.shade300)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: CustomText(
+                fontWeight: FontWeight.w600,
+                top: 10,
+                  text: "You are blocked by this user."),
+            ),
           );
         }
       }
