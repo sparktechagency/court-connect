@@ -1,5 +1,6 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_colors.dart';
+import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
@@ -8,6 +9,7 @@ import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/time_format.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/block_unblock_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
@@ -43,10 +45,19 @@ class _ChatScreenState extends State<ChatScreen> {
   final BlockUnblockController _blockUnblockController = Get.put(BlockUnblockController());
   HomeController homeController = Get.find<HomeController>();
 
+  String userId = '';
+
+
+  void myId()async{
+    userId = await PrefsHelper.getString(AppConstants.userId);
+  }
+
+
 
   @override
   void initState() {
     super.initState();
+    myId();
     _controller.currentChatData.value = widget.chatData;
     _controller.blockUnblock.value = widget.chatData;
     _controller.currentChatData.refresh();
@@ -133,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                         final senderMessage = isBlock
                             ? 'You blocked $myName'
-                            : 'You unblocked $myName';
+                            : 'You unblocked  $myName';
                         final receiverMessage = isBlock
                             ? 'You have been blocked by ${currentChatData['name'] ?? ''}'
                             : 'You have been unblocked by ${currentChatData['name'] ?? ''}';
@@ -167,7 +178,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now()
                         ),
                         text: chat.message ?? '',
-                        isMe: homeController.userId.value == chat.senderId,
+                        isMe: userId == chat.senderId ?? true,
                       );
                     } else {
                       return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
@@ -199,51 +210,49 @@ class _ChatScreenState extends State<ChatScreen> {
         if (isBlockedByMe) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-            child: GestureDetector(
-              onTap: () {
-                showDeleteORSuccessDialog(
-                  context,
-                  title: 'Unblock $name',
-                  buttonLabel: 'Unblock',
-                  message: 'Are you sure you want to unblock $name? They will be able to contact you again.',
-                  onTap: () {
-                    _blockUnblockController.unblockUser(receiverId!);
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-              child: CustomContainer(
-                width: double.infinity,
-                  border: Border(top: BorderSide(color: Colors.grey.shade300)),
-                child: Center(
-                  child: Column(
-                    children: [
+            child: CustomContainer(
+              width: double.infinity,
+                border: Border(top: BorderSide(color: Colors.grey.shade300)),
+              child: Center(
+                child: Column(
+                  children: [
 
-                      CustomText(
-                        top: 10,
-                        text:
-                         "You've blocked $name ",
-                          color: Colors.grey,
-                          fontsize: 10.sp,
-                          fontWeight: FontWeight.w700,
-                      ),
-                      CustomText(text:
-                         "You can't message or call them in this chat, and you won't receive their messages",
-                          color: Colors.grey,
-                          fontsize: 10.sp,
-                      ),
+                    CustomText(
+                      top: 10,
+                      text:
+                       "You've blocked $name ",
+                        color: Colors.grey,
+                        fontsize: 10.sp,
+                        fontWeight: FontWeight.w700,
+                    ),
+                    CustomText(text:
+                       "You can't message or call them in this chat, and you won't receive their messages",
+                        color: Colors.grey,
+                        fontsize: 10.sp,
+                    ),
 
 
-                      CustomText(
-                        top: 10,
-                        text:
-                        'Unblock $name',
-                          color: Colors.red,
-                          fontsize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                      ),
-                    ],
-                  ),
+                    CustomText(
+                      onTap: (){
+                        showDeleteORSuccessDialog(
+                          context,
+                          title: 'Unblock $name',
+                          buttonLabel: 'Unblock',
+                          message: 'Are you sure you want to unblock $name? They will be able to contact you again.',
+                          onTap: () {
+                            _blockUnblockController.unblockUser(receiverId!);
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                      top: 10,
+                      text:
+                      'Unblock $name',
+                        color: Colors.red,
+                        fontsize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                    ),
+                  ],
                 ),
               ),
             ),

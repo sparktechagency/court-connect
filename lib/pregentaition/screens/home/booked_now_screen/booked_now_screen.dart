@@ -20,6 +20,8 @@ class BookedNowScreen extends StatefulWidget {
 class _BookedNowScreenState extends State<BookedNowScreen> {
 
   final HomeController _controller = Get.put(HomeController());
+  StripePaymentSheet paymentController = Get.put(StripePaymentSheet());
+
 
   @override
   void initState() {
@@ -77,7 +79,7 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
             SizedBox(height: 54.h),
             CustomButton(
               onPressed: () {
-                StripePaymentSheet()
+                paymentController
                     .paymentSheetInit(amount: _controller.charge.value.round().toString(), context: context);
               },
               label: 'Proceed to Payment',

@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
-import '../helpers/prefs_helper.dart';
 import 'api_urls.dart';
 import 'error_response.dart';
 import 'logger.dart';
@@ -29,6 +31,7 @@ class ApiClient extends GetxService {
       'Authorization': 'Bearer $bearerToken'
     };
     try {
+
       log.i(
           '|📍📍📍|-----------------[[ GET ]] method details start -----------------|📍📍📍|');
       log.i('URL: $uri \n Headers: ${headers ?? mainHeaders}');
@@ -40,6 +43,13 @@ class ApiClient extends GetxService {
       )
           .timeout(const Duration(seconds: timeoutInSeconds));
 
+      if(response.statusCode == 498){
+        final cxt = Get.context;
+        if(cxt != null){
+          cxt.goNamed(AppRoutes.loginScreen);
+          print('++++++++++++++++++== tanvir ');
+        }
+      }
       return handleResponse(response, uri);
     } catch (e, s) {
       log.e('🐞🐞🐞 Error in getData: ${e.toString()}');
@@ -383,6 +393,9 @@ class ApiClient extends GetxService {
 
     log.i(
         '====> API Response: [${response0.statusCode}] $uri\n${response0.body}');
+
+
+
     return response0;
   }
 }

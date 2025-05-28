@@ -5,6 +5,7 @@ import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
+import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -41,7 +42,7 @@ class LoginController extends GetxController {
         final String? userName = responseBody['data']?['user']['name'];
         final String? userImage = responseBody['data']?['user']['image'];
         final String? userId = responseBody['data']?['user']['_id'];
-        //final String? bio = responseBody['data']?['user']['boi'];
+        final String? userEmail = responseBody['data']?['user']['email'];
 
         if (token != null) {
           debugPrint('====================> response token save: $token');
@@ -50,9 +51,11 @@ class LoginController extends GetxController {
           await PrefsHelper.setString(AppConstants.name, userName);
           await PrefsHelper.setString(AppConstants.image, userImage);
           await PrefsHelper.setString(AppConstants.userId, userId);
+          await PrefsHelper.setString(AppConstants.email, userEmail);
           context.goNamed(AppRoutes.customBottomNavBar);
           Get.find<CustomBottomNavBarController>().onChange(0);
-
+          SocketServices socketServices = SocketServices();
+          socketServices.init();
         }
       } else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "Login failed.");

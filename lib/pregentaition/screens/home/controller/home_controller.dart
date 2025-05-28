@@ -13,6 +13,7 @@ class HomeController extends GetxController {
   final userName = ''.obs;
   final userImage = ''.obs;
   final userId = ''.obs;
+  final userEmail = ''.obs;
   final bio = ''.obs;
 
   final type = 'all'.obs;
@@ -44,6 +45,7 @@ class HomeController extends GetxController {
     userName.value = await PrefsHelper.getString(AppConstants.name);
     userImage.value = await PrefsHelper.getString(AppConstants.image);
     userId.value = await PrefsHelper.getString(AppConstants.userId);
+    userEmail.value = await PrefsHelper.getString(AppConstants.email);
     bio.value = await PrefsHelper.getString(AppConstants.bio);
   }
 

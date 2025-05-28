@@ -7,6 +7,7 @@ class ApiUrls {
   static const String register = '/auth/register';
   static const String verifyOtp = '/auth/verify-otp';
   static const String login = '/auth/login';
+  static const String refreshToken = '/refresh-token';
   static const String forgetPassword = '/auth/forget-password';
   static  const String  resendOtp = '/auth/resend-otp';
   static  const String  resetPassword = '/auth/reset-password';
@@ -30,7 +31,7 @@ class ApiUrls {
   static   String  post (String? communityId,type,page,)=> '/post?communityId=$communityId&page=$page&type=$type';
   static   String  community (String? type,page,date,)=> '/community?page=$page&type=$type&date=$date';
   static   String  communityDetails (String? communityId)=> '/community/details?communityId=$communityId';
-  static   String  user (String id)=> '/session/registered-users?sessionId=$id';
+  static   String  user (String sessionId)=> '/session/registered-users?sessionId=$sessionId';
   static   String  bookmark (String id)=> '/booking/add?sessionId=$id';
   static   String  deleteBooking (String id)=> '/booking/delete?bookingId=$id';
   static   String  deleteSession (String id)=> '/session/delete?sessionId=$id';

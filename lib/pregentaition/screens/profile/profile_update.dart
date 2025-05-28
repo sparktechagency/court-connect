@@ -41,83 +41,85 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
       appBar: const CustomAppBar(
         title: 'Edit Profile',
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Stack(
-              children: [
-                CustomImageAvatar(
-                  radius: 60.r,
-                  image: _controller.profileData.image ?? '',
-                  fileImage: _controller.profileImage.value,
-                ),
-                Positioned(
-                  bottom: 6.h,
-                  right: 8.w,
-                  child: CustomContainer(
-                    onTap: _pickImage,
-                    height: 32.h,
-                    width: 32.w,
-                    color: AppColors.primaryColor,
-                    shape: BoxShape.circle,
-                    child: Center(
-                        child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                      size: 18.r,
-                    )),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Stack(
+                children: [
+                  CustomImageAvatar(
+                    radius: 60.r,
+                    image: _controller.profileData.image ?? '',
+                    fileImage: _controller.profileImage.value,
                   ),
-                ),
-              ],
+                  Positioned(
+                    bottom: 6.h,
+                    right: 8.w,
+                    child: CustomContainer(
+                      onTap: _pickImage,
+                      height: 32.h,
+                      width: 32.w,
+                      color: AppColors.primaryColor,
+                      shape: BoxShape.circle,
+                      child: Center(
+                          child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 18.r,
+                      )),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 60.h),
-          CustomTextField(
-            controller: _controller.nameTEController,
-            hintText: "User Name",
-            filColor: Colors.transparent,
-            borderColor: Colors.black,
-          ),
-
-          SizedBox(height: 10.h),
-
-          CustomTextField(
-            controller: _controller.phoneTEController,
-            hintText: "Phone",
-            filColor: Colors.transparent,
-            borderColor: Colors.black,
-          ),
-
-          SizedBox(height: 10.h),
-
-          CustomTextField(
-            controller: _controller.addressTEController,
-            hintText: "Address",
-            filColor: Colors.transparent,
-            borderColor: Colors.black,
-          ),
-
-          SizedBox(height: 10.h),
-
-          CustomTextField(
-            maxLine: 5,
-            controller: _controller.bioTEController,
-            hintText: "Bio",
-            filColor: Colors.transparent,
-            borderColor: Colors.black,
-          ),
-          const Spacer(),
-          Obx(() => _controller.isLoading.value
-              ? const CustomLoader()
-              : CustomButton(
-                  label: 'Update Profile',
-                  onPressed: () =>
-                           _controller.editProfile(context)
-
-                )),
-          SizedBox(height: 100.h),
-        ],
+            SizedBox(height: 60.h),
+            CustomTextField(
+              controller: _controller.nameTEController,
+              hintText: "User Name",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+        
+            SizedBox(height: 10.h),
+        
+            CustomTextField(
+              controller: _controller.phoneTEController,
+              hintText: "Phone",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+        
+            SizedBox(height: 10.h),
+        
+            CustomTextField(
+              controller: _controller.addressTEController,
+              hintText: "Address",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+        
+            SizedBox(height: 10.h),
+        
+            CustomTextField(
+              maxLine: 5,
+              controller: _controller.bioTEController,
+              hintText: "Bio",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+            const Spacer(),
+            Obx(() => _controller.isLoading.value
+                ? const CustomLoader()
+                : CustomButton(
+                    label: 'Update Profile',
+                    onPressed: () =>
+                             _controller.editProfile(context)
+        
+                  )),
+            SizedBox(height: 100.h),
+          ],
+        ),
       ),
     );
   }

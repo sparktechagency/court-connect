@@ -26,6 +26,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   
   
   final ProfileController _controller = Get.put(ProfileController());
+
+
+  @override
+  void initState() {
+    _controller.getMyProfile();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -98,7 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     onConfirm: ()async {
                       await PrefsHelper.remove(AppConstants.bearerToken);
-                      SocketServices().disconnect;
+                      final socket = SocketServices();
+                      socket.disconnect();
                       context.go(AppRoutes.loginScreen);
                     },
                   ),

@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_constants.dart';
-import 'package:courtconnect/core/widgets/custom_button.dart';
-import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/payment_controller.dart';
@@ -49,7 +47,9 @@ class StripePaymentSheet {
     try {
       await Stripe.instance.presentPaymentSheet().then((_) {
         final transactionId = _intentPaymentData?['id'] ?? 'Unknown';
-        _intentPaymentData = null;_controller.paymentParams(
+        _intentPaymentData = null;
+
+        _controller.paymentParams(
           amount: int.parse(amount),
           transactionId: transactionId,
         );
@@ -75,8 +75,8 @@ class StripePaymentSheet {
     required BuildContext context,
   }) async {
     try {
-        Stripe.publishableKey = PaymentKeys.publishAbleKey; // <-- Add this
-        await Stripe.instance.applySettings(); // <-- Add this
+        /*Stripe.publishableKey = PaymentKeys.publishAbleKey; // <-- Add this
+        await Stripe.instance.applySettings(); // <-- Add this*/
 
       _intentPaymentData = await _makeIntentForPayment(amount);
 
@@ -88,10 +88,13 @@ class StripePaymentSheet {
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
+          customFlow: false,
           allowsDelayedPaymentMethods: true,
           paymentIntentClientSecret: _intentPaymentData!['client_secret'],
+          customerEphemeralKeySecret: '',
+          customerId: '',
           style: ThemeMode.light,
-          merchantDisplayName: await PrefsHelper.getString(AppConstants.name),
+          merchantDisplayName: 'court-connect',
         ),
       );
       _showPaymentSheet(amount: amount, context: context);

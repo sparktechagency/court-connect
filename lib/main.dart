@@ -1,29 +1,29 @@
+import 'dart:async';
 import 'package:courtconnect/helpers/dependancy_injaction.dart';
-import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/utils/payment_keys.dart';
 import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'app_themes/app_themes.dart';
 import 'core/app_routes/app_routes.dart';
 import 'core/widgets/no_inter_net_screen.dart';
 
-void main() async{
-
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SocketServices socketServices = SocketServices();
 
+  //Stripe.publishableKey = PaymentKeys.publishAbleKey;
+  //Stripe.merchantIdentifier = 'court-connect';
+  //await Stripe.instance.applySettings();
+  SocketServices socketServices = SocketServices();
   socketServices.init();
 
-
-
-  await dotenv.load(fileName: ".env");
-  print(' ==================>>   ${dotenv.env['STRIPE_PUBLISHABLE_KEY']}');
-
-
-  DependencyInjection().dependencies();
-
+  //await dotenv.load(fileName: ".env");
+  DependencyInjection di = DependencyInjection();
+  di.dependencies();
+  di.lockDevicePortrait();
 
   runApp(const MyApp());
 }
@@ -31,13 +31,11 @@ void main() async{
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(393, 852),
-      builder: (context, child) =>  MaterialApp.router(
-
+      builder: (context, child) => MaterialApp.router(
         debugShowCheckedModeBanner: false,
         theme: Themes().lightTheme,
         darkTheme: Themes().lightTheme,

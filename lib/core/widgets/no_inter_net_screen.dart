@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:courtconnect/services/internet/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,7 @@ class NoInterNetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Retrieve the ConnectivityService instance
-    final ConnectivityService connectivityService = Get.put(ConnectivityService());
+    final ConnectivityController connectivityService = Get.put(ConnectivityController());
 
     return Stack(
       children: [
@@ -91,33 +92,5 @@ class NoInterNetScreen extends StatelessWidget {
 
       ],
     );
-  }
-}
-
-
-
-
-
-class ConnectivityService extends GetxController {
-  final Connectivity _connectivity = Connectivity();
-  final RxBool isConnected = true.obs;
-
-  ConnectivityService() {
-    // Initialize connectivity status and set up a listener for connectivity changes.
-    _initializeConnectivity();
-    _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
-      _updateConnectionStatus(result);
-    });
-  }
-
-  Future<void> _initializeConnectivity() async {
-    // Check the initial connectivity status
-    final status = await _connectivity.checkConnectivity();
-    isConnected.value = status != ConnectivityResult.none;
-  }
-
-  void _updateConnectionStatus(ConnectivityResult result) {
-    // Update the connectivity status based on the result
-    isConnected.value = result != ConnectivityResult.none;
   }
 }

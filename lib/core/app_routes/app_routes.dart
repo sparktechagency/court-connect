@@ -378,11 +378,11 @@ class AppRoutes {
 
         ///=========ForgetScreen Screen========>>
 
-        GoRoute(
+        /*GoRoute(
           path: paymentScreen,
           name: paymentScreen,
           pageBuilder: (context, state) =>  _customTransitionPage( const PaymentScreen(), state),
-        ),
+        ),*/
 
         ///=========ForgetScreen Screen========>>
 

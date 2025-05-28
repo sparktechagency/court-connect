@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -5,13 +6,13 @@ class ConnectivityController extends GetxController {
   final Connectivity _connectivity = Connectivity();
   final RxBool isConnected = true.obs;
 
+  late final StreamSubscription<ConnectivityResult> _subscription;
+
   @override
   void onInit() {
     super.onInit();
     _initializeConnectivity();
-    _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
-      _updateConnectionStatus(result);
-    });
+    _subscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
   Future<void> _initializeConnectivity() async {
@@ -21,5 +22,11 @@ class ConnectivityController extends GetxController {
 
   void _updateConnectionStatus(ConnectivityResult result) {
     isConnected.value = result != ConnectivityResult.none;
+  }
+
+  @override
+  void onClose() {
+    _subscription.cancel();
+    super.onClose();
   }
 }

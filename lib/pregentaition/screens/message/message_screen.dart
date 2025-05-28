@@ -95,10 +95,9 @@ class _MessageScreenState extends State<MessageScreen> {
                     }
 
                        return ListView.builder(
-                         //reverse: true,
                           itemCount: _controller.filteredChatList.length,
                           itemBuilder: (context, index) {
-                            final chatData = _controller.filteredChatList[index];
+                            final chatData = _controller.filteredChatList[_controller.filteredChatList.length - 1 - index];
                             _controller.receveId.value = chatData.receiver?.id ?? '';
                             _controller.chatId.value = chatData.chatId ?? '';
 
