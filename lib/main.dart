@@ -1,5 +1,5 @@
 import 'package:courtconnect/helpers/dependancy_injaction.dart';
-import 'package:courtconnect/keys/payment_keys.dart';
+import 'package:courtconnect/config/payment_keys.dart';
 import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:courtconnect/keys/payment_keys.dart';
+import 'package:courtconnect/config/payment_keys.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/foundation.dart';
