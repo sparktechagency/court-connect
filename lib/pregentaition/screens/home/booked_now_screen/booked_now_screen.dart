@@ -4,7 +4,7 @@ import 'package:courtconnect/core/widgets/custom_button.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
-import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/stripe_payment_sheet.dart';
+import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/payment_controller.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +20,7 @@ class BookedNowScreen extends StatefulWidget {
 class _BookedNowScreenState extends State<BookedNowScreen> {
 
   final HomeController _controller = Get.put(HomeController());
-  StripePaymentSheet paymentController = Get.put(StripePaymentSheet());
+  PaymentController paymentController = Get.put(PaymentController());
 
 
   @override
@@ -79,8 +79,7 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
             SizedBox(height: 54.h),
             CustomButton(
               onPressed: () {
-                paymentController
-                    .paymentSheetInit(amount: _controller.charge.value.round().toString(), context: context);
+                paymentController.makePayment( price: _controller.charge.value.toString());
               },
               label: 'Proceed to Payment',
             ),

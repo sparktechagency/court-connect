@@ -137,7 +137,7 @@ class HomeController extends GetxController {
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
 
-        charge.value = responseBody['data']['charge'];
+        charge.value = responseBody['data']?['charge'] ?? '';
 
     } else{
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");

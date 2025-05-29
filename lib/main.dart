@@ -1,9 +1,7 @@
-import 'dart:async';
 import 'package:courtconnect/helpers/dependancy_injaction.dart';
-import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/utils/payment_keys.dart';
+import 'package:courtconnect/keys/payment_keys.dart';
 import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'app_themes/app_themes.dart';
@@ -14,13 +12,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
-  //Stripe.publishableKey = PaymentKeys.publishAbleKey;
-  //Stripe.merchantIdentifier = 'court-connect';
-  //await Stripe.instance.applySettings();
+  Stripe.publishableKey = PaymentKeys.publishAbleKey;
+  Stripe.merchantIdentifier = 'court-connect';
+  await Stripe.instance.applySettings();
   SocketServices socketServices = SocketServices();
   socketServices.init();
 
-  //await dotenv.load(fileName: ".env");
+
   DependencyInjection di = DependencyInjection();
   di.dependencies();
   di.lockDevicePortrait();
