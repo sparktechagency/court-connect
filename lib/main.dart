@@ -15,6 +15,8 @@ void main() async {
   Stripe.publishableKey = PaymentKeys.publishAbleKey;
   Stripe.merchantIdentifier = 'court-connect';
   await Stripe.instance.applySettings();
+
+
   SocketServices socketServices = SocketServices();
   socketServices.init();
 

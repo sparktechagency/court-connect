@@ -40,7 +40,6 @@ dependencies:
   badges:
   multiselect: ^0.1.1
   connectivity_plus: ^4.0.1
-  flutter_dotenv: ^5.2.1
   syncfusion_flutter_pdf: ^29.1.38
   path_provider: ^2.1.5
   open_file: ^3.5.10
@@ -97,9 +96,6 @@ flutter:
       - assets/icons/
       - assets/lottie/
       - assets/audio/
-
-      - .env
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -28,11 +28,13 @@ class PaymentController {
 
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
+            customFlow: false,
             billingDetails: const BillingDetails(
               name: '',
               email: 'contact@courtconnect.uk',
             ),
             googlePay: const PaymentSheetGooglePay(merchantCountryCode: 'US'),
+
             merchantDisplayName: 'court connect',
             paymentIntentClientSecret: clientSecret,
             style: ThemeMode.light,

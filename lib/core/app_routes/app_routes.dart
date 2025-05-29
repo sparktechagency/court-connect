@@ -9,7 +9,6 @@ import 'package:courtconnect/pregentaition/screens/group/members_screen.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/booked_now_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/create_session_screen.dart';
-import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/payement_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/registered_users_screen.dart';
 import 'package:courtconnect/pregentaition/screens/home/session_edit/session_edit_screen.dart';
