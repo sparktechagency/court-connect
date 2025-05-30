@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/env/config.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/services/api_client.dart';
@@ -32,6 +33,14 @@ class PaymentController {
 
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
+            appearance: PaymentSheetAppearance(
+              colors: PaymentSheetAppearanceColors(
+                background: Colors.white,
+                componentBackground: Colors.white,
+                componentText: Colors.black,
+                placeholderText: Colors.black
+              )
+            ),
             customFlow: false,
             billingDetails: const BillingDetails(
               name: '',
@@ -41,7 +50,7 @@ class PaymentController {
 
             merchantDisplayName: 'court connect',
             paymentIntentClientSecret: clientSecret,
-            style: ThemeMode.light,
+            style: ThemeMode.dark,
           ),
         );
 

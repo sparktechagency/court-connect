@@ -13,7 +13,7 @@ void main() async {
 
 
   Stripe.publishableKey = Config.publishableKey;
-  Stripe.merchantIdentifier = 'court-connect';
+  Stripe.merchantIdentifier = 'MerchantIdentifier';
   await Stripe.instance.applySettings();
 
 
