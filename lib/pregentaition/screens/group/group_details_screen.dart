@@ -8,6 +8,7 @@ import 'package:courtconnect/pregentaition/screens/bottom_nav_bar/controller/cus
 import 'package:courtconnect/pregentaition/screens/group/widgets/group_card_widget.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -158,8 +159,8 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
 
                     }
                   },
-                  label: data.alreadyJoined! ? 'Leave Group' : 'Join this Group',
-                        backgroundColor: data.alreadyJoined! ? AppColors.removeColor : AppColors.primaryColor,
+                  label: data.alreadyJoined ?? false ? 'Leave Group' : 'Join this Group',
+                        backgroundColor: data.alreadyJoined ?? false ? AppColors.removeColor : AppColors.primaryColor,
                 );
               }
             ),

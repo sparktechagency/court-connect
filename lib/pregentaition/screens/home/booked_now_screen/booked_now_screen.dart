@@ -40,7 +40,8 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      appBar: const CustomAppBar(title: 'Pay to Create Session'),
+      appBar: const CustomAppBar(
+          title: 'Pay to Create Session'),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +80,7 @@ class _BookedNowScreenState extends State<BookedNowScreen> {
             SizedBox(height: 54.h),
             CustomButton(
               onPressed: () {
-                paymentController.makePayment( price: _controller.charge.value.toString());
+                paymentController.makePayment(context, price: _controller.charge.value.toString());
               },
               label: 'Proceed to Payment',
             ),

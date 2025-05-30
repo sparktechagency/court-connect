@@ -1,7 +1,9 @@
-import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
+import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/pregentaition/screens/group/models/group_details_data.dart';
+import 'package:courtconnect/services/api_urls.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GroupAllMembersWidget extends StatelessWidget {
@@ -13,30 +15,26 @@ class GroupAllMembersWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int displayCount = members.length > 3 ? 3 : members.length;
-    double imageSize = 60.w;
-    double spacing = 20.w;
-    double totalWidth = imageSize + (displayCount - 1) * (imageSize - spacing);
-
+    List<String> fullImageUrls = members
+        .map((member) => member.image)
+        .where((img) => img != null && img.isNotEmpty)
+        .map((img) => '${ApiUrls.imageBaseUrl}$img')
+        .toList();
     return GestureDetector(
       onTap: onTap,
       child: Row(
         children: [
-          SizedBox(
-            width: totalWidth.w,
-            height: 60.h,
-            child: Stack(
-              children: List.generate(
-                displayCount,
-                (int index) => Positioned(
-                    left: index * (imageSize - spacing),
-                    child: CustomImageAvatar(
-                      image: members[index].image ?? '',
-                    )),
-              ),
-            ),
+          FlutterImageStack(
+            itemBorderColor: AppColors.primaryColor,
+            imageList: fullImageUrls,
+            //showTotalCount: true,
+            totalCount: 0,
+            itemRadius: 52.r,
+            itemCount: 3,
+            itemBorderWidth: 2,
           ),
-          SizedBox(width: 10.w),
+
+          SizedBox(width: 6.w),
           CustomText(
             text: "$totalMember more",
             color: Colors.black,

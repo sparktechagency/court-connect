@@ -15,11 +15,9 @@ import 'package:courtconnect/pregentaition/screens/message/controller/block_unbl
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/widgets/chat_card.dart';
-import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 

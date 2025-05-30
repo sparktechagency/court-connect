@@ -30,12 +30,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 }
               },
               child: Padding(
-                padding: EdgeInsets.all(10.r),
+                padding: EdgeInsets.all(8.r),
                 child: Container(
+                  padding: EdgeInsets.zero,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.black)),
-                    child: const Icon(Icons.arrow_back, color: Colors.black)),
+                    child:  Icon(Icons.arrow_back, color: Colors.black,size: 20.r,)),
               ),
             )
           : null,
