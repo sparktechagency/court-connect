@@ -45,17 +45,11 @@ class SocketChatController extends GetxController {
         var next = chatData.length;
 
         if (next > prev) {
-          seenChat(data['chatId']);
+          seenChat(data['chatId'] ?? '');
         }
 
         debugPrint('=======================================>   ${demoData.isSender}');
 
-
-        if(demoData.messageType == 'block'){
-
-        }else{
-
-        }
         if(demoData.messageType == 'block'){
           _controller.blockUnblock.value = {
             'lastMessageType': demoData.messageType,

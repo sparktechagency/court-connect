@@ -57,10 +57,11 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     myId();
     _controller.currentChatData.value = widget.chatData;
-    _controller.blockUnblock.value = widget.chatData;
     _controller.currentChatData.refresh();
     _controller.blockUnblock.refresh();
     _socketChatController.listenActiveStatus();
+    _socketChatController.listenUnblockUser();
+    _socketChatController.listenBlockUser();
     _socketChatController.listenMessage();
     _socketChatController.seenChat(widget.chatData['chatId'] ?? '');
     _socketChatController.listenSeenStatus(widget.chatData['chatId'] ?? '');
@@ -198,40 +199,42 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildBlockUnblockSection(BuildContext context) {
     return Obx(() {
-      final blockInfo = _controller.blockUnblock;
-      final isBlocked = blockInfo['lastMessageType'] == 'block';
-      final isBlockedByMe = blockInfo['blockId'] == homeController.userId.value;
+     // _controller.blockUnblock.value = _controller.currentChatData;
+
+      final blockInfo = (_controller.blockUnblock = _controller.currentChatData);
       final name = widget.chatData['name'];
       final receiverId = widget.chatData['receiverId'];
+      final userId = homeController.userId.value;
+      final bool isBlocked = blockInfo['lastMessageType'] == 'block';
+      final bool isBlockedByMe = blockInfo['blockId'] == userId;
 
+
+
+      print('++++++++++++++++iftekar fuck boy ===> $blockInfo');
       if (isBlocked) {
         if (isBlockedByMe) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
             child: CustomContainer(
               width: double.infinity,
-                border: Border(top: BorderSide(color: Colors.grey.shade300)),
+              border: Border(top: BorderSide(color: Colors.grey.shade300)),
               child: Center(
                 child: Column(
                   children: [
-
                     CustomText(
                       top: 10,
-                      text:
-                       "You've blocked $name ",
-                        color: Colors.grey,
-                        fontsize: 10.sp,
-                        fontWeight: FontWeight.w700,
+                      text: "You've blocked $name",
+                      color: Colors.grey,
+                      fontsize: 10.sp,
+                      fontWeight: FontWeight.w700,
                     ),
-                    CustomText(text:
-                       "You can't message or call them in this chat, and you won't receive their messages",
-                        color: Colors.grey,
-                        fontsize: 10.sp,
-                    ),
-
-
                     CustomText(
-                      onTap: (){
+                      text: "You can't message or call them in this chat, and you won't receive their messages.",
+                      color: Colors.grey,
+                      fontsize: 10.sp,
+                    ),
+                    CustomText(
+                      onTap: () {
                         showDeleteORSuccessDialog(
                           context,
                           title: 'Unblock $name',
@@ -244,18 +247,17 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                       },
                       top: 10,
-                      text:
-                      'Unblock $name',
-                        color: Colors.red,
-                        fontsize: 16.sp,
-                        fontWeight: FontWeight.w600,
+                      text: 'Unblock $name',
+                      color: Colors.red,
+                      fontsize: 16.sp,
+                      fontWeight: FontWeight.w600,
                     ),
                   ],
                 ),
               ),
             ),
           );
-        } else {
+        } else{
           return CustomContainer(
             width: double.infinity,
             border: Border(top: BorderSide(color: Colors.grey.shade300)),
@@ -264,7 +266,8 @@ class _ChatScreenState extends State<ChatScreen> {
               child: CustomText(
                 fontWeight: FontWeight.w600,
                 top: 10,
-                  text: "You are blocked by this user."),
+                text: "You are blocked by this user.",
+              ),
             ),
           );
         }

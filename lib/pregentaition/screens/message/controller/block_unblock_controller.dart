@@ -7,13 +7,12 @@ import 'package:courtconnect/services/api_urls.dart';
 class BlockUnblockController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isBlocked = false.obs;
-  final ChatController _chatController =  Get.put(ChatController());
 
 
 
 
 
-  Future<void> blockUser(String receiverId,senderId) async {
+  Future<void> blockUser(String receiverId) async {
     isLoading.value = true;
 
     try {

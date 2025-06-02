@@ -1,8 +1,8 @@
 
+import 'package:courtconnect/global/custom_assets/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 
 
 
@@ -35,8 +35,7 @@ class NoInternetWrapper extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Lottie animation for "No Internet" message
-                      Lottie.asset(
-                        'assets/animations/no_internet.json',
+                      Assets.lottie.noInternet.lottie(
                         width: MediaQuery.of(context).size.width * 0.8,
                         height: MediaQuery.of(context).size.height * 0.4,
                         fit: BoxFit.contain,

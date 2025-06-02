@@ -9,6 +9,7 @@ import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
+import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -29,10 +30,13 @@ class _MessageScreenState extends State<MessageScreen> {
 
   final ChatController _controller =   Get.put(ChatController());
   final SocketChatController _socketChatController =   Get.put(SocketChatController());
+  SocketServices socketServices = SocketServices();
+  //socketServices.init();
 
 
   @override
   void initState() {
+    _socketChatController.listenMessage();
     _socketChatController.listenActiveStatus();
     _controller.getChatList();
     _controller.searchText.value = _searchController.text.toLowerCase();
@@ -117,7 +121,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                       'receiverId' : chatData.receiver?.id ?? '',
                                       'lastActive' : chatData.receiver?.lastActive ?? '',
                                       'lastMessageType' : chatData.lastMessage?.messageType ?? '',
-                                      'blockId' : chatData.blockBy?.id ?? '',
+                                      'block' : chatData.blockBy,
                                       'heroTag' : index,
                                     });
 

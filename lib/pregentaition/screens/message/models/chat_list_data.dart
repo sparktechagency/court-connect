@@ -74,7 +74,16 @@ class BlockBy {
     id = json['id'];
     name = json['name'];
   }
+
+  BlockBy copyWith({String? id,String? name}){
+    return BlockBy(
+      id: id,
+      name: name,
+    );
+  }
 }
+
+
 
 
 class LastMessage {
@@ -109,5 +118,7 @@ class ChatFile {
     type = json['type'];
   }
 }
+
+
 
 

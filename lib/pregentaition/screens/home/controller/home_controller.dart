@@ -38,7 +38,6 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     _getUser();
-    _getBanner();
   }
 
   void _getUser() async {
@@ -50,7 +49,7 @@ class HomeController extends GetxController {
   }
 
   /// <==================== Get Banner Data ======================>
-  Future<void> _getBanner() async {
+  Future<void> getBanner() async {
     isLoading.value = true;
 
     try {

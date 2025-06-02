@@ -51,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _homeController.getBanner();
     _notificationController.getNotificationBadge();
     _homeController.getSession();
     _searchController.addListener(() {

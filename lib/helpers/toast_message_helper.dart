@@ -19,13 +19,13 @@ class ToastMessageHelper{
     );
 
 
-    Get.snackbar('', message,
+    /*Get.snackbar('', message,
         snackPosition: SnackPosition.TOP,
         backgroundColor: const Color.fromARGB(204, 255, 255, 255),
         colorText: Colors.black,
         borderRadius: 10,
         margin: const EdgeInsets.all(10),
         duration:  Duration(seconds: secound ?? 3),
-        leftBarIndicatorColor: actionColor);
+        leftBarIndicatorColor: actionColor);*/
   }
 }

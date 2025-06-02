@@ -22,14 +22,11 @@ class ChatProfileViewScreen extends StatefulWidget {
 }
 
 class _ChatProfileViewScreenState extends State<ChatProfileViewScreen> {
-  final SocketChatController _socketChatController = Get.put(SocketChatController());
   final BlockUnblockController _blockUnblockController = Get.put(BlockUnblockController());
-  final ChatController _chatController = Get.put(ChatController());
 
   @override
   void initState() {
     super.initState();
-    //_socketChatController.listenMessage();
   }
 
   @override
@@ -132,12 +129,9 @@ class _ChatProfileViewScreenState extends State<ChatProfileViewScreen> {
                     if (lastMessageType == 'block' || isBlocked) {
                       _blockUnblockController.unblockUser(widget.chatData['receiverId']!);
                     } else {
-                      _blockUnblockController.blockUser(
-                          widget.chatData['receiverId']!,
-                          widget.chatData['receiverId']!);
+                      _blockUnblockController.blockUser(widget.chatData['receiverId']!);
                     }
 
-                    _chatController.getChatList();
                     Navigator.of(context).pop();
                   },
                 );
@@ -156,6 +150,10 @@ class _ChatProfileViewScreenState extends State<ChatProfileViewScreen> {
           if ((lastMessageType == 'block' || isBlocked) && (userId != blockId))
             Center(
               child: CustomContainer(
+                onTap: (){
+                  //_blockUnblockController.unblockUser(widget.chatData['receiverId']!);
+
+                },
                 radiusAll: 16,
                 paddingAll: 10,
                 color: Colors.white,
