@@ -28,7 +28,6 @@ import 'package:courtconnect/pregentaition/screens/home/controller/home_controll
 import 'package:courtconnect/pregentaition/screens/home/widgets/price_list_bottom_sheet.dart';
 import 'package:badges/badges.dart' as badges;
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -49,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
     {'label': 'My Sessions', 'value': 'my'},
   ];
 
-
   @override
   void initState() {
     super.initState();
@@ -61,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _homeController.searchText.value = _searchController.text.toLowerCase();
       _addScrollListener();
     });
-
   }
 
   @override
@@ -85,26 +82,35 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
         ),
         actions: [
-          Obx(
-            () {
-              return Padding(
-                padding:  EdgeInsets.only(right: 16.w),
-                child: badges.Badge(
-                  position: badges.BadgePosition.topEnd(top: -6, end: -2),
-                  showBadge: _notificationController.unreadCount.value <= 0 ? false : true,
-                  badgeContent: CustomText(text: _notificationController.unreadCount.value.toString() ,color: Colors.black,fontWeight: FontWeight.w600,fontsize: 8.sp,),
-                  child: GestureDetector(
-                    onTap: () {
-                      context.pushNamed(AppRoutes.notificationScreen).then((_) {
-                        _notificationController.unreadCount.value = 0;
-                      });
-                    },
-                    child:  Icon(Icons.notifications, color: Colors.black,size: 28.r,),
+          Obx(() {
+            return Padding(
+              padding: EdgeInsets.only(right: 16.w),
+              child: badges.Badge(
+                position: badges.BadgePosition.topEnd(top: -6, end: -2),
+                showBadge: _notificationController.unreadCount.value <= 0
+                    ? false
+                    : true,
+                badgeContent: CustomText(
+                  text: _notificationController.unreadCount.value.toString(),
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontsize: 8.sp,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    context.pushNamed(AppRoutes.notificationScreen).then((_) {
+                      _notificationController.unreadCount.value = 0;
+                    });
+                  },
+                  child: Icon(
+                    Icons.notifications,
+                    color: Colors.black,
+                    size: 28.r,
                   ),
                 ),
-              );
-            }
-          ),
+              ),
+            );
+          }),
         ],
       ),
       body: Column(
@@ -142,7 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
               }).toList(),
             );
           }),
-
           SizedBox(height: 24.h),
           Row(
             children: [
@@ -182,19 +187,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: _homeController.onChangeType,
               )),
           SizedBox(height: 16.h),
-
-
           Expanded(
             child: RefreshIndicator(
               color: AppColors.primaryColor,
-              onRefresh: ()async{
+              onRefresh: () async {
                 await _homeController.getSession();
               },
               child: Obx(() {
-                if (_homeController.isLoading.value && _homeController.filteredSessionList.isEmpty) {
+                if (_homeController.isLoading.value &&
+                    _homeController.filteredSessionList.isEmpty) {
                   return ListView.builder(
                     itemCount: 3,
-                    itemBuilder: (context, index) => _buildShimmer(height: 280.h),
+                    itemBuilder: (context, index) =>
+                        _buildShimmer(height: 280.h),
                   );
                 }
 
@@ -206,74 +211,83 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _homeController.scrollController,
                   itemCount: _homeController.filteredSessionList.length + 1,
                   itemBuilder: (context, index) {
-                    if(index == _homeController.filteredSessionList.length){
-                      return _homeController.isLoading.value ? Center(child: CustomLoader(),) : SizedBox();
+                    if (index == _homeController.filteredSessionList.length) {
+                      return _homeController.isLoading.value
+                          ? Center(
+                              child: CustomLoader(),
+                            )
+                          : SizedBox();
                     }
-                    if(index < _homeController.filteredSessionList.length){
-                      final session = _homeController.filteredSessionList[index];
-                      return Obx(
-                              () {
-                            return CustomSessionCard(
-                              menuItems:  _homeController.type.value == 'all' ? []: [
-                                'Edit',
-                                'Delete'
-                              ],
-                              onSelected: (val){
-                                if(val == 'Edit'){
-                                  context.pushNamed(
-                                    AppRoutes.editSessionScreen,  // Name of the route
-                                    extra: {
-                                      'id' : session.sId,
-                                      'name': session.name,
-                                      'image': '${ApiUrls.imageBaseUrl}${session.image}',
-                                      'price': session.price,
-                                      'location': session.location,
-                                      'date': session.date,
-                                      'time': session.time,
-                                    },
-                                  );
-                                }else if(val == 'Delete'){
-                                  showDeleteORSuccessDialog(context, onTap: () {
-                                    context.pop();
-                                    _sessionEditController.deleteMySession(session.sId!);
-                                  });
-                                }
-
-                              },
-                              image: '${ApiUrls.imageBaseUrl}${session.image}',
-                              title: session.name ?? '',
-                              subtitles: [
-                                '\$ ${session.price}',
-                                session.location ?? '',
-                                '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
-                              ],
-                              onTap: () {
-                                if(  session.isbooked == true || _bookMarkController.isBookedMap[session.sId] == true){
-                                  ToastMessageHelper.showToastMessage("It's Already Booked");
-
-                                }else if(_homeController.type.value == 'all'){
-                                  _bookMarkController.getBookMark( context,session.sId ?? '');
-                                }
-                                else{
-                                  context.pushNamed(AppRoutes.registeredUsersScreen,pathParameters: {'sessionId': session.sId!});
-                                }
-                              },
-                              buttonLabel: _bookMarkController.isLoadingMap[session.sId] == true
-                                  ? 'Please wait..'
-                                  :(_bookMarkController.isBookedMap[session.sId] == true || session.isbooked == true)
+                    if (index < _homeController.filteredSessionList.length) {
+                      final session =
+                          _homeController.filteredSessionList[index];
+                      return Obx(() {
+                        return CustomSessionCard(
+                          menuItems: _homeController.type.value == 'all'
+                              ? []
+                              : ['Edit', 'Delete'],
+                          onSelected: (val) {
+                            if (val == 'Edit') {
+                              context.pushNamed(
+                                AppRoutes.editSessionScreen,
+                                // Name of the route
+                                extra: {
+                                  'id': session.sId,
+                                  'name': session.name,
+                                  'image':
+                                      '${ApiUrls.imageBaseUrl}${session.image}',
+                                  'price': session.price,
+                                  'location': session.location,
+                                  'date': session.date,
+                                  'time': session.time,
+                                },
+                              );
+                            } else if (val == 'Delete') {
+                              showDeleteORSuccessDialog(context, onTap: () {
+                                context.pop();
+                                _sessionEditController
+                                    .deleteMySession(session.sId!);
+                              });
+                            }
+                          },
+                          image: '${ApiUrls.imageBaseUrl}${session.image}',
+                          title: session.name ?? '',
+                          subtitles: [
+                            '\$ ${session.price}',
+                            session.location ?? '',
+                            '${TimeFormatHelper.formatDate(DateTime.parse(session.date.toString()))} | ${session.time}',
+                          ],
+                          onTap: () {
+                            if (session.isbooked == true ||
+                                _bookMarkController.isBookedMap[session.sId] ==
+                                    true) {
+                              ToastMessageHelper.showToastMessage(
+                                  "It's Already Booked");
+                            } else if (_homeController.type.value == 'all') {
+                              _bookMarkController.getBookMark(
+                                  context, session.sId ?? '');
+                            } else {
+                              context.pushNamed(AppRoutes.registeredUsersScreen,
+                                  pathParameters: {'sessionId': session.sId!});
+                            }
+                          },
+                          buttonLabel: _bookMarkController
+                                      .isLoadingMap[session.sId] ==
+                                  true
+                              ? 'Please wait..'
+                              : (_bookMarkController.isBookedMap[session.sId] ==
+                                          true ||
+                                      session.isbooked == true)
                                   ? 'Booked'
                                   : _homeController.type.value == 'all'
-                                  ? 'Book Now'
-                                  : 'Registered Users',
-
-
-                            );
-                          }
-                      );
-
-                    }else{
-                      return index < _homeController.totalPage ? CustomLoader() : SizedBox.shrink();
-
+                                      ? 'Book Now'
+                                      : 'Registered Users',
+                        );
+                      });
+                    } else {
+                      return index < _homeController.totalPage
+                          ? CustomLoader()
+                          : SizedBox.shrink();
                     }
                   },
                 );
@@ -285,7 +299,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   void _addScrollListener() {
     _homeController.scrollController.addListener(() {
       if (_homeController.scrollController.position.pixels ==
@@ -296,10 +309,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-
   Widget _buildShimmer({required double height}) {
     return Padding(
-      padding:  EdgeInsets.all(8.0.r),
+      padding: EdgeInsets.all(8.0.r),
       child: Shimmer.fromColors(
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
@@ -313,5 +325,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 }
