@@ -84,24 +84,23 @@ class _MessageScreenState extends State<MessageScreen> {
                   return ListView.builder(
                       itemCount: _controller.filteredChatList.length,
                       itemBuilder: (context, index) {
-                        final chatData = _controller.filteredChatList[_controller.filteredChatList.length - 1 - index];
+                        final chatData = _controller.filteredChatList[index];
                         if (index < _controller.filteredChatList.length) {
                           return Hero(
                             tag: index,
                             child: CustomListTile(
                               onTap: () {
                                 context.pushNamed(AppRoutes.chatScreen, extra: {
-                                  'receiver': chatData.receiver ?? {},
                                   'receiverId': chatData.receiver?.id ?? '',
                                   'chatId': chatData.chatId ?? '',
-                                  'heroTag': index,
+                                  'index': index,
                                 });
                               },
                               selectedColor: (chatData.unreadCount ?? 0) > 0
                                   ? AppColors.primaryColor.withOpacity(0.8)
                                   : null,
                               image: chatData.receiver?.image ?? '',
-                              title: chatData.receiver?.name ?? '',
+                              title:  chatData.receiver?.name ?? '',
                               activeColor: chatData.receiver?.status == 'online'
                                   ? Colors.green
                                   : Colors.grey,

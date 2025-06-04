@@ -7,7 +7,12 @@ import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GroupAllMembersWidget extends StatelessWidget {
-  const GroupAllMembersWidget({super.key,this.totalMember, required this.members, this.onTap});
+  const GroupAllMembersWidget({
+    super.key,
+    this.totalMember,
+    required this.members,
+    this.onTap,
+  });
 
   final List<Members> members;
   final int? totalMember;
@@ -15,11 +20,21 @@ class GroupAllMembersWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> fullImageUrls = members
-        .map((member) => member.image)
-        .where((img) => img != null && img.isNotEmpty)
-        .map((img) => '${ApiUrls.imageBaseUrl}$img')
-        .toList();
+    int missingImageCount = 0;
+    List<String> fullImageUrls = members.map((member) {
+      final image = member.image;
+      if (image == null || image.isEmpty) {
+        if (missingImageCount < 3) {
+          missingImageCount++;
+          return 'https://templates.joomla-monster.com/joomla30/jm-news-portal/components/com_djclassifieds/assets/images/default_profile.png'; // your asset image
+        } else {
+          return '';
+        }
+      } else {
+        return '${ApiUrls.imageBaseUrl}$image';
+      }
+    }).where((url) => url.isNotEmpty).toList();
+
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -27,13 +42,13 @@ class GroupAllMembersWidget extends StatelessWidget {
           FlutterImageStack(
             itemBorderColor: AppColors.primaryColor,
             imageList: fullImageUrls,
-            //showTotalCount: true,
-            totalCount: 0,
             itemRadius: 52.r,
-            itemCount: 3,
+            itemCount: 3, // Number of avatars to show in stack
             itemBorderWidth: 2,
+            totalCount: 0,
+            showTotalCount: false,
+            backgroundColor: Colors.grey.shade200,
           ),
-
           SizedBox(width: 6.w),
           CustomText(
             text: "$totalMember more",

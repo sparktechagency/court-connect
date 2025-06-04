@@ -19,6 +19,7 @@ class ChatBubbleMessage extends StatelessWidget {
   final bool isSeen;
   final bool isMe;
   final String status;
+  final  VoidCallback? deleteText;
 
   const ChatBubbleMessage({
     super.key,
@@ -27,13 +28,13 @@ class ChatBubbleMessage extends StatelessWidget {
     this.image,
     required this.isMe,
     this.isSeen = false,
-    this.status = 'offline',
+    this.status = 'offline', this.deleteText,
   });
 
   @override
   Widget build(BuildContext context) {
     void onLongPressStart(
-        LongPressStartDetails details, message, VoidCallback deleteText) {
+        LongPressStartDetails details, message, VoidCallback? deleteText) {
       showCupertinoDialog(
         barrierDismissible: true,
         context: context,
@@ -62,7 +63,7 @@ class ChatBubbleMessage extends StatelessWidget {
               Flexible(
                 child: GestureDetector(
                   onLongPressStart: (details){
-                    onLongPressStart(details,text,(){});
+                    onLongPressStart(details,text,deleteText);
                   },
                   child: CustomContainer(
                     horizontalPadding: 16.w,
@@ -132,10 +133,10 @@ class ChatBubbleMessage extends StatelessWidget {
 
 class MyMessageEdit extends StatelessWidget {
   const MyMessageEdit(
-      {super.key, required this.message, required this.deleteText});
+      {super.key, required this.message,  this.deleteText});
 
   final String message;
-  final VoidCallback deleteText;
+  final VoidCallback? deleteText;
 
   @override
   Widget build(BuildContext context) {

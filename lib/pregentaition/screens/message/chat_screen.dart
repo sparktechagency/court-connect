@@ -36,7 +36,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
-  final _controller = Get.put(ChatController());
+  final _chatController = Get.put(ChatController());
   final _socketChatController = Get.put(SocketChatController());
   final _blockUnblockController = Get.put(BlockUnblockController());
 
@@ -52,42 +52,48 @@ class _ChatScreenState extends State<ChatScreen> {
     userId = await PrefsHelper.getString(AppConstants.userId);
     _socketChatController.listenActiveStatus();
     _socketChatController.listenMessage();
+    //_socketChatController.messageDelete();
     _socketChatController.seenChat(widget.chatData['chatId'] ?? '');
     _socketChatController.listenSeenStatus(widget.chatData['chatId'] ?? '');
     _addScrollListener();
-    _controller.getChat(widget.chatData['receiverId'] ?? '', widget.chatData['chatId'] ?? '');
+    _chatController.getChat(widget.chatData['receiverId'] ?? '', widget.chatData['chatId'] ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
-    final Receiver receiver = widget.chatData['receiver'];
+    var receiver = _chatController.chatListData[widget.chatData['index'] ?? ''].receiver;
     return CustomScaffold(
       appBar: CustomAppBar(
-        titleWidget: Hero(
-          tag: widget.chatData['heroTag'] ?? '',
-          child: GestureDetector(
-            onTap: () {
-              context.pushNamed(
-                AppRoutes.chatProfileViewScreen,
-                extra: {
-                  'receiver' : receiver,
-                  'chatId' : widget.chatData['chatId'] ?? ''
+        titleWidget: Obx(() {
+          final bool isBlocked = _chatController.chatData.isNotEmpty? _chatController.chatData[0].messageType == 'block' : false;
+
+          var receiver = _chatController.chatListData[widget.chatData['index'] ?? ''].receiver;
+          return Hero(
+              tag: widget.chatData['index'] ?? '',
+              child: GestureDetector(
+                onTap: () {
+                  context.pushNamed(
+                    AppRoutes.chatProfileViewScreen,
+                    extra: {
+                      'index' : widget.chatData['index'] ?? '',
+                      'chatId' : widget.chatData['chatId'] ?? ''
+                    },
+                  );
                 },
-              );
-            },
-            child: CustomListTile(
-              imageRadius: 20.r,
-              image: receiver.image ?? '',
-              title: receiver.name ?? '',
-              subTitle: receiver.status == 'online'
-                  ? 'online'
-                  : TimeFormatHelper.getTimeAgo(
-                      DateTime.tryParse(receiver.lastActive ?? '') ??
-                          DateTime.now()),
-              statusColor:
-                  receiver.status == 'online' ? Colors.green : Colors.grey,
-            ),
-          ),
+                child: CustomListTile(
+                  imageRadius: 20.r,
+                  image: receiver?.image ?? '',
+                  title:receiver?.name ?? '',
+                  subTitle: !isBlocked && receiver?.status == 'online'
+                      ? 'online'
+                      : TimeFormatHelper.getTimeAgo(
+                          DateTime.tryParse(receiver?.lastActive ?? '') ??
+                              DateTime.now()),
+                  statusColor: !isBlocked && receiver?.status == 'online' ? Colors.green : Colors.grey,
+                ),
+              ),
+            );
+          }
         ),
       ),
       body: Column(
@@ -100,18 +106,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   reverse: true,
-                  itemCount: _controller.chatData.length,
+                  itemCount: _chatController.chatData.length,
                   itemBuilder: (context, index) {
-                    if (_controller.isLoading.value) {
+                    if (_chatController.isLoading.value) {
                       return _buildShimmer();
                     }
 
-                    if (_controller.chatData.isEmpty) {
+                    if (_chatController.chatData.isEmpty) {
                       return Center(child: CustomText(text: 'No chat yet'));
                     }
 
-                    if (index < _controller.chatData.length) {
-                      final chat = _controller.chatData[index];
+                    if (index < _chatController.chatData.length) {
+                      final chat = _chatController.chatData[index];
                       if (chat.messageType == 'block' ||
                           chat.messageType == 'unblock') {
                         final isBlock = chat.messageType == 'block';
@@ -122,8 +128,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             ? 'You blocked $myName'
                             : 'You unblocked  $myName';
                         final receiverMessage = isBlock
-                            ? 'You have been blocked by ${receiver.name ?? ''}'
-                            : 'You have been unblocked by ${receiver.name ?? ''}';
+                            ? 'You have been blocked by ${receiver?.name ?? ''}'
+                            : 'You have been unblocked by ${receiver?.name ?? ''}';
 
                         return Center(
                           child: Column(
@@ -147,16 +153,19 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                       }
                       return ChatBubbleMessage(
-                        status: receiver.status ?? '',
+                        status: receiver?.status ?? '',
                         isSeen: chat.seenList!.length > 1,
                         time: TimeFormatHelper.timeFormat(
                             DateTime.tryParse(chat.createdAt ?? '') ??
                                 DateTime.now()),
-                        text: chat.message ?? '',
+                        text: chat.isDeleted == true ? chat.messageStatus ?? '' :  chat.message ?? '',
                         isMe: userId == chat.senderId,
+                        deleteText: (){
+                          _chatController.deleteMessage(context,chat.sId!,chat.chatId!);
+                        },
                       );
                     } else {
-                      return index < _controller.totalPage
+                      return index < _chatController.totalPage
                           ? CustomLoader()
                           : SizedBox.shrink();
                     }
@@ -172,14 +181,14 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildBlockUnblockSection(Receiver receiver) {
+  Widget _buildBlockUnblockSection(Receiver? receiver) {
     return Obx(() {
-      final name = receiver.name ?? '';
-      final receiverId = receiver.id ?? '';
+      final name = receiver?.name ?? '';
+      final receiverId = receiver?.id ?? '';
       final chatId = widget.chatData['chatId'] ?? '';
-      if (_controller.chatData.isNotEmpty) {
-        final bool isBlocked = _controller.chatData[0].messageType == 'block';
-        final bool isBlockedByMe = _controller.chatData[0].senderId == userId;
+      if (_chatController.chatData.isNotEmpty) {
+        final bool isBlocked = _chatController.chatData[0].messageType == 'block';
+        final bool isBlockedByMe = _chatController.chatData[0].senderId == userId;
         if (isBlocked) {
           if (isBlockedByMe) {
             return Padding(
@@ -213,7 +222,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 'Are you sure you want to unblock $name? They will be able to contact you again.',
                             onTap: () {
                               _blockUnblockController.unblockUser(
-                                  receiverId!, chatId!);
+                                  receiverId, chatId!);
                               Navigator.of(context).pop();
                             },
                           );
@@ -312,7 +321,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        _controller.loadMore(
+        _chatController.loadMore(
             widget.chatData['receiverId'], widget.chatData['chatId']);
         print("load more true");
       }
@@ -322,7 +331,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     _socketChatController.offSocket(widget.chatData['chatId']);
     super.dispose();
   }
+
 }

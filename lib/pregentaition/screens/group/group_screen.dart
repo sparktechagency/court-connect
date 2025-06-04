@@ -1,4 +1,5 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_app_bar.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_delete_or_success_dialog.dart';
@@ -83,74 +84,80 @@ class _GroupScreenState extends State<GroupScreen> {
             hintText: "Search Community...",
             contentPaddingVertical: 0,
           ),
-          Expanded(child: Obx(() {
-            if (_controller.isLoading.value) {
+          Expanded(child: RefreshIndicator(
+    color: AppColors.primaryColor,
+    onRefresh: ()async{
+    await _controller.getGroup();
+    },
+            child: Obx(() {
+              if (_controller.isLoading.value) {
+                return ListView.builder(
+                  itemCount: 3,
+                  itemBuilder: (context, index) => _buildShimmer(height: 280.h),
+                );
+              }
+
+              if (_controller.filteredGroupList.isEmpty) {
+                return const Center(child: Text("No Community available"));
+              }
               return ListView.builder(
-                itemCount: 3,
-                itemBuilder: (context, index) => _buildShimmer(height: 280.h),
-              );
-            }
+                  itemCount: _controller.filteredGroupList.length,
+                  itemBuilder: (context, index) {
+                    if(index < _controller.filteredGroupList.length){
+                      final data = _controller.filteredGroupList[index];
 
-            if (_controller.filteredGroupList.isEmpty) {
-              return const Center(child: Text("No Community available"));
-            }
-            return ListView.builder(
-                itemCount: _controller.filteredGroupList.length,
-                itemBuilder: (context, index) {
-                  if(index < _controller.filteredGroupList.length){
-                    final data = _controller.filteredGroupList[index];
-
-                    return GroupCardWidget(
-                      menuItems: _controller.type.value == 'all'
-                          ? []
-                          : ['Edit', 'Delete', 'Group Info'],
-                      onSelected: (val) {
-                        if (val == 'Delete') {
-                          showDeleteORSuccessDialog(context, onTap: () {
-                            _editGroupController.deleteGroup(context, data.id!);
-                          });
-                        } else if (val == 'Edit') {
-                          context.pushNamed(
-                            AppRoutes.editGroupScreen,
-                            extra: {
+                      return GroupCardWidget(
+                        menuItems: _controller.type.value == 'all'
+                            ? []
+                            : ['Edit', 'Delete', 'Group Info'],
+                        onSelected: (val) {
+                          if (val == 'Delete') {
+                            showDeleteORSuccessDialog(context, onTap: () {
+                              _editGroupController.deleteGroup(context, data.id!);
+                            });
+                          } else if (val == 'Edit') {
+                            context.pushNamed(
+                              AppRoutes.editGroupScreen,
+                              extra: {
+                                'id': data.id!,
+                                'name': data.name ?? '',
+                                'image':
+                                '${ApiUrls.imageBaseUrl}${data.coverPhoto ?? ''}',
+                                'des': data.description ?? '',
+                              },
+                            );
+                          } else if (val == 'Group Info') {
+                            context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
                               'id': data.id!,
-                              'name': data.name ?? '',
-                              'image':
-                              '${ApiUrls.imageBaseUrl}${data.coverPhoto ?? ''}',
-                              'des': data.description ?? '',
                             },
-                          );
-                        } else if (val == 'Group Info') {
+                            );
+                          }
+                        },
+                        title: data.name ?? '',
+                        subTitle: '${data.totalMembers} Members',
+                        coverImage: '${ApiUrls.imageBaseUrl}${data.coverPhoto}',
+                        detailAction: () {
                           context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
                             'id': data.id!,
-                          },
-                          );
-                        }
-                      },
-                      title: data.name ?? '',
-                      subTitle: '${data.totalMembers} Members',
-                      coverImage: '${ApiUrls.imageBaseUrl}${data.coverPhoto}',
-                      detailAction: () {
-                        context.pushNamed(AppRoutes.groupDetailsScreen, extra: {
-                          'id': data.id!,
-                        });
-                      },
+                          });
+                        },
 
 
-                      onTapPostAction: (){
-                        if(_controller.type.value == 'join' || _controller.type.value == 'my'){
-                          context.pushNamed(AppRoutes.postScreen,extra: {
-                            'id': data.id!,
-                          },);
-                        }
-                      },
-                    );
-                  }else{
-                    return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
+                        onTapPostAction: (){
+                          if(_controller.type.value == 'join' || _controller.type.value == 'my'){
+                            context.pushNamed(AppRoutes.postScreen,extra: {
+                              'id': data.id!,
+                            },);
+                          }
+                        },
+                      );
+                    }else{
+                      return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
 
-                  }
-                });
-          }))
+                    }
+                  });
+            }),
+          )),
         ],
       ),
     );

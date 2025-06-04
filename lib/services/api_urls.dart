@@ -54,6 +54,7 @@ class ApiUrls {
   static   String  chatList(String page) => '/chat/list?page=$page';
   static   String  blockUser(String receiverId,String chatId) => '/chat/block-user?receiverId=$receiverId&chatId=$chatId';
   static   String  unblockUser(String receiverId,String chatId) => '/chat/unblock-user?receiverId=$receiverId&chatId=$chatId';
+  static   String  deleteMessage(String id,String chatId) => '/chat/message-delete?messageId=$id&chatId=$chatId';
 
 
   static  const String  notification = '/notification';

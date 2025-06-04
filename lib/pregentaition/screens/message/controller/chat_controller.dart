@@ -3,7 +3,9 @@ import 'package:courtconnect/pregentaition/screens/message/models/chat_data.dart
 import 'package:courtconnect/pregentaition/screens/message/models/chat_list_data.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatController extends GetxController {
   RxBool isLoading = false.obs;
@@ -95,6 +97,29 @@ class ChatController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
+
+  Future<void> deleteMessage(BuildContext context, String id,String chatId) async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiClient.deleteData(ApiUrls.deleteMessage(id,chatId));
+      final responseBody = response.body;
+
+      if (response.statusCode == 200) {
+        context.pop();
+        //ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+      } else {
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+      }
+    } catch (e) {
+      ToastMessageHelper.showToastMessage("Something went wrong: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 
 
   List<ChatListData> get filteredChatList {

@@ -14,7 +14,6 @@ import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/
 import 'package:courtconnect/pregentaition/screens/home/session_edit/session_edit_screen.dart';
 import 'package:courtconnect/pregentaition/screens/message/chat_profile_view_screen.dart';
 import 'package:courtconnect/pregentaition/screens/message/chat_screen.dart';
-import 'package:courtconnect/pregentaition/screens/message/models/chat_list_data.dart';
 import 'package:courtconnect/pregentaition/screens/notification/notification_screen.dart';
 import 'package:courtconnect/pregentaition/screens/post/create_post_screen.dart';
 import 'package:courtconnect/pregentaition/screens/post/edit_post_screen.dart';
@@ -350,9 +349,10 @@ class AppRoutes {
           name: chatProfileViewScreen,
           pageBuilder: (context, state) {
             final chatData = state.extra as Map<String, dynamic>;
-            final Receiver receiver = chatData['receiver'] as Receiver;
+            final int index = chatData['index'] as int;
+            final String chatId = chatData['chatId'] as String;
 
-            return _customTransitionPage( ChatProfileViewScreen(receiver: receiver, chatId: chatData['chatId'],), state);
+            return _customTransitionPage( ChatProfileViewScreen(index: index, chatId: chatId,), state);
   }  ,
         ),
 

@@ -5,6 +5,7 @@ import 'package:courtconnect/core/widgets/custom_loader.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/pregentaition/screens/home/booked_now_screen/controller/book_mark_controller.dart';
 import 'package:courtconnect/pregentaition/screens/home/session_edit/controller/session_edit_controller.dart';
+import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/notification/controller/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _bookMarkController = Get.put(BookMarkController());
   final _sessionEditController = Get.put(SessionEditController());
   final _notificationController = Get.put(NotificationController());
+  final _socketChatController = Get.put(SocketChatController());
   final _searchController = TextEditingController();
 
   final _sessionTypes = [
@@ -52,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _homeController.getBanner();
+    _socketChatController.notificationUnreadCount();
     _notificationController.getNotificationBadge();
     _homeController.getSession();
     _searchController.addListener(() {
@@ -92,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   badgeContent: CustomText(text: _notificationController.unreadCount.value.toString() ,color: Colors.black,fontWeight: FontWeight.w600,fontsize: 8.sp,),
                   child: GestureDetector(
                     onTap: () {
-                      context.pushNamed(AppRoutes.notificationScreen);
+                      context.pushNamed(AppRoutes.notificationScreen).then((_) {
+                        _notificationController.unreadCount.value = 0;
+                      });
                     },
                     child:  Icon(Icons.notifications, color: Colors.black,size: 28.r,),
                   ),

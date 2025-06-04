@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/models/chat_data.dart';
+import 'package:courtconnect/pregentaition/screens/notification/controller/notification_controller.dart';
 import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 class SocketChatController extends GetxController {
   SocketServices socketService = SocketServices();
   ChatController _controller = Get.put(ChatController());
+  NotificationController _notificationController = Get.put(NotificationController());
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   /// ===============> Listen for new messages via socket.
@@ -21,10 +23,13 @@ class SocketChatController extends GetxController {
 
         var prev = _controller.chatData.length;
 
+
         _controller.chatData.insert(0, demoData);
+        //messageDelete();
 
         var next = _controller.chatData.length;
 
+        //messageDelete();
         if (next > prev) {
           seenChat(data['chatId'] ?? '');
         }
@@ -38,22 +43,14 @@ class SocketChatController extends GetxController {
       if (data != null) {
         print("=========> Socket active $data -------------------------");
 
-        int index = _controller.chatListData
-            .indexWhere((x) => x.receiver?.id == data['userId']);
+        int index = _controller.chatListData.indexWhere((x) => x.receiver?.id == data['userId']);
         if (index != -1) {
-          _controller.chatListData[index].receiver =
-              _controller.chatListData[index].receiver?.copyWith(
+          _controller.chatListData[index].receiver = _controller.chatListData[index].receiver?.copyWith(
             status: data["status"],
             name: data['name'],
             id: data['userId'],
           );
-
           _controller.chatListData.refresh();
-          /*_controller.currentChatData['status'] = data['status'];
-          _controller.currentChatData['name'] = data['name'];
-          _controller.currentChatData.refresh();*/
-          update();
-
           print('--------------------------status changed ');
         }
       }
@@ -107,6 +104,27 @@ class SocketChatController extends GetxController {
         socketService.emit('check-seen', body);
       });
     }
+  }
+
+
+  void notificationUnreadCount() {
+    socketService.socket.on('notification', (data){
+      _notificationController.unreadCount.value+=1;
+      print(data);
+    });
+  }
+
+
+  void messageDelete() {
+    socketService.socket.on('message-delete', (data){
+      if (data != null) {
+        //_controller.chatData.removeWhere((element) => element.sId == data['_id']);
+        _controller.chatData.refresh();
+
+        print(data);
+    }
+    }
+    );
   }
 
   /// ===================> Turn off specific socket events when the chat is closed
