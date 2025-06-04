@@ -52,8 +52,8 @@ class ApiUrls {
   static   String  createChat (String receiverId)=> '/chat/create?receiverId=$receiverId';
   static   String  getChatMessage (String receiverId,chatId,page)=> '/chat/message?receiverId=$receiverId&chatId=$chatId&page=$page';
   static   String  chatList(String page) => '/chat/list?page=$page';
-  static   String  blockUser(String receiverId) => '/chat/block-user?receiverId=$receiverId';
-  static   String  unblockUser(String receiverId) => '/chat/unblock-user?receiverId=$receiverId';
+  static   String  blockUser(String receiverId,String chatId) => '/chat/block-user?receiverId=$receiverId&chatId=$chatId';
+  static   String  unblockUser(String receiverId,String chatId) => '/chat/unblock-user?receiverId=$receiverId&chatId=$chatId';
 
 
   static  const String  notification = '/notification';

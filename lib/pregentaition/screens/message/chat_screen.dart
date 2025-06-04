@@ -14,6 +14,7 @@ import 'package:courtconnect/helpers/time_format.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/block_unblock_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
+import 'package:courtconnect/pregentaition/screens/message/models/chat_list_data.dart';
 import 'package:courtconnect/pregentaition/screens/message/widgets/chat_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,87 +27,67 @@ import '../home/controller/home_controller.dart';
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.chatData});
 
-
-  final Map<String,dynamic> chatData;
+  final Map<String, dynamic> chatData;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
-  final TextEditingController _messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-
-  final ChatController _controller = Get.put(ChatController());
-  final SocketChatController _socketChatController = Get.put(SocketChatController());
-  final BlockUnblockController _blockUnblockController = Get.put(BlockUnblockController());
-  HomeController homeController = Get.find<HomeController>();
+  final _messageController = TextEditingController();
+  final _scrollController = ScrollController();
+  final _controller = Get.put(ChatController());
+  final _socketChatController = Get.put(SocketChatController());
+  final _blockUnblockController = Get.put(BlockUnblockController());
 
   String userId = '';
-
-
-  void myId()async{
-    userId = await PrefsHelper.getString(AppConstants.userId);
-  }
-
-
 
   @override
   void initState() {
     super.initState();
-    myId();
-    _controller.currentChatData.value = widget.chatData;
-    _controller.currentChatData.refresh();
-    _controller.blockUnblock.refresh();
+    _chatInit();
+  }
+
+  void _chatInit() async {
+    userId = await PrefsHelper.getString(AppConstants.userId);
     _socketChatController.listenActiveStatus();
-    _socketChatController.listenUnblockUser();
-    _socketChatController.listenBlockUser();
     _socketChatController.listenMessage();
     _socketChatController.seenChat(widget.chatData['chatId'] ?? '');
     _socketChatController.listenSeenStatus(widget.chatData['chatId'] ?? '');
     _addScrollListener();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.getChat(widget.chatData['receiverId'] ?? '', widget.chatData['chatId'] ?? '');
-    });
+    _controller.getChat(widget.chatData['receiverId'] ?? '', widget.chatData['chatId'] ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
-
-
-
-
-
+    final Receiver receiver = widget.chatData['receiver'];
     return CustomScaffold(
       appBar: CustomAppBar(
-        titleWidget: Obx(
-          () {
-            var currentChatData = _controller.currentChatData;
-            bool blockActive = currentChatData['lastMessageType'] != 'block' && currentChatData['status'] == 'online';
-
-            return Hero(
-              tag: currentChatData['heroTag'] ?? '',
-              child: GestureDetector(
-                onTap: (){
-                  context.pushNamed(AppRoutes.chatProfileViewScreen,
-                    extra: widget.chatData,
-                  );
-
+        titleWidget: Hero(
+          tag: widget.chatData['heroTag'] ?? '',
+          child: GestureDetector(
+            onTap: () {
+              context.pushNamed(
+                AppRoutes.chatProfileViewScreen,
+                extra: {
+                  'receiver' : receiver,
+                  'chatId' : widget.chatData['chatId'] ?? ''
                 },
-                child: CustomListTile(
-                  imageRadius: 20.r,
-                  image: currentChatData['image'] ?? '',
-                  title: currentChatData['name'] ?? '',
-                  subTitle: blockActive
-                      ? 'online'
-                      : TimeFormatHelper.getTimeAgo(DateTime.tryParse(currentChatData['lastActive'] ?? '') ?? DateTime.now()),
-                  statusColor: blockActive ? Colors.green : Colors.grey,
-
-                ),
-              ),
-            );
-          }
+              );
+            },
+            child: CustomListTile(
+              imageRadius: 20.r,
+              image: receiver.image ?? '',
+              title: receiver.name ?? '',
+              subTitle: receiver.status == 'online'
+                  ? 'online'
+                  : TimeFormatHelper.getTimeAgo(
+                      DateTime.tryParse(receiver.lastActive ?? '') ??
+                          DateTime.now()),
+              statusColor:
+                  receiver.status == 'online' ? Colors.green : Colors.grey,
+            ),
+          ),
         ),
       ),
       body: Column(
@@ -114,14 +95,13 @@ class _ChatScreenState extends State<ChatScreen> {
           SizedBox(height: 8.h),
           Expanded(
             child: Obx(
-                  () {
+              () {
                 return ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   reverse: true,
                   itemCount: _controller.chatData.length,
                   itemBuilder: (context, index) {
-
                     if (_controller.isLoading.value) {
                       return _buildShimmer();
                     }
@@ -132,21 +112,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     if (index < _controller.chatData.length) {
                       final chat = _controller.chatData[index];
-                      var currentChatData = _controller.currentChatData;
-
-                      // Check if the message is 'block' or 'unblock'
-                      if (chat.messageType == 'block' || chat.messageType == 'unblock') {
+                      if (chat.messageType == 'block' ||
+                          chat.messageType == 'unblock') {
                         final isBlock = chat.messageType == 'block';
-                        final currentUserId = Get.find<HomeController>().userId.value;
-                        final myName = Get.find<HomeController>().userName.value;
-
+                        final myName =
+                            Get.find<HomeController>().userName.value;
 
                         final senderMessage = isBlock
                             ? 'You blocked $myName'
                             : 'You unblocked  $myName';
                         final receiverMessage = isBlock
-                            ? 'You have been blocked by ${currentChatData['name'] ?? ''}'
-                            : 'You have been unblocked by ${currentChatData['name'] ?? ''}';
+                            ? 'You have been blocked by ${receiver.name ?? ''}'
+                            : 'You have been unblocked by ${receiver.name ?? ''}';
 
                         return Center(
                           child: Column(
@@ -154,131 +131,124 @@ class _ChatScreenState extends State<ChatScreen> {
                               CustomText(
                                 fontsize: 7.h,
                                 text: TimeFormatHelper.formatDateTime(
-                                  DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now(),
+                                  DateTime.tryParse(chat.createdAt ?? '') ??
+                                      DateTime.now(),
                                 ),
                               ),
                               CustomText(
                                 fontsize: 12.sp,
-                                text: chat.senderId ==  currentUserId ? senderMessage : receiverMessage,
+                                text: chat.senderId == userId
+                                    ? senderMessage
+                                    : receiverMessage,
                                 bottom: 8,
                               ),
                             ],
                           ),
                         );
                       }
-
-
-
-                      // Regular message chat bubble
                       return ChatBubbleMessage(
-                        status: currentChatData['status'] ?? '',
+                        status: receiver.status ?? '',
                         isSeen: chat.seenList!.length > 1,
                         time: TimeFormatHelper.timeFormat(
-                            DateTime.tryParse(chat.createdAt ?? '') ?? DateTime.now()
-                        ),
+                            DateTime.tryParse(chat.createdAt ?? '') ??
+                                DateTime.now()),
                         text: chat.message ?? '',
-                        isMe: userId == chat.senderId ?? true,
+                        isMe: userId == chat.senderId,
                       );
                     } else {
-                      return index < _controller.totalPage ? CustomLoader() : SizedBox.shrink();
+                      return index < _controller.totalPage
+                          ? CustomLoader()
+                          : SizedBox.shrink();
                     }
                   },
                 );
               },
             ),
           ),
-
-          _buildBlockUnblockSection(context),
-
-
+          _buildBlockUnblockSection(receiver),
           SizedBox(height: 10.h),
         ],
       ),
     );
   }
 
-  Widget _buildBlockUnblockSection(BuildContext context) {
+  Widget _buildBlockUnblockSection(Receiver receiver) {
     return Obx(() {
-     // _controller.blockUnblock.value = _controller.currentChatData;
-
-      final blockInfo = (_controller.blockUnblock = _controller.currentChatData);
-      final name = widget.chatData['name'];
-      final receiverId = widget.chatData['receiverId'];
-      final userId = homeController.userId.value;
-      final bool isBlocked = blockInfo['lastMessageType'] == 'block';
-      final bool isBlockedByMe = blockInfo['blockId'] == userId;
-
-
-
-      print('++++++++++++++++iftekar fuck boy ===> $blockInfo');
-      if (isBlocked) {
-        if (isBlockedByMe) {
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-            child: CustomContainer(
-              width: double.infinity,
-              border: Border(top: BorderSide(color: Colors.grey.shade300)),
-              child: Center(
-                child: Column(
-                  children: [
-                    CustomText(
-                      top: 10,
-                      text: "You've blocked $name",
-                      color: Colors.grey,
-                      fontsize: 10.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    CustomText(
-                      text: "You can't message or call them in this chat, and you won't receive their messages.",
-                      color: Colors.grey,
-                      fontsize: 10.sp,
-                    ),
-                    CustomText(
-                      onTap: () {
-                        showDeleteORSuccessDialog(
-                          context,
-                          title: 'Unblock $name',
-                          buttonLabel: 'Unblock',
-                          message: 'Are you sure you want to unblock $name? They will be able to contact you again.',
-                          onTap: () {
-                            _blockUnblockController.unblockUser(receiverId!);
-                            Navigator.of(context).pop();
-                          },
-                        );
-                      },
-                      top: 10,
-                      text: 'Unblock $name',
-                      color: Colors.red,
-                      fontsize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
+      final name = receiver.name ?? '';
+      final receiverId = receiver.id ?? '';
+      final chatId = widget.chatData['chatId'] ?? '';
+      if (_controller.chatData.isNotEmpty) {
+        final bool isBlocked = _controller.chatData[0].messageType == 'block';
+        final bool isBlockedByMe = _controller.chatData[0].senderId == userId;
+        if (isBlocked) {
+          if (isBlockedByMe) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+              child: CustomContainer(
+                width: double.infinity,
+                border: Border(top: BorderSide(color: Colors.grey.shade300)),
+                child: Center(
+                  child: Column(
+                    children: [
+                      CustomText(
+                        top: 10,
+                        text: "You've blocked $name",
+                        color: Colors.grey,
+                        fontsize: 10.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      CustomText(
+                        text:
+                            "You can't message or call them in this chat, and you won't receive their messages.",
+                        color: Colors.grey,
+                        fontsize: 10.sp,
+                      ),
+                      CustomText(
+                        onTap: () {
+                          showDeleteORSuccessDialog(
+                            context,
+                            title: 'Unblock $name',
+                            buttonLabel: 'Unblock',
+                            message:
+                                'Are you sure you want to unblock $name? They will be able to contact you again.',
+                            onTap: () {
+                              _blockUnblockController.unblockUser(
+                                  receiverId!, chatId!);
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        },
+                        top: 10,
+                        text: 'Unblock $name',
+                        color: Colors.red,
+                        fontsize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        } else{
-          return CustomContainer(
-            width: double.infinity,
-            border: Border(top: BorderSide(color: Colors.grey.shade300)),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: CustomText(
-                fontWeight: FontWeight.w600,
-                top: 10,
-                text: "You are blocked by this user.",
+            );
+          } else {
+            return CustomContainer(
+              width: double.infinity,
+              border: Border(top: BorderSide(color: Colors.grey.shade300)),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: CustomText(
+                  fontWeight: FontWeight.w600,
+                  top: 10,
+                  text: "You are blocked by this user.",
+                ),
               ),
-            ),
-          );
+            );
+          }
         }
       }
 
       return _buildMessageSender();
     });
   }
-
-
-
 
   Widget _buildMessageSender() {
     return Container(
@@ -296,32 +266,29 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           SizedBox(width: 10.w),
-
           CustomContainer(
-            onTap: _sendMessage,
+            onTap: () {
+              if (_messageController.text.trim() == '') return;
+              _socketChatController.sendMessage(
+                  _messageController.text,
+                  "${widget.chatData['receiverId']}",
+                  "${widget.chatData['chatId']}");
+              _messageController.clear();
+            },
             verticalPadding: 8.r,
             horizontalPadding: 8.r,
             horizontalMargin: 4.r,
             shape: BoxShape.circle,
             color: AppColors.primaryColor,
-            child: const Icon(Icons.arrow_forward_rounded,color: Colors.white,),
+            child: const Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
     );
   }
-
-
-
-  void _sendMessage() {
-    if(_messageController.text.trim() == '') return;
-    setState(() {
-      _socketChatController.sendMessage(_messageController.text, "${widget.chatData['receiverId']}");
-      _messageController.clear();
-    });
-  }
-
-
 
   Widget _buildShimmer() {
     return Padding(
@@ -341,18 +308,16 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-
   void _addScrollListener() {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        _controller.loadMore(widget.chatData['receiverId'], widget.chatData['chatId']);
+        _controller.loadMore(
+            widget.chatData['receiverId'], widget.chatData['chatId']);
         print("load more true");
       }
     });
   }
-
-
 
   @override
   void dispose() {

@@ -10,15 +10,11 @@ class ChatController extends GetxController {
   RxBool isChatListDataLoading = false.obs;
   RxList<ChatListData> chatListData = <ChatListData>[].obs;
   RxList<ChatData> chatData = <ChatData>[].obs;
-  RxMap<String, dynamic> currentChatData = <String, dynamic>{}.obs;
-  RxMap<String, dynamic> blockUnblock = <String, dynamic>{}.obs;
 
 
 
 
   RxString searchText = ''.obs;
-  RxString chatId = ''.obs;
-  RxString receveId = ''.obs;
 
   RxInt page = 1.obs;
   var totalPage = (-1);

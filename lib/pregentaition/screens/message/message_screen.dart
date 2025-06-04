@@ -9,7 +9,6 @@ import 'package:courtconnect/core/widgets/custom_text.dart';
 import 'package:courtconnect/core/widgets/custom_text_field.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/chat_controller.dart';
 import 'package:courtconnect/pregentaition/screens/message/controller/socket_chat_controller.dart';
-import 'package:courtconnect/services/socket_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -24,31 +23,19 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-
-  final ChatController _controller =   Get.put(ChatController());
-  final SocketChatController _socketChatController =   Get.put(SocketChatController());
-  SocketServices socketServices = SocketServices();
-  //socketServices.init();
-
+  final ChatController _controller = Get.put(ChatController());
+  final SocketChatController _socketChatController = Get.put(SocketChatController());
 
   @override
   void initState() {
-    _socketChatController.listenMessage();
     _socketChatController.listenActiveStatus();
     _controller.getChatList();
     _controller.searchText.value = _searchController.text.toLowerCase();
     _addScrollListener();
     super.initState();
   }
-
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +47,7 @@ class _MessageScreenState extends State<MessageScreen> {
         body: Column(
           children: [
             CustomTextField(
-              onChanged: (val){
+              onChanged: (val) {
                 _controller.searchText.value = val.toLowerCase();
               },
               validator: (_) {
@@ -81,86 +68,72 @@ class _MessageScreenState extends State<MessageScreen> {
                 color: AppColors.primaryColor,
                 onRefresh: () async {
                   await _controller.getChatList();
-
                 },
-                child: Obx(
-                  () {
-
-
-                    if (_controller.isChatListDataLoading.value) {
-                      return ListView.builder(
-                        itemCount: 3,
-                        itemBuilder: (context, index) => _buildSimmer(),
-                      );
-                    }
-
-                    if (_controller.filteredChatList.isEmpty) {
-                      return const Center(child: Text("No chat available"));
-                    }
-
-                       return ListView.builder(
-                          itemCount: _controller.filteredChatList.length,
-                          itemBuilder: (context, index) {
-                            final chatData = _controller.filteredChatList[_controller.filteredChatList.length - 1 - index];
-                            _controller.receveId.value = chatData.receiver?.id ?? '';
-                            _controller.chatId.value = chatData.chatId ?? '';
-
-
-                            if(index < _controller.filteredChatList.length){
-                              return Hero(
-                                tag: index,
-                                child: CustomListTile(
-                                  onTap: (){
-
-                                    context.pushNamed(AppRoutes.chatScreen,extra: {
-                                      'image' : chatData.receiver?.image ?? '',
-                                      'name' : chatData.receiver?.name ?? '',
-                                      'email' : chatData.receiver?.email ?? '',
-                                      'status' : chatData.receiver?.status ?? '',
-                                      'chatId' : chatData.chatId ?? '',
-                                      'receiverId' : chatData.receiver?.id ?? '',
-                                      'lastActive' : chatData.receiver?.lastActive ?? '',
-                                      'lastMessageType' : chatData.lastMessage?.messageType ?? '',
-                                      'block' : chatData.blockBy,
-                                      'heroTag' : index,
-                                    });
-
-
-                                  },
-                                  selectedColor: (chatData.unreadCount ?? 0) > 0
-                                      ? AppColors.primaryColor.withOpacity(0.8)
-                                      : null,
-                                  image: chatData.receiver?.image ?? '',
-                                  title: chatData.receiver?.name ?? '',
-                                  activeColor: chatData.receiver?.status == 'online' ? Colors.green : Colors.grey,
-                                  subTitle: chatData.lastMessage?.message ?? '',
-                                  trailing: (chatData.unreadCount ?? 0) > 0
-                                      ? CustomContainer(
-                                    color: AppColors.primaryColor,
-                                    shape: BoxShape.circle,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(6.r),
-                                      child: CustomText(
-                                          text: chatData.unreadCount.toString() ?? '', color: Colors.white, fontsize: 10.sp),
-                                    ),
-                                  )
-                                      : null,
-                                ),
-                              );
-
-                            }else{
-                              return index < _controller.chatListTotalPage ? CustomLoader() : SizedBox.shrink();
-
-                            }
-                          });
+                child: Obx(() {
+                  if (_controller.isChatListDataLoading.value) {
+                    return ListView.builder(
+                      itemCount: 3,
+                      itemBuilder: (context, index) => _buildSimmer(),
+                    );
                   }
-                ),
+
+                  if (_controller.filteredChatList.isEmpty) {
+                    return const Center(child: Text("No chat available"));
+                  }
+
+                  return ListView.builder(
+                      itemCount: _controller.filteredChatList.length,
+                      itemBuilder: (context, index) {
+                        final chatData = _controller.filteredChatList[_controller.filteredChatList.length - 1 - index];
+                        if (index < _controller.filteredChatList.length) {
+                          return Hero(
+                            tag: index,
+                            child: CustomListTile(
+                              onTap: () {
+                                context.pushNamed(AppRoutes.chatScreen, extra: {
+                                  'receiver': chatData.receiver ?? {},
+                                  'receiverId': chatData.receiver?.id ?? '',
+                                  'chatId': chatData.chatId ?? '',
+                                  'heroTag': index,
+                                });
+                              },
+                              selectedColor: (chatData.unreadCount ?? 0) > 0
+                                  ? AppColors.primaryColor.withOpacity(0.8)
+                                  : null,
+                              image: chatData.receiver?.image ?? '',
+                              title: chatData.receiver?.name ?? '',
+                              activeColor: chatData.receiver?.status == 'online'
+                                  ? Colors.green
+                                  : Colors.grey,
+                              subTitle: chatData.lastMessage?.message ?? '',
+                              trailing: (chatData.unreadCount ?? 0) > 0
+                                  ? CustomContainer(
+                                      color: AppColors.primaryColor,
+                                      shape: BoxShape.circle,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(6.r),
+                                        child: CustomText(
+                                            text: chatData.unreadCount
+                                                    .toString(),
+                                            color: Colors.white,
+                                            fontsize: 10.sp),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          );
+                        } else {
+                          return index < _controller.chatListTotalPage
+                              ? CustomLoader()
+                              : SizedBox.shrink();
+                        }
+                      });
+                }),
               ),
             ),
           ],
         ));
   }
-
 
   void _addScrollListener() {
     _scrollController.addListener(() {
@@ -174,7 +147,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   Widget _buildSimmer() {
     return Padding(
-      padding:  EdgeInsets.symmetric(vertical: 8.0.h),
+      padding: EdgeInsets.symmetric(vertical: 8.0.h),
       child: Shimmer.fromColors(
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
@@ -225,6 +198,4 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
     );
   }
-
-
 }
