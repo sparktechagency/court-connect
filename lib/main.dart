@@ -1,6 +1,9 @@
 import 'package:courtconnect/env/config.dart';
 import 'package:courtconnect/helpers/dependancy_injaction.dart';
+import 'package:courtconnect/services/get_fcm_token.dart';
 import 'package:courtconnect/services/socket_services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -11,15 +14,17 @@ import 'core/widgets/no_inter_net_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
   Stripe.publishableKey = Config.publishableKey;
   Stripe.merchantIdentifier = 'MerchantIdentifier';
   await Stripe.instance.applySettings();
 
 
+  await Firebase.initializeApp();
+  await FirebaseMessaging.instance;
+  await FirebaseNotificationService.requestPermission();
+
   SocketServices socketServices = SocketServices();
   socketServices.init();
-
 
   DependencyInjection di = DependencyInjection();
   di.dependencies();

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../global/custom_assets/assets.gen.dart';
 
 class SplashScreen extends StatelessWidget {

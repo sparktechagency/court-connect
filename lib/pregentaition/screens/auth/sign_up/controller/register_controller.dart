@@ -4,6 +4,7 @@ import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
+import 'package:courtconnect/services/get_fcm_token.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ class RegisterController extends GetxController {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+
   final RxBool isLoading = false.obs;
   final RxBool isChecked = false.obs;
 
@@ -22,11 +24,18 @@ class RegisterController extends GetxController {
   Future<void> registerAccount(BuildContext context) async {
     isLoading.value = true;
 
+    String? fcmToken = await FirebaseNotificationService.getFCMToken();
+
+
     var bodyParams = {
       'name': usernameController.text.trim(),
       'email': emailController.text.trim(),
       'password': passwordController.text,
+      'fcmToken': fcmToken ?? '',
     };
+
+
+
 
     try {
       final response = await ApiClient.postData(
@@ -41,7 +50,7 @@ class RegisterController extends GetxController {
         if (token != null) {
           debugPrint('====================> response token save: $token');
           await PrefsHelper.setString(AppConstants.bearerToken, token);
-          context.pushReplacementNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'signupScreen'});
+          context.pushNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'signupScreen'});
           _cleanTextField();
           ToastMessageHelper.showToastMessage(responseBody['message'] ?? "OTP sent to your email");
         }

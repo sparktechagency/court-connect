@@ -30,8 +30,23 @@
 	<array>
 		<string>_dartobservatory._tcp</string>
 	</array>
+
+	<!-- CAMERA Permission -->
 	<key>NSCameraUsageDescription</key>
 	<string>To scan cards</string>
+
+	<!-- NOTIFICATION Permissions -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This will help deliver relevant notifications to you.</string>
+	<key>UNUserNotificationCenter</key>
+	<string>We need permission to send you notifications.</string>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -51,10 +66,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<key>NSCameraUsageDescription</key>
-    <string>Scan your card to add it automatically</string>
-    <key>NSCameraUsageDescription</key>
-    <string>To scan cards</string>
 </dict>
 </plist>
