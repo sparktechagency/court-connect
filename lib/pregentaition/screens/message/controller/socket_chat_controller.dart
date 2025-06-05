@@ -26,6 +26,7 @@ class SocketChatController extends GetxController {
 
         _controller.chatData.insert(0, demoData);
         //messageDelete();
+        _controller.chatData.refresh();
 
         var next = _controller.chatData.length;
 

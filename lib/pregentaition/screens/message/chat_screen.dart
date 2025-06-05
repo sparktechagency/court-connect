@@ -160,9 +160,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                 DateTime.now()),
                         text: chat.isDeleted == true ? chat.messageStatus ?? '' :  chat.message ?? '',
                         isMe: userId == chat.senderId,
-                        deleteText: (){
-                          _chatController.deleteMessage(context,chat.sId!,chat.chatId!);
-                        },
+                        deleteText: chat.isDeleted == false ? (){
+                          _chatController.deleteMessage(context,chat.sId ?? '',widget.chatData['chatId'] ?? '');
+                        } : null,
                       );
                     } else {
                       return index < _chatController.totalPage

@@ -108,6 +108,7 @@ class ChatController extends GetxController {
       final responseBody = response.body;
 
       if (response.statusCode == 200) {
+        chatData.removeWhere((chat) => chat.sId == id);
         context.pop();
         //ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
       } else {
