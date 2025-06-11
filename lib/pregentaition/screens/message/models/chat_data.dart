@@ -52,6 +52,19 @@ class ChatData {
     isSender = json['isSender'];
   }
 
+  ChatData copyWith({
+    String? messageStatus,
+    String? senderId,
+    bool? isDeleted,
+  }) {
+    return ChatData(
+      senderId: senderId,
+      messageStatus: messageStatus ?? this.messageStatus,
+      isDeleted: isDeleted ?? this.isDeleted,
+    );
+  }
+
+
 }
 
 

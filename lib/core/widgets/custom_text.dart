@@ -19,7 +19,7 @@ class CustomText extends StatelessWidget {
       this.fontWeight = FontWeight.w400,
       this.color,
       this.text = "",
-      this.onTap});
+      this.onTap, this.fontStyle, this.textDecoration});
 
   final double left;
   final TextOverflow? textOverflow;
@@ -35,6 +35,8 @@ class CustomText extends StatelessWidget {
   final String? fontName;
   final double? textHeight;
   final VoidCallback? onTap;
+  final FontStyle? fontStyle;
+  final TextDecoration? textDecoration;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,9 @@ class CustomText extends StatelessWidget {
           maxLines: maxline,
           overflow: textOverflow,
           style: TextStyle(
+            decoration: textDecoration,
+            decorationColor: color ?? AppColors.textColor363636,
+            fontStyle: fontStyle,
               fontSize: fontsize ?? 14.h,
               fontFamily: fontName ?? "Montserrat-Regular",
               fontWeight: fontWeight == null ? FontWeight.w400 : fontWeight,

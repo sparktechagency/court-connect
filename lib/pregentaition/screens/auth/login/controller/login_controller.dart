@@ -57,7 +57,14 @@ class LoginController extends GetxController {
           SocketServices socketServices = SocketServices();
           socketServices.init();
         }
-      } else {
+      } else if(response.statusCode == 401) {
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+        final String? token = responseBody['data']?['token'];
+        await PrefsHelper.setString(AppConstants.bearerToken, token);
+        context.pushNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'signupScreen'});
+
+
+      }else {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "Login failed.");
       }
     } catch (e) {

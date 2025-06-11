@@ -16,7 +16,7 @@ class SocketChatController extends GetxController {
   /// ===============> Listen for new messages via socket.
   void listenMessage() async {
     socketService.socket.on("new-message", (data) {
-      print("=========> Response Message : $data -------------------------");
+      print("=========> Response Message  listen: $data -------------------------");
 
       if (data != null) {
         ChatData demoData = ChatData.fromJson(data);
@@ -26,7 +26,7 @@ class SocketChatController extends GetxController {
 
         _controller.chatData.insert(0, demoData);
         //messageDelete();
-        _controller.chatData.refresh();
+        //_controller.chatData.refresh();
 
         var next = _controller.chatData.length;
 
@@ -117,15 +117,22 @@ class SocketChatController extends GetxController {
 
 
   void messageDelete() {
-    socketService.socket.on('message-delete', (data){
+    socketService.socket.on('message-delete', (data) {
       if (data != null) {
-        //_controller.chatData.removeWhere((element) => element.sId == data['_id']);
-        _controller.chatData.refresh();
+        print("=========> message-delete Response $data -------------------------");
+        ChatData deletedMessage = ChatData.fromJson(data);
 
-        print(data);
-    }
-    }
-    );
+        int index = _controller.chatData.indexWhere((msg) => msg.sId == deletedMessage.sId);
+        if (index != -1) {
+          ChatData oldMessage = _controller.chatData[index];
+          _controller.chatData[index] = oldMessage.copyWith(
+            isDeleted: data['isDeleted'] ?? false,
+              messageStatus: data['messageStatus'] ?? 'The message has been deleted.',
+              senderId: data['senderId'] ?? ''
+          );
+        }
+      }
+    });
   }
 
   /// ===================> Turn off specific socket events when the chat is closed

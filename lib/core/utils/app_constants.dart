@@ -11,6 +11,7 @@ class AppConstants{
   static const String isLogged = "isLogged";
   static const String managerType = "managerType";
   static const String fcmToken = "fcmToken";
+  static const String apnsToken = "apnsToken";
   static const String isBlock = "isBlock";
   static const String senderId = "senderId";
 

@@ -49,7 +49,6 @@ class RegisterController extends GetxController {
         final String? token = responseBody['data']?['token'];
         if (token != null) {
           debugPrint('====================> response token save: $token');
-          await PrefsHelper.setString(AppConstants.bearerToken, token);
           context.pushNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'signupScreen'});
           _cleanTextField();
           ToastMessageHelper.showToastMessage(responseBody['message'] ?? "OTP sent to your email");

@@ -1,5 +1,6 @@
 import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/core/widgets/custom_container.dart';
 import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
 import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/core/widgets/custom_text.dart';
@@ -42,18 +43,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 50.h),
             // Profile Picture and Name Section
             Center(
-              child: Obx(() => Column(
-                children: [
-                  // Profile Picture with Outer Border and Shadow
-                  CustomImageAvatar(
-                    radius: 60.r,
-                    image: _controller.profileData.image ?? '',
-                  ),
-                  SizedBox(height: 24.h),
-                  CustomText(text: _controller.profileData.name ?? 'N/A', fontsize: 18.h),
-                ],
+              child: Obx(
+                () {
+                  final profileData = _controller.profileData;
+                  return Column(
+                    children: [
+                      CustomImageAvatar(
+                        radius: 60.r,
+                        image: profileData.image ?? '',
+                      ),
+                      SizedBox(height: 24.h),
+                      CustomText(text: profileData.name ?? 'N/A', fontsize: 18.h),
+                      CustomText(text: profileData.email ?? 'N/A', fontsize: 10.h,bottom: 10.h,),
+                      if(profileData.bio != null)
+                        CustomContainer(
+                          radiusAll: 8.r,
+                          paddingAll: 8.r,
+                          color: Colors.grey.shade200,
+                          child: CustomText(
+                              text: profileData.bio ?? 'N/A', fontsize: 10.h),
+                        ),
+                    ],
+                  );
+                }
               )),
-            ),
             SizedBox(height: 20.h),
             // List of Options
             ProfileListTile(

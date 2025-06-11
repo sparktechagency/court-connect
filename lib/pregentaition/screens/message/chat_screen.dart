@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
     userId = await PrefsHelper.getString(AppConstants.userId);
     _socketChatController.listenActiveStatus();
     _socketChatController.listenMessage();
-    //_socketChatController.messageDelete();
+    _socketChatController.messageDelete();
     _socketChatController.seenChat(widget.chatData['chatId'] ?? '');
     _socketChatController.listenSeenStatus(widget.chatData['chatId'] ?? '');
     _addScrollListener();
@@ -153,16 +153,18 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                       }
                       return ChatBubbleMessage(
+                        fontStyle: chat.isDeleted == true ? FontStyle.italic : null,
+                        textDecoration: chat.isDeleted == true ? TextDecoration.lineThrough : null,
                         status: receiver?.status ?? '',
-                        isSeen: chat.seenList!.length > 1,
+                        isSeen: (chat.seenList?.length ?? 0) > 1,
                         time: TimeFormatHelper.timeFormat(
                             DateTime.tryParse(chat.createdAt ?? '') ??
                                 DateTime.now()),
                         text: chat.isDeleted == true ? chat.messageStatus ?? '' :  chat.message ?? '',
                         isMe: userId == chat.senderId,
-                        deleteText: chat.isDeleted == false ? (){
-                          _chatController.deleteMessage(context,chat.sId ?? '',widget.chatData['chatId'] ?? '');
-                        } : null,
+                        deleteText: chat.isDeleted == true ? null : (){
+                          _chatController.deleteMessage(context,chat.sId ?? '',chat.chatId ?? '');
+                        },
                       );
                     } else {
                       return index < _chatController.totalPage

@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:chat_bubbles/bubbles/bubble_normal_image.dart';
 import 'package:courtconnect/core/utils/app_colors.dart';
 import 'package:courtconnect/core/widgets/custom_container.dart';
@@ -9,12 +8,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatBubbleMessage extends StatelessWidget {
   final String time;
   final String? text;
+  final Color? bgColor;
+  final FontStyle? fontStyle;
+  final TextDecoration? textDecoration;
   final String? image;
   final bool isSeen;
   final bool isMe;
@@ -28,7 +29,7 @@ class ChatBubbleMessage extends StatelessWidget {
     this.image,
     required this.isMe,
     this.isSeen = false,
-    this.status = 'offline', this.deleteText,
+    this.status = 'offline', this.deleteText, this.bgColor, this.fontStyle, this.textDecoration,
   });
 
   @override
@@ -63,7 +64,9 @@ class ChatBubbleMessage extends StatelessWidget {
               Flexible(
                 child: GestureDetector(
                   onLongPressStart: (details){
-                    onLongPressStart(details,text,deleteText);
+                    if(deleteText != null){
+                      onLongPressStart(details,text,deleteText);
+                    }
                   },
                   child: CustomContainer(
                     horizontalPadding: 16.w,
@@ -101,6 +104,8 @@ class ChatBubbleMessage extends StatelessWidget {
   Widget _buildMessageContent() {
     if (text?.isNotEmpty == true) {
       return CustomText(
+        fontStyle: fontStyle,
+        textDecoration: textDecoration,
         maxline: 10,
         textAlign: TextAlign.left,
         fontWeight: FontWeight.w400,

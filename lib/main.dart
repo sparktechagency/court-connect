@@ -21,7 +21,8 @@ void main() async {
 
   await Firebase.initializeApp();
   await FirebaseMessaging.instance;
-  await FirebaseNotificationService.requestPermission();
+  await FirebaseNotificationService.printFCMToken();
+  await FirebaseNotificationService.initialize();
 
   SocketServices socketServices = SocketServices();
   socketServices.init();
