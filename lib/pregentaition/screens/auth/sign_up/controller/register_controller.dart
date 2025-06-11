@@ -48,6 +48,7 @@ class RegisterController extends GetxController {
       if (response.statusCode == 200 && responseBody['success'] == true) {
         final String? token = responseBody['data']?['token'];
         if (token != null) {
+          PrefsHelper.setString(AppConstants.bearerTokenSignUp, token);
           debugPrint('====================> response token save: $token');
           context.pushNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'signupScreen'});
           _cleanTextField();

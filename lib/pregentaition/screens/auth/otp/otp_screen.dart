@@ -96,7 +96,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   void _onTapNextScreen()async {
     if (!_globalKey.currentState!.validate()) return;
-    final bool success = await _controller.otpSubmit();
+    final bool success = await _controller.otpSubmit(widget.screenType == 'signupScreen');
     if(success){
       if(widget.screenType == 'signupScreen'){
         context.goNamed(AppRoutes.loginScreen);

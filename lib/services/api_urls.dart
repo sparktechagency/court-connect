@@ -1,8 +1,17 @@
 class ApiUrls {
-  static const String baseUrl = "https://courtconnect-asifur-rahman.sarv.live/api/v1";
+  /// development
+  //static const String baseUrl = "https://courtconnect-asifur-rahman.sarv.live/api/v1";
+
+  /// production
+  static const String baseUrl = "https://courtconnect.uk/api/v1";
 
 
-  static const String imageBaseUrl = "https://courtconnect-asifur-rahman.sarv.live";
+  //static const String imageBaseUrl = "https://courtconnect-asifur-rahman.sarv.live";
+
+  static const String imageBaseUrl = "https://courtconnect.uk";
+
+
+  static const String socketBaseUrl = "https://courtconnect.uk/";
 
   static const String register = '/auth/register';
   static const String verifyOtp = '/auth/verify-otp';

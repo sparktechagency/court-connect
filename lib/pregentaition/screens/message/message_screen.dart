@@ -100,7 +100,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                   ? AppColors.primaryColor.withOpacity(0.8)
                                   : null,
                               image: chatData.receiver?.image ?? '',
-                              title:  chatData.receiver?.name ?? '',
+                              title: chatData.receiver?.isDeleted ?? false ? 'Court-connect User' :  chatData.receiver?.name ?? '',
                               activeColor: chatData.receiver?.status == 'online'
                                   ? Colors.green
                                   : Colors.grey,

@@ -34,6 +34,8 @@ class Receiver {
   String? image;
   String? status;
   String? lastActive;
+  bool? isDeleted;
+
 
   Receiver(
       {this.id,
@@ -41,7 +43,9 @@ class Receiver {
         this.email,
         this.image,
         this.status,
-        this.lastActive});
+        this.lastActive,
+        this.isDeleted = false,
+      });
 
   Receiver.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -50,6 +54,7 @@ class Receiver {
     image = json['image'];
     status = json['status'];
     lastActive = json['lastActive'];
+    isDeleted = json['isDeleted'] ?? false;
   }
 
 

@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(height: 24.h),
                       CustomText(text: profileData.name ?? 'N/A', fontsize: 18.h),
                       CustomText(text: profileData.email ?? 'N/A', fontsize: 10.h,bottom: 10.h,),
-                      if(profileData.bio != null)
+                      if(profileData.bio != null && profileData.bio != '')
                         CustomContainer(
                           radiusAll: 8.r,
                           paddingAll: 8.r,

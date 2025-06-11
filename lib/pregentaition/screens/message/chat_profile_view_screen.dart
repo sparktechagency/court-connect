@@ -60,7 +60,7 @@ class _ChatProfileViewScreenState extends State<ChatProfileViewScreen> {
           ),
           Center(
             child: CustomText(
-              text: receiver?.name ?? '',
+              text: receiver?.isDeleted ?? false ? 'Court-Connect User' : receiver?.name ?? '',
               top: 16.h,
               fontsize: 18.sp,
               fontWeight: FontWeight.w600,

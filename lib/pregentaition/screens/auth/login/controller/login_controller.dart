@@ -60,7 +60,8 @@ class LoginController extends GetxController {
       } else if(response.statusCode == 401) {
         ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
         final String? token = responseBody['data']?['token'];
-        await PrefsHelper.setString(AppConstants.bearerToken, token);
+        //await PrefsHelper.setString(AppConstants.bearerToken, token);
+        await PrefsHelper.setString(AppConstants.bearerTokenSignUp, token);
         context.pushNamed(AppRoutes.otpScreen,pathParameters: {'screenType' : 'signupScreen'});
 
 

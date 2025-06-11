@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:courtconnect/core/utils/app_constants.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
 import 'package:courtconnect/services/api_client.dart';
 import 'package:courtconnect/services/api_urls.dart';
@@ -10,11 +12,19 @@ class OTPController extends GetxController {
 
   final isLoading = false.obs;
 
+
   /// <==================otpSubmit function hare====================>
 
-  Future<bool> otpSubmit() async {
+  Future<bool> otpSubmit(bool isSignUp) async {
+    String bearerToken = await PrefsHelper.getString(AppConstants.bearerTokenSignUp);
+
     RxBool isSuccess = false.obs;
     isLoading.value = true;
+
+    var mainHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $bearerToken',
+    };
 
     var bodyParams = {
       'otp': otpCtrl.text,
@@ -23,6 +33,7 @@ class OTPController extends GetxController {
     try {
       final response = await ApiClient.postData(
         ApiUrls.verifyOtp,
+        headers: isSignUp ? mainHeaders : null,
         bodyParams,
       );
 

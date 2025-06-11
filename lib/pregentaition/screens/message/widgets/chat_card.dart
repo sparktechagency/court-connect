@@ -13,14 +13,12 @@ import 'package:go_router/go_router.dart';
 class ChatBubbleMessage extends StatelessWidget {
   final String time;
   final String? text;
-  final Color? bgColor;
-  final FontStyle? fontStyle;
-  final TextDecoration? textDecoration;
   final String? image;
   final bool isSeen;
   final bool isMe;
   final String status;
-  final  VoidCallback? deleteText;
+  final VoidCallback? deleteText;
+  final bool isDeleted;
 
   const ChatBubbleMessage({
     super.key,
@@ -29,7 +27,9 @@ class ChatBubbleMessage extends StatelessWidget {
     this.image,
     required this.isMe,
     this.isSeen = false,
-    this.status = 'offline', this.deleteText, this.bgColor, this.fontStyle, this.textDecoration,
+    this.status = 'offline',
+    this.deleteText,
+    this.isDeleted = false,
   });
 
   @override
@@ -63,16 +63,17 @@ class ChatBubbleMessage extends StatelessWidget {
             children: [
               Flexible(
                 child: GestureDetector(
-                  onLongPressStart: (details){
-                    if(deleteText != null){
-                      onLongPressStart(details,text,deleteText);
+                  onLongPressStart: (details) {
+                    if (deleteText != null) {
+                      onLongPressStart(details, text, deleteText);
                     }
                   },
                   child: CustomContainer(
                     horizontalPadding: 16.w,
                     verticalPadding: 8.h,
+                    bordersColor: isDeleted ? AppColors.textColor787878 : null,
                     color:
-                        isMe ? AppColors.primaryColor : const Color(0xffEEEEEE),
+                        isMe ? AppColors.primaryColor : isDeleted ? Colors.transparent : const Color(0xffEEEEEE),
                     radiusAll: 10.r,
                     child: _buildMessageContent(),
                   ),
@@ -104,8 +105,8 @@ class ChatBubbleMessage extends StatelessWidget {
   Widget _buildMessageContent() {
     if (text?.isNotEmpty == true) {
       return CustomText(
-        fontStyle: fontStyle,
-        textDecoration: textDecoration,
+        fontStyle: isDeleted ? FontStyle.italic : null,
+        textDecoration: isDeleted ? TextDecoration.lineThrough : null,
         maxline: 10,
         textAlign: TextAlign.left,
         fontWeight: FontWeight.w400,
@@ -137,8 +138,7 @@ class ChatBubbleMessage extends StatelessWidget {
 }
 
 class MyMessageEdit extends StatelessWidget {
-  const MyMessageEdit(
-      {super.key, required this.message,  this.deleteText});
+  const MyMessageEdit({super.key, required this.message, this.deleteText});
 
   final String message;
   final VoidCallback? deleteText;

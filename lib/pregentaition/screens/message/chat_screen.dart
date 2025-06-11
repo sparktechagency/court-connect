@@ -83,7 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: CustomListTile(
                   imageRadius: 20.r,
                   image: receiver?.image ?? '',
-                  title:receiver?.name ?? '',
+                  title: receiver?.isDeleted ?? false ? 'Court-Connect User' : receiver?.name ?? '',
                   subTitle: !isBlocked && receiver?.status == 'online'
                       ? 'online'
                       : TimeFormatHelper.getTimeAgo(
@@ -153,8 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                       }
                       return ChatBubbleMessage(
-                        fontStyle: chat.isDeleted == true ? FontStyle.italic : null,
-                        textDecoration: chat.isDeleted == true ? TextDecoration.lineThrough : null,
+                        isDeleted: chat.isDeleted ?? false,
                         status: receiver?.status ?? '',
                         isSeen: (chat.seenList?.length ?? 0) > 1,
                         time: TimeFormatHelper.timeFormat(

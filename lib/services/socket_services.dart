@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
+import 'package:courtconnect/services/api_urls.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketServices {
@@ -20,8 +21,7 @@ class SocketServices {
 
     print("-------------------------------------------------------------\n Socket call \n token = $token");
 
-    socket = IO.io(
-        'https://courtconnect-asifur-rahman.sarv.live/',
+    socket = IO.io(ApiUrls.socketBaseUrl,
         // '${ApiConstants.imageBaseUrl}?token=$token',
         IO.OptionBuilder()
             .setTransports(['websocket'])
