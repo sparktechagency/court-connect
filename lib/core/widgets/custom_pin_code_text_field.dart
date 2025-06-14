@@ -53,7 +53,7 @@ class _CustomPinCodeTextFieldState extends State<CustomPinCodeTextField> {
         ),
       ),
       cursor: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             width: 2,

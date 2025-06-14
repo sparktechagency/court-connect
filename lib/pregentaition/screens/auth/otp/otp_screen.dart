@@ -79,14 +79,20 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
 
             SizedBox(height: 36.h),
-            Visibility(
-              visible: !_controller.isLoading.value,
-              replacement: const CustomLoader(),
-              child: CustomButton(
-                label: "Get Verification Code",
-                onPressed: _onTapNextScreen,
-              ),
+
+            Obx(() {
+                return Visibility(
+                  visible: !_controller.isLoading.value,
+                  replacement: const CustomLoader(),
+                  child: CustomButton(
+                    label: "Get Verification Code",
+                    onPressed: _onTapNextScreen,
+                  ),
+                );
+              }
             ),
+
+
             SizedBox(height: 18.h),
           ],
         ),

@@ -55,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _socketChatController.notificationUnreadCount();
     _notificationController.getNotificationBadge();
     _homeController.getSession();
+    _homeController.getUser();
     _searchController.addListener(() {
       _homeController.searchText.value = _searchController.text.toLowerCase();
       _addScrollListener();

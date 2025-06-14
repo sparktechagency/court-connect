@@ -116,6 +116,7 @@ class SocketChatController extends GetxController {
   }
 
 
+/*
   void messageDelete() {
     socketService.socket.on('message-delete', (data) {
       if (data != null) {
@@ -128,12 +129,13 @@ class SocketChatController extends GetxController {
           _controller.chatData[index] = oldMessage.copyWith(
             isDeleted: data['isDeleted'] ?? false,
               messageStatus: data['messageStatus'] ?? 'The message has been deleted.',
-              senderId: data['senderId'] ?? ''
+              senderId: data['senderId'] ?? '',
           );
         }
       }
     });
   }
+*/
 
   /// ===================> Turn off specific socket events when the chat is closed
   void offSocket(String chatId) {

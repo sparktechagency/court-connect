@@ -3,6 +3,7 @@ import 'package:courtconnect/core/app_routes/app_routes.dart';
 import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/home/controller/home_controller.dart';
 import 'package:courtconnect/pregentaition/screens/profile/models/my_profile_data.dart';
 import 'package:courtconnect/pregentaition/screens/profile/models/other_profile_data.dart';
 import 'package:courtconnect/services/api_client.dart';
@@ -37,6 +38,7 @@ class ProfileController extends GetxController {
 
       if (response.statusCode == 200 && responseBody['success'] == true) {
         _profileData.value = MyProfileData.fromJson(responseBody['data']);
+
       } else {
         ToastMessageHelper.showToastMessage("Failed to fetch profile data");
       }
@@ -81,10 +83,12 @@ class ProfileController extends GetxController {
           multipartBody: multipartBody);
       final responseBody = response.body;
 
-      final String? userName = responseBody['data']?['user']?['name'] ?? '';
-      final String? userImage = responseBody['data']?['user']?['image'] ?? '';
-      final String? bio = responseBody['data']?['user']?['boi'] ?? '';
+      final String? userName = responseBody['data']?['name'] ?? '';
+      final String? userImage = responseBody['data']?['image'] ?? '';
+      final String? bio = responseBody['data']?['boi'] ?? '';
 
+
+      print('=============NAme ====$userName');
       if (response.statusCode == 200 && responseBody['success'] == true) {
         await PrefsHelper.setString(AppConstants.name, userName);
         await PrefsHelper.setString(AppConstants.image, userImage);

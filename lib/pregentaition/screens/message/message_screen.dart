@@ -31,6 +31,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     _socketChatController.listenActiveStatus();
+    _socketChatController.listenMessage();
     _controller.getChatList();
     _controller.searchText.value = _searchController.text.toLowerCase();
     _addScrollListener();

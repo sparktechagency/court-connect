@@ -1,35 +1,26 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../core/utils/app_constants.dart';
 import '../helpers/prefs_helper.dart';
-
-
 
 class FirebaseNotificationService {
   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
-  // ✅ Static socket instance (Ensure it's initialized properly)
-  static late IO.Socket socket;
-
   // Singleton pattern
   FirebaseNotificationService._privateConstructor();
+
   static final FirebaseNotificationService instance =
-  FirebaseNotificationService._privateConstructor();
+      FirebaseNotificationService._privateConstructor();
 
   /// **Initialize Firebase Notifications and Socket**
   static Future<void> initialize() async {
     // Request notification permission
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+    final settings = await _firebaseMessaging.requestPermission(
       alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
       sound: true,
+      badge: true,
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.denied) {
@@ -38,31 +29,34 @@ class FirebaseNotificationService {
     }
 
     // Initialize local notifications
-    const AndroidInitializationSettings androidInitSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initSettings =
-    InitializationSettings(android: androidInitSettings);
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosInit = DarwinInitializationSettings(
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
+    );
+
+    const initSettings =
+        InitializationSettings(android: androidInit, iOS: iosInit);
     await _localNotifications.initialize(initSettings);
 
     // Handle FCM messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _handleForegroundMessage(message);
-      debugPrint("📩 App opened from foreground message: ${message.data}");
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint("📩 App opened from notification: ${message.data}");
-    });
+    FirebaseMessaging.onMessage
+        .listen((message) => _handleForegroundMessage(message));
+    FirebaseMessaging.onMessageOpenedApp.listen((message) =>
+        debugPrint("📩 App opened from notification: ${message.data}"));
   }
 
   /// **Handle foreground FCM messages and show local notification**
   static Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    debugPrint("📩 Received foreground notification: ${message.notification?.title}");
+    debugPrint(
+        "📩 Received foreground notification: ${message.notification?.title}");
 
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
+    final notification = message.notification;
+    final android = notification?.android;
 
-    if (notification != null && android != null) {
+    if (notification != null &&
+        (android != null || defaultTargetPlatform == TargetPlatform.iOS)) {
       _localNotifications.show(
         notification.hashCode,
         notification.title,
@@ -75,11 +69,10 @@ class FirebaseNotificationService {
             priority: Priority.high,
             playSound: true,
             icon: '@mipmap/ic_launcher',
-            styleInformation: BigTextStyleInformation(
-              notification.body ?? '',
-              contentTitle: notification.title,
-            )
+            styleInformation: BigTextStyleInformation(notification.body ?? '',
+                contentTitle: notification.title ?? ''),
           ),
+          iOS: DarwinNotificationDetails(),
         ),
       );
     }
@@ -87,7 +80,45 @@ class FirebaseNotificationService {
 
   /// **Retrieve FCM Token**
   static Future<String?> getFCMToken() async {
-    return await _firebaseMessaging.getToken();
+    // Request notification permissions first
+    final settings = await _firebaseMessaging.getNotificationSettings();
+
+    if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
+      await _firebaseMessaging.requestPermission(
+          alert: true, badge: true, sound: true);
+    }
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      // For iOS, try to get the APNs token first
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        String? apnsToken;
+        int attempts = 0;
+
+        // Retry fetching APNs token for up to 5 seconds
+        while (apnsToken == null && attempts < 10) {
+          apnsToken = await _firebaseMessaging.getAPNSToken();
+          await Future.delayed(
+              const Duration(milliseconds: 500)); // Delay before retrying
+          attempts++;
+        }
+
+        if (apnsToken == null) {
+          debugPrint("🚫 APNs token not available yet");
+          return null;
+        }
+
+        debugPrint("✅ APNs token: $apnsToken");
+      }
+
+      // Now that APNs token is available, get the FCM token
+      final fcmToken = await _firebaseMessaging.getToken();
+      debugPrint("✅ FCM token: $fcmToken");
+      return fcmToken;
+    }
+
+    debugPrint("❌ User denied notification permission");
+    return null;
   }
 
   /// **Print FCM Token & Store it in Preferences**
@@ -99,17 +130,6 @@ class FirebaseNotificationService {
       token = await getFCMToken() ?? '';
       PrefsHelper.setString(AppConstants.fcmToken, token);
       debugPrint("🔑 FCM Token (New): $token");
-    }
-  }
-
-
-  /// **Emit Socket Events from Anywhere**
-  static void sendSocketEvent(String eventName, dynamic data) {
-    if (socket.connected) {
-      socket.emit(eventName, data);
-      debugPrint('📤 Socket emit: $eventName - $data');
-    } else {
-      debugPrint('⚠️ Socket is not connected!');
     }
   }
 }

@@ -37,15 +37,15 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _getUser();
   }
 
-  void _getUser() async {
+  void getUser() async {
     userName.value = await PrefsHelper.getString(AppConstants.name);
     userImage.value = await PrefsHelper.getString(AppConstants.image);
     userId.value = await PrefsHelper.getString(AppConstants.userId);
     userEmail.value = await PrefsHelper.getString(AppConstants.email);
     bio.value = await PrefsHelper.getString(AppConstants.bio);
+    update();
   }
 
   /// <==================== Get Banner Data ======================>
