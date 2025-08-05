@@ -1,37 +1,128 @@
 import 'dart:io';
-
+import 'package:courtconnect/core/widgets/custom_app_bar.dart';
+import 'package:courtconnect/core/widgets/custom_button.dart';
+import 'package:courtconnect/core/widgets/custom_container.dart';
+import 'package:courtconnect/core/widgets/custom_image_avatar.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
+import 'package:courtconnect/pregentaition/screens/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../core/utils/app_colors.dart';
-import '../../../core/widgets/custom_network_image.dart';
 import '../../../core/widgets/custom_text_field.dart';
 
 class ProfileUpdate extends StatefulWidget {
   const ProfileUpdate({super.key});
 
   @override
-  _ProfileUpdateState createState() => _ProfileUpdateState();
+  State<ProfileUpdate> createState() => _ProfileUpdateState();
 }
 
 class _ProfileUpdateState extends State<ProfileUpdate> {
   final ImagePicker _picker = ImagePicker();
-  File? _profileImage;
+  final ProfileController _controller = Get.put(ProfileController());
 
-  final TextEditingController nameTEController = TextEditingController();
-  final TextEditingController emailTEController = TextEditingController();
-  final TextEditingController imageCtrl = TextEditingController();
+
 
   @override
   void initState() {
+    _controller.nameTEController.text = _controller.profileData.name ?? '';
+    _controller.phoneTEController.text = _controller.profileData.phone ?? '';
+    _controller.addressTEController.text = _controller.profileData.address ?? '';
+    _controller.bioTEController.text = _controller.profileData.bio ?? '';
     super.initState();
+  }
 
-    // Initialize controllers with default values
-    nameTEController.text = Get.arguments["name"];
-    emailTEController.text = Get.arguments["email"];
-    imageCtrl.text = Get.arguments["image"];
+  @override
+  Widget build(BuildContext context) {
+    return CustomScaffold(
+      appBar: const CustomAppBar(
+        title: 'Edit Profile',
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Stack(
+                children: [
+                  CustomImageAvatar(
+                    radius: 60.r,
+                    image: _controller.profileData.image ?? '',
+                    fileImage: _controller.profileImage.value,
+                  ),
+                  Positioned(
+                    bottom: 6.h,
+                    right: 8.w,
+                    child: CustomContainer(
+                      onTap: _pickImage,
+                      height: 32.h,
+                      width: 32.w,
+                      color: AppColors.primaryColor,
+                      shape: BoxShape.circle,
+                      child: Center(
+                          child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 18.r,
+                      )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 60.h),
+            CustomTextField(
+              controller: _controller.nameTEController,
+              hintText: "User Name",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+        
+            SizedBox(height: 10.h),
+        
+            CustomTextField(
+              controller: _controller.phoneTEController,
+              hintText: "Phone",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+        
+            SizedBox(height: 10.h),
+        
+            CustomTextField(
+              controller: _controller.addressTEController,
+              hintText: "Address",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+        
+            SizedBox(height: 10.h),
+        
+            CustomTextField(
+              maxLine: 5,
+              controller: _controller.bioTEController,
+              hintText: "Bio",
+              filColor: Colors.transparent,
+              borderColor: Colors.black,
+            ),
+            SizedBox(height: 100.h),
+            //const Spacer(),
+            Obx(() => _controller.isLoading.value
+                ? const CustomLoader()
+                : CustomButton(
+                    label: 'Update Profile',
+                    onPressed: () =>
+                             _controller.editProfile(context)
+        
+                  )),
+            SizedBox(height: 100.h),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _pickImage() async {
@@ -48,7 +139,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     await _picker.pickImage(source: ImageSource.gallery);
                 if (image != null) {
                   setState(() {
-                    _profileImage = File(image.path);
+                    _controller.profileImage.value = File(image.path);
                   });
                 }
                 Navigator.pop(context);
@@ -62,7 +153,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     await _picker.pickImage(source: ImageSource.camera);
                 if (image != null) {
                   setState(() {
-                    _profileImage = File(image.path);
+                    _controller.profileImage.value = File(image.path);
                   });
                 }
                 Navigator.pop(context);
@@ -71,121 +162,6 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
           ],
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // title: CustomTextOne(
-        //   text: 'Profile Update',
-        //   fontSize: 18.sp,
-        //   color: AppColors.textColor,
-        // ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // spacing: 10.h,
-            children: [
-              // Profile Picture
-              Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      width: 120.r,
-                      height: 120.r,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            blurRadius: 10.r,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                        border: Border.all(
-                          color: AppColors.primaryColor.withOpacity(0.5),
-                          width: 2.w,
-                        ),
-                      ),
-                      child: _profileImage != null
-                          ? Container(
-                              height: 120.h,
-                              width: 120.w,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                              ),
-                              child:
-                                  Image.file(_profileImage!, fit: BoxFit.cover))
-                          : CustomNetworkImage(
-                              boxShape: BoxShape.circle,
-                              imageUrl: Get.arguments["image"].toString(),
-                              height: 120.h,
-                              width: 120.w)
-                    ),
-
-
-
-                    Container(
-                      height: 40.h,
-                      width: 40.w,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          onPressed: _pickImage,
-                          icon:
-                              const Icon(Icons.camera_alt, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-               //CustomTextTwo(text: "User Name", bottom: 8.h),
-              CustomTextField(
-                controller: nameTEController,
-                hintText: "Enter your name",
-                filColor: Colors.transparent,
-                borderColor: Colors.black,
-              ),
-
-              SizedBox(height: 20.h),
-
-               //CustomTextTwo(text: "E-mail", bottom: 8.h),
-              CustomTextField(
-                readOnly: true,
-                controller: emailTEController,
-                hintText: "Enter your email address",
-                filColor: Colors.transparent,
-                borderColor: Colors.black,
-              ),
-
-              SizedBox(
-                height: 50.h,
-              ),
-              // Edit Profile Button
-              // CustomTextButton(
-              //   text: 'Update Profile',
-              //   onTap: () async {
-              //     profileController.profileUpdate(
-              //       name: nameTEController.text,
-              //       image: _profileImage
-              //     );
-              //   },
-              // ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

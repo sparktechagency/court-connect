@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../global/custom_assets/assets.gen.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -8,7 +7,6 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
         child: Assets.images.logo.image(),
       ),

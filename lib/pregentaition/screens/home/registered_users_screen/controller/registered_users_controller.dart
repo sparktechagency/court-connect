@@ -1,0 +1,36 @@
+import 'package:courtconnect/helpers/toast_message_helper.dart';
+import 'package:courtconnect/pregentaition/screens/home/registered_users_screen/models/user_data.dart';
+import 'package:courtconnect/services/api_client.dart';
+import 'package:courtconnect/services/api_urls.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
+
+class RegisteredUsersController extends GetxController {
+  RxBool isLoading = false.obs;
+  RxList<UserData> userDataList = <UserData>[].obs;
+
+
+
+  Future<void> getUser(String id) async {
+    isLoading.value = true;
+
+    try {
+      final response = await ApiClient.getData(ApiUrls.user(id));
+
+      final responseBody = response.body;
+
+      if (response.statusCode == 200) {
+        userDataList.clear();
+        final List data = responseBody['data'];
+        userDataList.value = data.map((json) => UserData.fromJson(json)).toList();
+      } else {
+        ToastMessageHelper.showToastMessage(responseBody['message'] ?? "");
+      }
+    } catch (e) {
+      ToastMessageHelper.showToastMessage("Error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}

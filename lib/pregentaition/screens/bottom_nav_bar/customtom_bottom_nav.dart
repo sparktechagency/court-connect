@@ -1,72 +1,88 @@
+import 'package:courtconnect/pregentaition/screens/group/group_screen.dart';
+import 'package:courtconnect/pregentaition/screens/home/home_screen.dart';
+import 'package:courtconnect/pregentaition/screens/message/message_screen.dart';
+import 'package:courtconnect/pregentaition/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../../../core/utils/app_colors.dart';
+import '../../../core/widgets/custom_container.dart';
+import '../bottom_nav_bar/controller/custom_bottom_nav_bar_controller.dart';
+import '../../../global/custom_assets/assets.gen.dart';
 
-class CustomBottomNavBar extends StatefulWidget {
-  @override
-  _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
-}
+class CustomBottomNavBar extends StatelessWidget {
+  CustomBottomNavBar({super.key});
 
-class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
-  int _selectedIndex = 0;
+  final CustomBottomNavBarController _navBarController = Get.find<CustomBottomNavBarController>();
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    GroupScreen(),
+    MessageScreen(),
+    ProfileScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-      selectedItemColor: Colors.blue[900], // Dark Blue for Selected
-      unselectedItemColor: Colors.grey, // Grey for Unselected
-      showSelectedLabels: true,
-      showUnselectedLabels: false,
-      items: [
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/home.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 0 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
+    return Obx(() => Scaffold(
+          body: _screens[_navBarController.selectedIndex.value],
+          bottomNavigationBar: CustomContainer(
+            elevation: true,
+            verticalPadding: 10.h,
+            color: Colors.white,
+            child: SafeArea(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(
+                    _navItems.length, (index) => _buildNavItem(index)),
+              ),
             ),
           ),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/network.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 1 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
+        ));
+  }
+
+  Widget _buildNavItem(int index) {
+    bool isSelected = _navBarController.selectedIndex.value == index;
+    return GestureDetector(
+      onTap: () => _navBarController.onChange(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            _navItems[index]["icon"],
+            color: isSelected ? AppColors.primaryColor : Colors.grey,
+            width: 24.w,
+            height: 24.h,
+          ),
+          SizedBox(height: 5.h),
+          Text(
+            _navItems[index]["label"],
+            style: TextStyle(
+              fontSize: 10.sp,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? AppColors.primaryColor : Colors.grey,
             ),
           ),
-          label: 'Network',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/chat.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 2 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
+          SizedBox(height: 3.h),
+          Container(
+            height: 4.h,
+            width: 30.w,
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.primaryColor : Colors.transparent,
+              borderRadius: BorderRadius.circular(10.r),
             ),
           ),
-          label: 'Chat',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/icons/profile.svg',
-            colorFilter: ColorFilter.mode(
-              _selectedIndex == 3 ? Colors.blue[900]! : Colors.grey,
-              BlendMode.srcIn,
-            ),
-          ),
-          label: 'Profile',
-        ),
-      ],
+        ],
+      ),
     );
   }
+
+  final List<Map<String, dynamic>> _navItems = [
+    {"icon": Assets.icons.homeBottom.path, "label": "Home"},
+    {"icon": Assets.icons.groupBottom.path, "label": "Community"},
+    {"icon": Assets.icons.message.path, "label": "Messages"},
+    {"icon": Assets.icons.profileNav.path, "label": "Profile"},
+  ];
 }

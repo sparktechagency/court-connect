@@ -4,31 +4,18 @@ import '../core/utils/app_colors.dart';
 
 class Themes {
   final lightTheme = ThemeData.light().copyWith(
-    ///-------------------------elevated button theme------------------------->
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.all(20),
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.maxFinite, 56),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-      ),
+      scaffoldBackgroundColor: AppColors.bgColor,
+      shadowColor: Colors.black,
+
+
 
       ///-----------------app bar theme------------------>
       appBarTheme: const AppBarTheme(
           color: Colors.white,
-          // backgroundColor: Colors.white10,
+          //backgroundColor: Colors.white10,
           centerTitle: true,
-          elevation: 5,
-          shadowColor: Colors.green)
+          elevation: 0,
+          scrolledUnderElevation: 0)
   );
 
 
@@ -60,7 +47,7 @@ class Themes {
 
 
       scrollbarTheme: ScrollbarThemeData(
-          thumbColor: MaterialStatePropertyAll(Colors.red.withOpacity(.50))
+          //thumbColor: MaterialStatePropertyAll(Colors.red.withOpacity(.50))
       ),
 
       ///-----------------app bar theme------------------>

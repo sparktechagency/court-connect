@@ -1,176 +1,115 @@
-import 'dart:async';
-
+import 'package:courtconnect/core/app_routes/app_routes.dart';
+import 'package:courtconnect/core/widgets/custom_app_bar.dart';
+import 'package:courtconnect/core/widgets/custom_loader.dart';
+import 'package:courtconnect/core/widgets/custom_scaffold.dart';
 import 'package:courtconnect/global/custom_assets/assets.gen.dart';
+import 'package:courtconnect/pregentaition/screens/auth/otp/controller/otp_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pinput/pinput.dart';
-import '../../../../core/app_routes/app_routes.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/custom_pin_code_text_field.dart';
 import '../../../../core/widgets/custom_text.dart';
-import '../../../../core/widgets/custom_text_field.dart';
 
-class OtpScreen extends StatelessWidget {
+class OtpScreen extends StatefulWidget {
+  const OtpScreen({super.key, required this.screenType,});
 
-  final TextEditingController otpCtrl = TextEditingController();
+  final String screenType;
+
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 60.h),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: GestureDetector(
-                  onTap: (){
-
-                  },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.black)
-                      ),
-                      child: Padding(
-                        padding:  EdgeInsets.all(5.r),
-                        child: const Icon(Icons.arrow_back),
-                      )),
-                ),
-              ),
-          
-              Assets.images.logo.image(width: 156.w, height: 79.h),
-          
-              SizedBox(height: 40.h),
-              CustomText(
-                text: "Enter Verification \n Code.",
-                fontsize: 24.sp,
-                fontWeight: FontWeight.bold,
-              ),
-              SizedBox(height: 8.h),
-              CustomText(
-                text: "Please enter the 6 digit verification code sent \n to your e-mail",
-                fontsize: 12.sp,
-                color: AppColors.textColor646464,
-              ),
-              SizedBox(height: 56.h),
-          
-              ///==============Pin code Field============<>>>>
-          
-              CustomPinCodeTextField(textEditingController: otpCtrl),
-          
-          
-          
-              Align(
-                alignment: Alignment.centerRight,
-                child: Obx(() => GestureDetector(
-                  onTap: isCountingDown.value
-                      ? null
-                      : () {
-                    startCountdown();
-                  },
-                  child: CustomText(
-                    text: isCountingDown.value
-                        ? 'Resend in ${countdown.value}s'
-                        : 'Resend code',
-                    color: isCountingDown.value
-                        ? Colors.red
-                        : AppColors.primaryColor,
-
-                  ),
-                )),
-              ),
-          
-          
-              SizedBox(height: 36.h),
-              CustomButton(
-                title: "Get Verification Code",
-                onpress: () {
-                  context.goNamed(AppRoutes.resetPasswordScreen);
-                },
-              ),
-              SizedBox(height: 18.h),
-          
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  final RxInt countdown = 10.obs;
-  final RxBool isCountingDown = false.obs;
-
-
-  void startCountdown() {
-    isCountingDown.value = true;
-    countdown.value = 10;
-
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (countdown.value > 0) {
-        countdown.value--;
-
-      } else {
-        timer.cancel();
-        isCountingDown.value = false;
-
-      }
-    });
-  }
-
+  State<OtpScreen> createState() => _OtpScreenState();
 }
 
-
-
-
-class CustomPinCodeTextField extends StatelessWidget {
-  const CustomPinCodeTextField({super.key, this.textEditingController});
-  final TextEditingController? textEditingController;
+class _OtpScreenState extends State<OtpScreen> {
+  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+  final OTPController _controller = Get.put(OTPController());
 
   @override
   Widget build(BuildContext context) {
-    return Pinput(
-      controller: textEditingController,
-      length: 6,
-      defaultPinTheme: PinTheme(
-        width: 120.w,
-        height: 60.h,
-        textStyle: const TextStyle(color: AppColors.textColor363636, fontSize: 20),
-        decoration: BoxDecoration(
-          color: const Color(0xffD3D3D3),
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
+    return CustomScaffold(
+      appBar: const CustomAppBar(),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Assets.images.logo.image(width: 156.w, height: 79.h),
 
-      focusedPinTheme: PinTheme(
-        width: 120.w,
-        height: 60.h,
-        textStyle: const TextStyle(color: AppColors.textColor363636, fontSize: 20),
-        decoration: BoxDecoration(
-          color: AppColors.bgColor,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.primaryColor),
+            SizedBox(height: 40.h),
+            CustomText(
+              text: "Enter Verification \n Code.",
+              fontsize: 24.sp,
+              fontWeight: FontWeight.bold,
+            ),
+            SizedBox(height: 8.h),
+            CustomText(
+              text:
+                  "Please enter the 6 digit verification code sent \n to your e-mail",
+              fontsize: 12.sp,
+              color: AppColors.textColor646464,
+            ),
+            SizedBox(height: 56.h),
+
+            ///==============Pin code Field============<>>>>
+
+            Form(
+              key: _globalKey,
+              child: CustomPinCodeTextField(
+                  textEditingController: _controller.otpCtrl),
+            ),
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: Obx(() => CustomText(
+                    onTap: _controller.isCountingDown.value
+                        ? null
+                        : () {
+                            _controller.resendOTP(context);
+                          },
+                    top: 10.h,
+                    text: _controller.isCountingDown.value
+                        ? 'Resend in ${_controller.countdown.value}s'
+                        : 'Resend code',
+                    color: _controller.isCountingDown.value
+                        ? Colors.red
+                        : AppColors.primaryColor,
+                  )),
+            ),
+
+            SizedBox(height: 36.h),
+
+            Obx(() {
+                return Visibility(
+                  visible: !_controller.isLoading.value,
+                  replacement: const CustomLoader(),
+                  child: CustomButton(
+                    label: "Get Verification Code",
+                    onPressed: _onTapNextScreen,
+                  ),
+                );
+              }
+            ),
+
+
+            SizedBox(height: 18.h),
+          ],
         ),
       ),
-      cursor: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            width: 2,
-            height: 20,
-            color: AppColors.textColor646464,
-          ),
-        ],
-      ),
-      keyboardType: TextInputType.number,
-      obscureText: false,
-      autofocus: false,
-      onChanged: (value) {},
     );
+  }
+
+  void _onTapNextScreen()async {
+    if (!_globalKey.currentState!.validate()) return;
+    final bool success = await _controller.otpSubmit(widget.screenType == 'signupScreen');
+    if(success){
+      if(widget.screenType == 'signupScreen'){
+        context.goNamed(AppRoutes.loginScreen);
+
+      }else{
+        context.pushNamed(AppRoutes.resetPasswordScreen);
+      }
+    }
   }
 }

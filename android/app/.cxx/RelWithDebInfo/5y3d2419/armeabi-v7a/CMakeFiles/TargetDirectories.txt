@@ -1,0 +1,2 @@
+/Users/tanvirhridoy/Desktop/officeWorks/court-connect/android/app/.cxx/RelWithDebInfo/5y3d2419/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/tanvirhridoy/Desktop/officeWorks/court-connect/android/app/.cxx/RelWithDebInfo/5y3d2419/armeabi-v7a/CMakeFiles/rebuild_cache.dir
