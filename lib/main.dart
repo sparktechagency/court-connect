@@ -1,5 +1,7 @@
+import 'package:courtconnect/core/utils/app_constants.dart';
 import 'package:courtconnect/env/config.dart';
 import 'package:courtconnect/helpers/dependancy_injaction.dart';
+import 'package:courtconnect/helpers/prefs_helper.dart';
 import 'package:courtconnect/services/get_fcm_token.dart';
 import 'package:courtconnect/services/socket_services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,8 +26,13 @@ void main() async {
   await FirebaseNotificationService.printFCMToken();
   await FirebaseNotificationService.initialize();
 
-  SocketServices socketServices = SocketServices();
-  socketServices.init();
+
+  String token = await PrefsHelper.getString(AppConstants.bearerToken);
+  if(token.isNotEmpty){
+    SocketServices socketServices = SocketServices();
+    await socketServices.init();
+  }
+
 
   DependencyInjection di = DependencyInjection();
   di.dependencies();

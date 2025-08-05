@@ -35,7 +35,7 @@ dependencies:
   logger: ^2.5.0
   carousel_slider: ^5.0.0
   country_picker: ^2.0.27
-  flutter_local_notifications: ^18.0.1
+  flutter_local_notifications:
   badges:
   multiselect: ^0.1.1
   connectivity_plus: ^4.0.1
@@ -59,13 +59,13 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.3
   build_runner: ^2.4.10
 
-
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/app_logo.png"
+  image_path: "assets/images/app_icon.png"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/app_logo.png"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
+  remove_alpha_ios: true
 
 
 

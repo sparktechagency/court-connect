@@ -21,7 +21,7 @@ class SocketServices {
 
     print("-------------------------------------------------------------\n Socket call \n token = $token");
 
-    socket = IO.io(ApiUrls.socketBaseUrl,
+    socket = IO.io('${ApiUrls.socketBaseUrl}',
         // '${ApiConstants.imageBaseUrl}?token=$token',
         IO.OptionBuilder()
             .setTransports(['websocket'])
