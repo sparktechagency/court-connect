@@ -3,15 +3,15 @@ class ApiUrls {
   //static const String baseUrl = "https://courtconnect-asifur-rahman.sarv.live/api/v1";
 
   /// production
-  static const String baseUrl = "https://courtconnect.uk/api/v1";
+  static const String baseUrl = "https://api.courtconnect.uk/api/v1";
 
 
   //static const String imageBaseUrl = "https://courtconnect-asifur-rahman.sarv.live";
 
-  static const String imageBaseUrl = "https://courtconnect.uk";
+  static const String imageBaseUrl = "https://api.courtconnect.uk";
 
 
-  static const String socketBaseUrl = "https://courtconnect.uk/";
+  static const String socketBaseUrl = "https://api.courtconnect.uk/";
 
 
   //static const String socketBaseUrl = "https://courtconnect-asifur-rahman.sarv.live/";
